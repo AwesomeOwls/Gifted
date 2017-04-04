@@ -208,7 +208,8 @@ background: #1abc9c !important;
 }
 
 .navbar-default {
-	position: relative;
+	position: fixed;
+	top: 0;
 	min-height: 60px;
 	width: 100%;
 	z-index: 999;
