@@ -20,7 +20,7 @@ body, html {
 
 .abcen{position: absolute;bottom: 8%;}
 
-.abcen1{position: absolute;top: 20%;}
+.abcen1{position: absolute;top: 40%;}
 
 .content-section-c {
 	border-top: 1px solid #32465A;
@@ -247,7 +247,7 @@ color: #ECEBEB;
 	padding-top: 50px; /* If you're making other pages, make sure there is 50px of padding to make sure the navbar doesn't overlap content! */
 	padding-bottom: 50px;
 	color: #f8f8f8;
-	background: url(../img/intro/intro5.jpg) no-repeat center center;
+	background: url(../../img/background1.jpg) no-repeat center center;
 	background-size: cover;
 	text-align: center;
 }

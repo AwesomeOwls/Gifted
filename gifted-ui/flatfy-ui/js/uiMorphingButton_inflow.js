@@ -47,6 +47,8 @@
 	}
 
 	UIMorphingButton.prototype._init = function() {
+		debugger
+		!this.el && return;
 		// save element height
 		this.elH = this.el.offsetHeight;
 		// the button
