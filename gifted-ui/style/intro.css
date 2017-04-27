@@ -1,7 +1,11 @@
-//.intro-header {
-//  background: url(../img/background1.jpg) no-repeat center center;
-//}
+/*.intro-header {*/
+  /*background: url(../img/background1.jpg) no-repeat center center;*/
+/*}*/
 .authors {
   width: 90px;
   height: 90px;
 }
+.menuItem {
+  cursor: pointer;
+}
+
