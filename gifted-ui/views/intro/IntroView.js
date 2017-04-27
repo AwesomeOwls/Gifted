@@ -39,9 +39,7 @@ var GoogleAuth = {
 },
     setLoginButton: function() {
         auth2.attachClickHandler($('#login-button')[0], {},
-            GoogleAuth.onSignIn, function(error) {
-                alert(JSON.stringify(error, undefined, 2));
-            });
+            GoogleAuth.onSignIn, e => console.error(e.error));
     }
 
 
