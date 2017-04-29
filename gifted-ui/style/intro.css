@@ -12,19 +12,31 @@
 }
 
 /* TODO when implementing convertion from sass to css move this into menuItem*/
-.google-icon, .logout-door {
+.logout-door {
+  height: 15px;
+  width: 15px;
+  align-self: center;
+}
+/* TODO FIX THIS when fixing sass to css issues*/
+.google-icon {
   height: 15px;
   width: 15px;
   align-self: center;
 }
 
-.owl-logo, .linkedin-icon {
+.linkedin-icon {
+  align-self: center;
+  width: 40px;
+  padding-left: 10px;
+}
+/* TODO FIX THIS when fixing sass to css issues*/
+.owl-logo {
   align-self: center;
   width: 40px;
   padding-left: 10px;
 }
 
-/* TODO when implementing convertion from sass to css move this into menuItem*/
+  /* TODO when implementing convertion from sass to css move this into menuItem*/
 #login-button {
   display: flex;
 }
