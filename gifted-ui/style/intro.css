@@ -1,11 +1,51 @@
 /*.intro-header {*/
   /*background: url(../img/background1.jpg) no-repeat center center;*/
 /*}*/
-.authors {
-  width: 90px;
-  height: 90px;
-}
-.menuItem {
+
+.menuItem * {
   cursor: pointer;
+}
+
+.authors {
+  width: 120px;
+  height: 120px;
+}
+
+/* TODO when implementing convertion from sass to css move this into menuItem*/
+.google-icon, .logout-door {
+  height: 15px;
+  width: 15px;
+  align-self: center;
+}
+
+.owl-logo, .linkedin-icon {
+  align-self: center;
+  width: 40px;
+  padding-left: 10px;
+}
+
+/* TODO when implementing convertion from sass to css move this into menuItem*/
+#login-button {
+  display: flex;
+}
+
+.navbar-header {
+  display: flex;
+}
+
+#welcome {
+  display: flex;
+  align-self: center;
+  font-family: arvo;
+  padding-left: 50px;
+}
+
+.user-img {
+  width: 25px;
+  height: 25px;
+}
+.bottom-bar {
+  background-color: #34495e;
+  min-height: 190px;
 }
 

@@ -16,30 +16,56 @@ function startApp() {
 var GoogleAuth = {
 
     onSignIn: function (googleUser) {
-
+    console.log('user logged in');
     var profile = googleUser.getBasicProfile();
-    $('#login-button').hide();
-    $('#logout-button').show();
-    $('#logout-button').click(GoogleAuth.signOut);
+    var $login =  $('#login-button');
+    var $logout =  $('#logout-button');
+    var $welcome =  $('#welcome');
+    var $search =  $('#search-button');
+    var $upload =  $('#upload-button');
+    var $account =  $('#account-button');
+    var pictureURL = profile.getImageUrl();
+    $login.hide();
+    $logout.show();
+    $search.show();
+    $upload.show();
+    $account.show();
+    $logout.click(GoogleAuth.signOut);
     //TODO check if user is in DB Already.
-    $('#welcome').show();
-    $('#welcome')[0].innerText = 'Welcome, ' + profile.getGivenName();
+    $welcome.show();
+    var $text = $('<div></div>')
+    $text[0].innerText = 'Welcome, ' + profile.getGivenName() + '!  ';
+    var img = $('<img class="user-img">');
+    img.attr('src', pictureURL);
+    $text.css('padding-left', '5px');
+    img.appendTo('#welcome');
+    $text.appendTo('#welcome');
+    // TODO: add permission for Birthday! (for reminders/dicounts when it arrives)
+
 },
 
     signOut: function () {
     var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(() => {
-        $('#logout-button').hide();
-        $('#login-button').find('a')[0].innerText = 'Log In';
-        $('#login-button').show();
-        $('#welcome')[0].innerText = '';
-        $('#welcome').hide();
-        GoogleAuth.setLoginButton();
+    var $login =  $('#login-button');
+    var $logout =  $('#logout-button');
+    var $welcome =  $('#welcome');
+    var $search =  $('#search-button');
+    var $upload =  $('#upload-button');
+    var $account =  $('#account-button');
+    auth2.signOut().then(function() {
+        console.log('user logged out');
+        $logout.hide();
+        $search.hide();
+        $upload.hide();
+        $account.hide();
+        $welcome.hide();
+        $login.show();
+        $welcome[0].innerText = '';
     });
 },
     setLoginButton: function() {
         auth2.attachClickHandler($('#login-button')[0], {},
-            GoogleAuth.onSignIn, e => console.error(e.error));
+            GoogleAuth.onSignIn, function(e) {console.error(e.error)});
     }
 
 

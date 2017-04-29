@@ -65,6 +65,9 @@
 	<script>
 		var GoogleAuthInit = function() {
 			$('#logout-button').hide();
+			$('#upload-button').hide();
+			$('#search-button').hide();
+			$('#account-button').hide();
 			gapi.load('auth2', function(){
 				// Retrieve the singleton for the GoogleAuth library and set up the client.
 				auth2 = gapi.auth2.init({
@@ -90,15 +93,17 @@
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" id="home-button" href="#home">Gifted</a>
+				<a id="welcome"></a>
 			</div>
 
 			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
+					<li class="menuItem" id="account-button"><a href="#account">My Account</a></li>
 					<li class="menuItem" id="search-button"><a href="#search">Search Gift</a></li>
 					<li class="menuItem" id="upload-button"><a href="#upload-gift">Upload Gift</a></li>
                     <li class="menuItem" id="about-button"><a href="#about">About Us</a></li>
-                    <li class="menuItem" id="logout-button"><a>Log Out</a></li>
-                    <li class="menuItem" id="login-button"><a>Log In</a></li>
+                    <li class="menuItem" id="logout-button"><a>Log Out&nbsp;&nbsp;<img class="logout-door" src="gifted-ui/img/logout-door.svg"></a></li>
+                    <li class="menuItem" id="login-button"><a>Log In&nbsp;&nbsp;<img class="google-icon" src="gifted-ui/img/google-icon.png"></a></li>
 
                 </ul>
 			</div>
@@ -112,7 +117,6 @@
 
 	<!-- FullScreen -->
     <div class="intro-header">
-		<h3 class="h3_home wow fadeIn" data-wow-delay="0.4s" id="welcome"	></h3>
 		<div class="col-xs-12 text-center abcen1">
 			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
 			<h3 class="h3_home wow fadeIn" data-wow-delay="0.6s">Find The Perfect Gift</h3>
@@ -136,58 +140,79 @@
 			</div>
 			
 			<div class="row">
-			
 				<div class="col-sm-4 wow fadeInDown text-center">
-				  <img class="rotate authors" src="gifted-ui/img/amit.svg" alt="Generic placeholder image">
-				  <h3>Amit Chen</h3>
-				  <p class="lead">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. </p>
-				  <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
-
-				<div class="col-sm-4 wow fadeInDown text-center">
-					<img class="rotate authors" src="gifted-ui/img/yehonatan.svg" alt="Generic placeholder image">
-					<h3>Yehonatan Sayag</h3>
-					<p class="lead">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. </p>
+					<img class="rotate authors" src="gifted-ui/img/evgeny.png" alt="Generic placeholder image">
+					<h3>Evgeny Agronsky</h3>
+					<p class="lead">Co-Founder, Backend Team.<br>Software Engineer at imVision<br>
+                        <a href="https://www.linkedin.com/in/evgeny-agronsky-a61322104" target="_blank">
+                            <img class="linkedin-icon" src="gifted-ui/img/linkedin-icon.png">
+                        </a>
+                    </p>
 					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
 				</div><!-- /.col-lg-4 -->
 
 				<div class="col-sm-4 wow fadeInDown text-center">
-				  <img class="rotate authors" src="gifted-ui/img/evgeny.svg" alt="Generic placeholder image">
-				   <h3>Evgeny Agronsky</h3>
-				   <p class="lead">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. </p>
-				   <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+					<img class="rotate authors" src="gifted-ui/img/yotam.png" alt="Generic placeholder image">
+					<h3>Yotam Ronen</h3>
+					<p class="lead">Co-Founder, Frontend Team.<br>Software Engineer at cTex<br>
+                        <a href="https://www.linkedin.com/in/yotam-ronen-092542a2/" target="_blank">
+                            <img class="linkedin-icon" src="gifted-ui/img/linkedin-icon.png">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
 				</div><!-- /.col-lg-4 -->
-				
+
+				<div class="col-sm-4 wow fadeInDown text-center">
+					<img class="rotate authors" src="gifted-ui/img/yehonatan.png" alt="Generic placeholder image">
+					<h3>Yehonatan Sayag</h3>
+					<p class="lead">Co-Founder, Frontend Team.<br>Software Engineer at INFINIDAT<br>
+                        <a href="https://www.linkedin.com/in/ysayag/" target="_blank">
+                            <img class="linkedin-icon" src="gifted-ui/img/linkedin-icon.png">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+				</div><!-- /.col-lg-4 -->
+
+
 
 			</div><!-- /.row -->
 				
 			<div class="row tworow">
 			
 				<div class="col-sm-4  wow fadeInDown text-center">
-				  <img class="rotate authors" src="gifted-ui/img/tomer.svg" alt="Generic placeholder image">
+				  <img class="rotate authors" src="gifted-ui/img/tomer.png" alt="Generic placeholder image">
 				  <h3>Tomer Ben-Kereth</h3>
-				  <p class="lead">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. </p>
+				  <p class="lead">Co-Founder, Backend/Database Team.<br>Software Engineer at imVision<br>
+                      <a href="https://www.linkedin.com/in/bktomer/" target="_blank">
+                          <img class="linkedin-icon" src="gifted-ui/img/linkedin-icon.png">
+                      </a>
+                  </p>
 				 <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
 				</div><!-- /.col-lg-4 -->
-				
 				<div class="col-sm-4 wow fadeInDown text-center">
-				  <img class="rotate authors" src="gifted-ui/img/yotam.svg" alt="Generic placeholder image">
-				   <h3>Yotam Ronen</h3>
-				   <p class="lead">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. </p>
-				   <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+					<img class="rotate authors" src="gifted-ui/img/amit.png" alt="Generic placeholder image">
+					<h3>Amit Chen</h3>
+					<p class="lead">Co-Founder, Database Team.<br>Freelance Software Engineer<br>
+                        <a href="https://www.linkedin.com/in/amit-chen-54013aa6/" target="_blank">
+                            <img class="linkedin-icon" src="gifted-ui/img/linkedin-icon.png">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
 				</div><!-- /.col-lg-4 -->
+
+
 
 			</div><!-- /.row -->
 		</div>
 	</div>
 </body>
-<footer>
+<footer class="bottom-bar">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-7">
-				<h3 class="footer-title">More Info</h3>
-				<p>More info goes here
-				</p>
+                <h3 class="footer-title">Gifted</h3>
+                <li> All Rights Reserved - Gifted </li>
+                <li>Go to: <a href="https://github.com/AwesomeOwls/Gifted" target="_blank">Our Github</a><img class="owl-logo" src="gifted-ui/img/owl-logo.png"></li>
 
 				<!-- LICENSE -->
 				UI Template :<a rel="cc:attributionURL" href="http://www.andreagalanti.it/flatfy"
@@ -195,16 +220,6 @@
 				<a rel="dc:creator" href="http://www.andreagalanti.it"
 				   property="cc:attributionName">Andrea Galanti</a>
 			</div> <!-- /col-xs-7 -->
-
-			<div class="col-md-5">
-				<div class="footer-banner">
-					<h3 class="footer-title">Gifted</h3>
-					<ul>
-						<li> All Rights Reserved - Gifted </li>
-					</ul>
-					Go to: <a href="https://github.com/AwesomeOwls/Gifted" target="_blank">Our Github</a>
-				</div>
-			</div>
 		</div>
 	</div>
 </footer>
