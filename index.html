@@ -37,7 +37,7 @@
 	<script src="gifted-ui/flatfy-ui/js/script.js"></script>
 
 	<!-- Gifted-UI JavaScript -->
-	<script src="gifted-ui/views/intro/IntroView.js"></script>
+	<script src="gifted-ui/views/views/MainView.js"></script>
 
 	<!-- StikyMenu -->
 	<script src="gifted-ui/flatfy-ui/js/stickUp.min.js"></script>
@@ -64,16 +64,12 @@
 	<script src="https://apis.google.com/js/api:client.js"></script>
 	<script>
 		var GoogleAuthInit = function() {
-			$('#logout-button').hide();
-			$('#upload-button').hide();
-			$('#search-button').hide();
-			$('#account-button').hide();
 			gapi.load('auth2', function(){
 				// Retrieve the singleton for the GoogleAuth library and set up the client.
 				auth2 = gapi.auth2.init({
 					client_id: '645612306634-gru7a0vtqlbklasgm5d7knqjn80rafg6.apps.googleusercontent.com',
 				});
-				GoogleAuth.setLoginButton();
+				NavBar.setLoginButton();
 			});
 		};
 	</script>
@@ -98,11 +94,11 @@
 
 			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-					<li class="menuItem" id="account-button"><a href="#account">My Account</a></li>
-					<li class="menuItem" id="search-button"><a href="#search">Search Gift</a></li>
-					<li class="menuItem" id="upload-button"><a href="#upload-gift">Upload Gift</a></li>
+					<li class="menuItem" id="account-button" style="display: none;"><a href="#account">My Account</a></li>
+					<li class="menuItem" id="search-button" style="display: none;"><a href="#search">Search Gift</a></li>
+					<li class="menuItem" id="upload-button" style="display: none;"><a href="#upload-gift">Upload Gift</a></li>
                     <li class="menuItem" id="about-button"><a href="#about">About Us</a></li>
-                    <li class="menuItem" id="logout-button"><a>Log Out&nbsp;&nbsp;<img class="logout-door" src="gifted-ui/img/logout-door.svg"></a></li>
+                    <li class="menuItem" id="logout-button" style="display: none;"><a>Log Out&nbsp;&nbsp;<img class="logout-door" src="gifted-ui/img/logout-door.svg"></a></li>
                     <li class="menuItem" id="login-button"><a>Log In&nbsp;&nbsp;<img class="google-icon" src="gifted-ui/img/google-icon.png"></a></li>
 
                 </ul>
@@ -110,7 +106,7 @@
 		</div>
 	</nav>
 
-<!-- Preloader -->
+	<!-- Preloader -->
 	<div id="preloader">
 		<div id="status"></div>
 	</div>
