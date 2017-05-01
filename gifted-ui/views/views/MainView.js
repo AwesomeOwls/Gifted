@@ -1,17 +1,4 @@
-// import $ from 'gifted-ui/flatfy-ui/js/jquery-1.10.2.js'
 
-function startApp() {
-    $('document').ready(function () {
-        var user = null;
-        $('#search-button > a').click(function () {
-            // $('#about').hide();
-        });
-
-        $('#home-button').click(function () {
-            // $('#about').show();
-        });
-    });
-}
 
 var GoogleAuth = {
 
@@ -32,9 +19,6 @@ var GoogleAuth = {
         NavBar.showTopButtons();
         NavBar.showWelcome(profile.getGivenName(), pictureURL);
     });
-
-    //TODO check if user is in DB Already.
-    // TODO: add permission for Birthday! (for reminders/dicounts when it arrives)
 },
 
     signOut: function () {
@@ -89,7 +73,7 @@ var NavBar = {
 
     showWelcome: function(userName, pictureURL) {
         var $welcome = $('#welcome');
-
+        //TODO: check if user is in DB Already, if so present 'welcome back' message or something similar
         $welcome.hide();
         var $welcomeText = $('<div></div>');
         $welcomeText[0].innerText = 'Welcome, ' + userName + '!  ';
@@ -100,8 +84,4 @@ var NavBar = {
         $welcomeText.appendTo('#welcome');
         $welcome.show();
     }
-
-}
-
-
-startApp();
+};

@@ -44,7 +44,7 @@
 	<script type="text/javascript">
 		jQuery(function($) {
 			$(document).ready( function() {
-				$('.navbar-default').stickUp();
+				$('.navbar-default').stickUp(); // stick nav bar up as default
 			});
 		});
 
@@ -64,12 +64,13 @@
 	<script src="https://apis.google.com/js/api:client.js"></script>
 	<script>
 		var GoogleAuthInit = function() {
+			//TODO implement storing the user's session data in session/local storage (for refresh, etc.)
 			gapi.load('auth2', function(){
 				// Retrieve the singleton for the GoogleAuth library and set up the client.
 				auth2 = gapi.auth2.init({
 					client_id: '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com',
 				});
-				NavBar.setLoginButton();
+				NavBar.setLoginButton(); // set listener to login function on login button
 			});
 		};
 	</script>
