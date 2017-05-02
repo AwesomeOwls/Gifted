@@ -1,0 +1,233 @@
+<!doctype html>
+ <html>
+<head>
+
+    <title>Gifted - Find The Perfect Gift</title>
+    {% load staticfiles%}
+
+	<link rel="shortcut icon" href="../../../gifted-ui/style/blue-gift.ico" />
+	<!-- Gifted-UI CSS-->
+	<link href="{% static 'gifted/style/intro.css' %} " rel="stylesheet">
+
+	<!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <!-- Custom Google Web Font -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
+	
+    <!-- Custom CSS-->
+    <link href="{% static 'gifted/flatfy-ui/css/general.css' %}" rel="stylesheet">
+	
+	 <!-- Owl-Carousel -->
+    <link href="{% static 'gifted/flatfy-ui/css/custom.css' %} " rel="stylesheet">
+    <link href="{% static 'gifted/flatfy-ui/css/owl.carousel.css' %} " rel="stylesheet">
+    <link href="{% static 'gifted/flatfy-ui/css/owl.theme.css' %} " rel="stylesheet">
+    <link href="{% static 'gifted/flatfy-ui/css/style.css' %} " rel="stylesheet">
+    <link href="{% static 'gifted/flatfy-ui/css/animate.css' %} " rel="stylesheet">
+
+	<!-- Magnific Popup core CSS file -->
+
+	<link rel="stylesheet" href="{% static 'gifted/flatfy-ui/css/magnific-popup.css' %}">
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>  <!-- Modernizr /-->
+
+	<!-- JavaScript -->
+	<script src="{% static 'gifted/flatfy-ui/js/jquery-1.10.2.js' %}"></script>
+	<script src="{% static 'gifted/flatfy-ui/js/bootstrap.js' %}"></script>
+	<script src="{% static 'gifted/flatfy-ui/js/owl.carousel.js' %}"></script>
+	<script src="{% static 'gifted/flatfy-ui/js/script.js' %}"></script>
+
+
+	<!-- Gifted-UI JavaScript -->
+	<script src="{% static 'gifted/views/MainView.js' %}"></script>
+
+	<!-- StikyMenu -->
+	<script src="{% static 'gifted/flatfy-ui/js/stickUp.min.js' %}"></script>
+	<script type="text/javascript">
+		jQuery(function($) {
+			$(document).ready( function() {
+				$('.navbar-default').stickUp();
+			});
+		});
+
+	</script>
+	<!-- Smoothscroll -->
+	<script type="text/javascript" src="{% static 'gifted/flatfy-ui/js/jquery.corner.js' %}"></script>
+	<script src="../../../gifted-ui/flatfy-ui/js/wow.min.js"></script>
+	<script>
+		new WOW().init();
+	</script>
+	<script src="{% static 'gifted/flatfy-ui/js/classie.js' %}"></script>
+	<!--<script src="flatfy-ui/js/uiMorphingButton_inflow.js"></script>-->
+	<!-- Magnific Popup core JS file -->
+	<script src="{% static 'gifted/flatfy-ui/js/jquery.magnific-popup.js' %}"></script>
+
+	<!-- Google Sign-In API -->
+	<script src="https://apis.google.com/js/api:client.js"></script>
+	<script>
+		var GoogleAuthInit = function() {
+			$('#logout-button').hide();
+			$('#upload-button').hide();
+			$('#search-button').hide();
+			$('#account-button').hide();
+			gapi.load('auth2', function(){
+				// Retrieve the singleton for the GoogleAuth library and set up the client.
+				auth2 = gapi.auth2.init({
+					client_id: '645612306634-gru7a0vtqlbklasgm5d7knqjn80rafg6.apps.googleusercontent.com',
+				});
+				GoogleAuth.setLoginButton();
+			});
+		};
+	</script>
+
+</head>
+
+<body id="home">
+
+<!-- NavBar-->
+	<nav class="navbar-default" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" id="home-button" href="#home">Gifted</a>
+				<a id="welcome"></a>
+			</div>
+
+			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					<li class="menuItem" id="account-button"><a href="#account">My Account</a></li>
+					<li class="menuItem" id="search-button"><a href="#search">Search Gift</a></li>
+					<li class="menuItem" id="upload-button"><a href="#upload-gift">Upload Gift</a></li>
+                    <li class="menuItem" id="about-button"><a href="#about">About Us</a></li>
+                    <li class="menuItem" id="logout-button"><a>Log Out&nbsp;&nbsp;<img class="logout-door" src="{% static 'gifted/img/logout-door.svg' %}"></a></li>
+                    <li class="menuItem" id="login-button"><a>Log In&nbsp;&nbsp;<img class="google-icon" src=" {% static 'gifted/img/google-icon.png' %}"></a></li>
+
+                </ul>
+			</div>
+		</div>
+	</nav>
+
+<!-- Preloader -->
+	<div id="preloader">
+		<div id="status"></div>
+	</div>
+
+	<!-- FullScreen -->
+    <div class="intro-header">
+		<div class="col-xs-12 text-center abcen1">
+			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
+			<h3 class="h3_home wow fadeIn" data-wow-delay="0.6s">Find The Perfect Gift</h3>
+		</div>
+        <!-- /.container -->
+		<div class="col-xs-12 text-center abcen wow fadeIn">
+			<div class="button_down ">
+				<a class="imgcircle wow bounceInUp" data-wow-duration="1.5s"  href="#about"> <img class="img_scroll" src="{% static 'gifted/flatfy-ui/img/icon/circle.png' %}" alt=""> </a>
+			</div>
+		</div>
+    </div>
+
+	<!-- What is -->
+	<div id="about" class="content-section-b" style="border-top: 0">
+		<div class="container">
+
+			<div class="col-md-6 col-md-offset-3 text-center wrap_title">
+				<h2>About Us</h2>
+				<p class="lead" style="margin-top:0">Creators of Gifted</p>
+
+			</div>
+			
+			<div class="row">
+				<div class="col-sm-4 wow fadeInDown text-center">
+					<img class="rotate authors" src=" {% static 'gifted/img/evgeny.png' %}" alt="Generic placeholder image">
+					<h3>Evgeny Agronsky</h3>
+					<p class="lead">Co-Founder, Backend Team.<br>Software Engineer at imVision<br>
+                        <a href="https://www.linkedin.com/in/evgeny-agronsky-a61322104" target="_blank">
+                            <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+				</div><!-- /.col-lg-4 -->
+
+				<div class="col-sm-4 wow fadeInDown text-center">
+					<img class="rotate authors" src="{% static 'gifted/img/yotam.png'%}" alt="Generic placeholder image">
+					<h3>Yotam Ronen</h3>
+					<p class="lead">Co-Founder, Frontend Team.<br>Software Engineer at cTex<br>
+                        <a href="https://www.linkedin.com/in/yotam-ronen-092542a2/" target="_blank">
+                            <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+				</div><!-- /.col-lg-4 -->
+
+				<div class="col-sm-4 wow fadeInDown text-center">
+					<img class="rotate authors" src="{% static 'gifted/img/yehonatan.png' %}" alt="Generic placeholder image">
+					<h3>Yehonatan Sayag</h3>
+					<p class="lead">Co-Founder, Frontend Team.<br>Software Engineer at INFINIDAT<br>
+                        <a href="https://www.linkedin.com/in/ysayag/" target="_blank">
+                            <img class="{% static 'gifted/img/linkedin-icon.png' %}">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+				</div><!-- /.col-lg-4 -->
+
+
+
+			</div><!-- /.row -->
+				
+			<div class="row tworow">
+			
+				<div class="col-sm-4  wow fadeInDown text-center">
+				  <img class="rotate authors" src="{% static 'gifted/img/tomer.png' %}" alt="Generic placeholder image">
+				  <h3>Tomer Ben-Kereth</h3>
+				  <p class="lead">Co-Founder, Backend/Database Team.<br>Software Engineer at imVision<br>
+                      <a href="https://www.linkedin.com/in/bktomer/" target="_blank">
+                          <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
+                      </a>
+                  </p>
+				 <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+				</div><!-- /.col-lg-4 -->
+				<div class="col-sm-4 wow fadeInDown text-center">
+					<img class="rotate authors" src="{% static 'gifted/img/amit.png' %}" alt="Generic placeholder image">
+					<h3>Amit Chen</h3>
+					<p class="lead">Co-Founder, Database Team.<br>Freelance Software Engineer<br>
+                        <a href="https://www.linkedin.com/in/amit-chen-54013aa6/" target="_blank">
+                            <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
+                        </a>
+                    </p>
+					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
+				</div><!-- /.col-lg-4 -->
+
+
+
+			</div><!-- /.row -->
+		</div>
+	</div>
+</body>
+<footer class="bottom-bar">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7">
+                <h3 class="footer-title">Gifted</h3>
+                <li> All Rights Reserved - Gifted </li>
+                <li>Go to: <a href="https://github.com/AwesomeOwls/Gifted" target="_blank">Our Github</a><img class="owl-logo" src="{% static 'gifted/img/owl-logo.png' %}"></li>
+
+				<!-- LICENSE -->
+				UI Template :<a rel="cc:attributionURL" href="http://www.andreagalanti.it/flatfy" target="_blank"
+								property="dc:title">Flatfy Theme </a> by
+				<a rel="dc:creator" href="http://www.andreagalanti.it"
+				   target="_blank"
+				   property="cc:attributionName">Andrea Galanti</a>
+			</div> <!-- /col-xs-7 -->
+		</div>
+	</div>
+</footer>
+
+</html>
+<script>GoogleAuthInit();</script>
