@@ -37,7 +37,8 @@
 	<script src="gifted-ui/flatfy-ui/js/script.js"></script>
 
 	<!-- Gifted-UI JavaScript -->
-	<script src="gifted-ui/views/views/MainView.js"></script>
+	<script src="gifted-ui/views/MainView.js"></script>
+	<script src="gifted-ui/dependencies/w3data.js"></script>
 
 	<!-- StikyMenu -->
 	<script src="gifted-ui/flatfy-ui/js/stickUp.min.js"></script>
@@ -64,7 +65,7 @@
 	<script src="https://apis.google.com/js/api:client.js"></script>
 	<script>
 		var GoogleAuthInit = function() {
-			//TODO implement storing the user's session data in session/local storage (for refresh, etc.)
+            //TODO implement storing the user's session data in session/local storage (for refresh, etc.)
 			gapi.load('auth2', function(){
 				// Retrieve the singleton for the GoogleAuth library and set up the client.
 				auth2 = gapi.auth2.init({
@@ -113,6 +114,8 @@
 	</div>
 
 	<!-- FullScreen -->
+	<div w3-include-html="gifted-ui/templates/searchModal.html"></div>
+	<div w3-include-html="gifted-ui/templates/uploadModal.html"></div>
     <div class="intro-header">
 		<div class="col-xs-12 text-center abcen1">
 			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
@@ -126,7 +129,7 @@
 		</div>
     </div>
 
-	<!-- What is -->
+	<!-- About Us -->
 	<div id="about" class="content-section-b" style="border-top: 0">
 		<div class="container">
 
@@ -223,4 +226,8 @@
 </footer>
 
 </html>
-<script>GoogleAuthInit();</script>
+<script>
+	GoogleAuthInit();
+    w3IncludeHTML();
+</script>
+

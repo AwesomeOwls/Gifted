@@ -1,49 +1,55 @@
 from __future__ import unicode_literals
-import uuid
+import os
 from django.db import models
 
 
 class User(models.Model):
-    user_id = models.IntegerField()
+    google_client_id = models.CharField(max_length=150, primary_key=True)
     user_name = models.CharField(max_length=100)
     user_rank = models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
 
+    def __str__(self):
+        return "id:%s, %s, rank:%s, banned:%s" %(self.google_client_id,self.user_name,self.user_rank, "yes" if self.is_banned else "no")
+
+
+class Relation(models.Model):
+    description = models.CharField(max_length=100)
+
+
+class Img(models.Model):
+    file = models.FileField()
+
+    def filename(self):
+        return os.path.basename(self.file.name)
+
 
 class Gift(models.Model):
-    gift_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True) #automatically generated unique id
-    uploading_user = models.ForeignKey(User) #reference to uploading user
+    uploading_user = models.ForeignKey(User)
     description = models.CharField(max_length=250)
-    age = models.IntegerField(default=0)
+    age = models.IntegerField()
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    price_lower_bound = models.IntegerField(default=0)
-    price_upper_bound = models.IntegerField(default=0)
-
-    image_file = models.FileField(default=None)
+    price = models.IntegerField()
+    gift_img = models.ForeignKey(Img)
     gift_rank = models.IntegerField(default=0)
     uploading_time = models.DateTimeField(auto_now_add=True)
+    relationship = models.ForeignKey(Relation)
+
+    def as_json(self):
+        return dict(
+            description=self.description,
+            price=self.price,
+            gift_rank=self.gift_rank,
+            gift_id=self.pk,
+            gift_img=self.gift_img.filename()
+        )
 
 
-class RelationshipID(models.Model):
-    relationship_id = models.IntegerField(default=0)
-    description = models.CharField(max_length=100)
-    gift_rel = models.ForeignKey(Gift)
-
-
-class RMatrix(models.Model):
-    description = models.CharField(max_length=100, default="Relationship Matrix", editable=False)
-
-
-class RMatrixCell(models.Model):
-    matrix = models.ForeignKey(RMatrix, on_delete=models.CASCADE)
-    row = models.IntegerField()
-    col = models.IntegerField()
-    rel_strength = models.IntegerField()
-
-
-
-
+class RelationshipMatrixCell(models.Model):
+    rel1 = models.ForeignKey(Relation, related_name='rel1')
+    rel2 = models.ForeignKey(Relation, related_name='rel2')
+    strength = models.IntegerField()
