@@ -37,10 +37,11 @@
 	<script src="{% static 'gifted/flatfy-ui/js/jquery-1.10.2.js' %}"></script>
 	<script src="{% static 'gifted/flatfy-ui/js/bootstrap.js' %}"></script>
 	<script src="{% static 'gifted/flatfy-ui/js/owl.carousel.js' %}"></script>
-	<script src="{% static 'gifted/flatfy-ui/js/script.js' %}"></script>
+	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
 
 
 	<!-- Gifted-UI JavaScript -->
+	<script src="{% static 'gifted/views/MainView.js' %}"></script>
 	<script src="{% static 'gifted/views/MainView.js' %}"></script>
 
 	<!-- StikyMenu -->
@@ -55,7 +56,7 @@
 	</script>
 	<!-- Smoothscroll -->
 	<script type="text/javascript" src="{% static 'gifted/flatfy-ui/js/jquery.corner.js' %}"></script>
-	<script src="../../../gifted-ui/flatfy-ui/js/wow.min.js"></script>
+	<script src="{% static 'gifted/flatfy-ui/js/wow.min.js' %}"></script>
 	<script>
 		new WOW().init();
 	</script>
@@ -117,6 +118,9 @@
 	</div>
 
 	<!-- FullScreen -->
+	<!--<div w3-include-html=" {% static 'gifted/inner-templates/searchModal.html' %}"></div>-->
+	<!--<div w3-include-html=" {% static 'gifted/inner-templates/uploadModal.html' %}"></div>-->
+
     <div class="intro-header">
 		<div class="col-xs-12 text-center abcen1">
 			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
@@ -130,7 +134,7 @@
 		</div>
     </div>
 
-	<!-- What is -->
+	<!-- About Us -->
 	<div id="about" class="content-section-b" style="border-top: 0">
 		<div class="container">
 
@@ -227,4 +231,8 @@
 </footer>
 
 </html>
-<script>GoogleAuthInit();</script>
+<script>
+	GoogleAuthInit();
+	w3IncludeHTML();
+</script>
+
