@@ -11,9 +11,11 @@
 
 	<!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
- 
+    <link href="{% static 'gifted/flatfy-ui/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
     <!-- Custom Google Web Font -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{% static 'gifted/flatfy-ui/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
 	
@@ -32,6 +34,7 @@
 	<link rel="stylesheet" href="{% static 'gifted/flatfy-ui/css/magnific-popup.css' %}">
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>  <!-- Modernizr /-->
+	<script src="{% static 'gifted/flatfy-ui/js/modernizr-2.8.3.min.js' %}"></script>  <!-- Modernizr /-->
 
 	<!-- JavaScript -->
 	<script src="{% static 'gifted/flatfy-ui/js/jquery-1.10.2.js' %}"></script>
@@ -42,6 +45,8 @@
 
 	<!-- Gifted-UI JavaScript -->
 	<script src="{% static 'gifted/views/MainView.js' %}"></script>
+	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
+
 
 	<!-- StikyMenu -->
 	<script src="{% static 'gifted/flatfy-ui/js/stickUp.min.js' %}"></script>
@@ -117,6 +122,9 @@
 	</div>
 
 	<!-- FullScreen -->
+	<div w3-include-html=" {% static 'gifted/inner-templates/searchModal.html' %}"></div>
+	<div w3-include-html=" {% static 'gifted/inner-templates/uploadModal.html' %}"></div>
+
     <div class="intro-header">
 		<div class="col-xs-12 text-center abcen1">
 			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
@@ -130,7 +138,7 @@
 		</div>
     </div>
 
-	<!-- What is -->
+	<!-- About Us -->
 	<div id="about" class="content-section-b" style="border-top: 0">
 		<div class="container">
 
@@ -227,4 +235,8 @@
 </footer>
 
 </html>
-<script>GoogleAuthInit();</script>
+<script>
+	GoogleAuthInit();
+	w3IncludeHTML();
+</script>
+

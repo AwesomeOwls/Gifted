@@ -60,3 +60,11 @@
   min-height: 190px;
 }
 
+
+.modal-field {
+  display: flex;
+  padding-left: 10px;
+}
+.modal-field > label {
+  align-self: center;
+}
