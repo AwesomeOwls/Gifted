@@ -11,9 +11,11 @@
 
 	<!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
- 
+    <link href="{% static 'gifted/flatfy-ui/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
     <!-- Custom Google Web Font -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{% static 'gifted/flatfy-ui/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
 	
@@ -32,17 +34,19 @@
 	<link rel="stylesheet" href="{% static 'gifted/flatfy-ui/css/magnific-popup.css' %}">
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>  <!-- Modernizr /-->
+	<script src="{% static 'gifted/flatfy-ui/js/modernizr-2.8.3.min.js' %}"></script>  <!-- Modernizr /-->
 
 	<!-- JavaScript -->
 	<script src="{% static 'gifted/flatfy-ui/js/jquery-1.10.2.js' %}"></script>
 	<script src="{% static 'gifted/flatfy-ui/js/bootstrap.js' %}"></script>
 	<script src="{% static 'gifted/flatfy-ui/js/owl.carousel.js' %}"></script>
-	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
+	<script src="{% static 'gifted/flatfy-ui/js/script.js' %}"></script>
 
 
 	<!-- Gifted-UI JavaScript -->
 	<script src="{% static 'gifted/views/MainView.js' %}"></script>
-	<script src="{% static 'gifted/views/MainView.js' %}"></script>
+	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
+
 
 	<!-- StikyMenu -->
 	<script src="{% static 'gifted/flatfy-ui/js/stickUp.min.js' %}"></script>
@@ -233,6 +237,6 @@
 </html>
 <script>
 	GoogleAuthInit();
-	w3IncludeHTML();
+//	w3IncludeHTML();
 </script>
 
