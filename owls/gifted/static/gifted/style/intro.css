@@ -60,11 +60,10 @@
   min-height: 190px;
 }
 
-
-.modal-field {
+.input-field {
   display: flex;
   padding-left: 10px;
 }
-.modal-field > label {
+.input-field > label {
   align-self: center;
 }
