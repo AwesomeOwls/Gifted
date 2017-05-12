@@ -34,12 +34,6 @@ class Relation(models.Model):
     description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
 
 
-class Img(models.Model):
-    file = models.FileField()
-
-    def filename(self):
-        return os.path.basename(self.file.name)
-
 
 class Gift(models.Model):
     uploading_user = models.ForeignKey(User)
@@ -51,7 +45,7 @@ class Gift(models.Model):
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     price = models.IntegerField()
-    gift_img = models.ForeignKey(Img)
+    gift_img = models.CharField(max_length=250)
     gift_rank = models.IntegerField(default=0)
     uploading_time = models.DateTimeField(auto_now_add=True)
     relationship = models.ForeignKey(Relation)
@@ -62,8 +56,9 @@ class Gift(models.Model):
             price=self.price,
             gift_rank=self.gift_rank,
             gift_id=self.pk,
-            gift_img=self.gift_img.filename()
+            gift_img=self.gift_img
         )
+
 
 
 class RelationshipMatrixCell(models.Model):
