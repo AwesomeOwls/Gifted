@@ -8,7 +8,7 @@ MIN_SEARCH_RANK = 10
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
-GOOGLE_CLIENT_ID = 'http://905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com/'
+GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
 def index(request):
     context = {}
