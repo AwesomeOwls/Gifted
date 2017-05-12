@@ -9,20 +9,40 @@
                 <h4 class="modal-title">Upload</h4>
             </div>
             <div class="modal-body">
-                <input id="search-description" maxlength="250">
-                <input id="search-age" maxlength="3">
-                <select id="search-gender">
-                    <option><a href="#">Male</a></option>
-                    <option><a href="#">Female</a></option>
-                </select>
-                <input id="search-price" maxlength="3"> ₪
-                <input id="search-relationships">
-                <input id="search-img-url">
-
+                <form>
+                    <div>
+                        <label>Description</label>
+                        <input id="upload-description" maxlength="250">
+                    </div>
+                    <div>
+                        <label>Age</label>
+                        <input id="upload-age" maxlength="3">
+                    </div>
+                    <div>
+                        <label>Gender</label>
+                        <select id="upload-gender">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Price (₪)</label>
+                        <input id="upload-price">
+                    </div>
+                    <div>
+                        <label>Relationship</label>
+                        <select id="upload-relationship">
+                        </select>
+                    </div>
+                    <div>
+                        <label>Image URL</label>
+                        <input id="upload-img-url">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Upload</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="upload-submit">Upload</button>
             </div>
         </div>
 
