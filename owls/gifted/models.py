@@ -9,7 +9,11 @@ class User(models.Model):
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
+<<<<<<< HEAD
         return "id:%s, %s, rank:%s, banned:%s" %(self.user_id,self.user_rank, )
+=======
+        return "id:%s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
+>>>>>>> 72e6191541e6498e44430c85a9e9c7471a9630ef
 
 
 class Relation(models.Model):
@@ -45,7 +49,7 @@ class Gift(models.Model):
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     price = models.IntegerField()
-    gift_img = models.CharField(max_length=250)
+    gift_img = models.CharField(max_length=500)
     gift_rank = models.IntegerField(default=0)
     uploading_time = models.DateTimeField(auto_now_add=True)
     relationship = models.ForeignKey(Relation)
@@ -58,6 +62,9 @@ class Gift(models.Model):
             gift_id=self.pk,
             gift_img=self.gift_img
         )
+
+    def __str__(self):
+        return "description:%s, uploading user:%s, price:%s" % (self.description, self.uploading_user,  self.price)
 
 
 
