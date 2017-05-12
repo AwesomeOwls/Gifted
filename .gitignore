@@ -2,3 +2,4 @@
 *.pyc
 *.sqlite3
 
+owls/gifted/migrations/0001_initial.py
