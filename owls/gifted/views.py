@@ -8,8 +8,28 @@ MIN_SEARCH_RANK = 10
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
+PREMIUM_USER_RANK = 4
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'User is not logged-in'
+RELATIONSHIP_CHOICES = (
+        ('Parent', 'Parent'),
+        ('Grandparent', 'Grandparent'),
+        ('Sibling', 'Sibling'),
+        ('Cousin', 'Cousin'),
+        ('Parent in law', 'Parent in law'),
+        ('Nephew', 'Nephew'),
+        ('Friend', 'Friend'),
+        ('Partner', 'Partner'),
+        ('Child', 'Child'),
+        ('Child in law', 'Child in law'),
+        ('Grandparent in law', 'Grandparent in law'),
+        ('Uncle/Aunt', 'Uncle/Aunt'),
+        ('Sibling in law', 'Sibling in law'),
+        ('Acquaintant', 'Acquaintant'),
+        ('Colleague', 'Colleague'),
+        ('Grandson', 'Grandson'),
+    )
+
 
 def index(request):
     context = {}
@@ -105,4 +125,55 @@ def upload_gift(request):
         return HttpResponse(json.dumps({'status': NOT_LOGGED_IN}), status=400)
     body = json.loads(request.body)
     ans = dict()
-    
+    age = body['age']
+    gender = body['gender']
+    price = body['price']
+    image = body.get('image')
+    description = body['description']
+    relation = body['relation']
+    other_relation = body['other_relation']
+    relation_strength = body['relation_strength']
+
+    try:
+        age = int(age)
+        price = int(price)
+    except ValueError:
+        ans = {'status': 'value error'}
+        return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
+    if gender is not 'M' or gender is not 'F':
+        ans = {'status': 'wrong gender'}
+        return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
+    if Relation.get(description=relation) is None:
+        ans = {'status': 'relation not defind'}
+        return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
+
+    user_id = request.COOKIES.get('user_id')
+    user = User.get(user_id)
+    if user is None:
+        return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
+    gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=relation)
+    gift.uploading_user_id = user_id
+
+    # update relationship matrix value according to user answer
+    if user.user_rank > PREMIUM_USER_RANK:
+        other_rel = Relation.get(description=other_relation)
+        try:
+            rel_matrix_cell = RelationshipMatrixCell.get(rel1_id=relation.pk, rel2_id=other_rel.pk)
+            rel_matrix_cell.strength = rel_matrix_cell.strength + (rel_matrix_cell.strength - relation_strength)
+        except TypeError:
+            return HttpResponse(json.dumps({'status':'relations ratio does not exist in db'}), status=400, content_type='application/json')
+        user.user_rank = user.user_rank + 1
+        rel_matrix_cell.save()
+    user.user_rank = user.user_rank + 2
+    user.save()
+    res = HttpResponse(json.dumps({'status':'OK'}), status=200,
+                        content_type='application/json')
+    res.set_cookie('user_rank', user.user_rank)
+    return res
+
+
+
+
+
+
+
