@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import json
 from models import *
-from oauth2client import client, crypt
+from oauth2client import client
 from datetime import *
 from dateutil import parser
 import requests
@@ -26,36 +26,48 @@ def index(request):
 
 def like(request):
 
+    ans = {}
+    if not is_logged(request):
+        ans['status'] = NOT_LOGGED_IN
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+
     body = json.loads(request.body)
-    user_id=body['user_id']
-    like= body['like']
-    gift_id= body['gift_id']
+    user_id = body['user_id']
+    like = body['like']
+    gift_id = body['gift_id']
 
-    gift= Gift.objects.get(gift_id)
-    user = Gift.objects.get(user_id)
-    uploader = Gift.objects.get(gift.uploading_user)
+    try:
+        gift = Gift.objects.get(gift_id)
+        user = User.objects.get(user_id)
+        uploader = User.objects.get(gift.uploading_user)
 
-    gift.gift_rank= gift.gift_rank+like
+    except User.DoesNotExist:
+        return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
+
+    gift.gift_rank = gift.gift_rank + int(like)
 
     # User may like/dislike other gifts only if his rank is high enough.
-    if user.user_rank<TRUST_USER_RANK:
-        return HttpResponse(json.dumps({'ststus':'user rank too low'}),content_type='application/json',status=400)
+    if user.user_rank < TRUST_USER_RANK:
+        return HttpResponse(json.dumps({'status':'user rank too low, cannot like'}),content_type='application/json',status=400)
 
     # Under gift rank of -5, the gift will be removed from the DB.
-    if gift.gift_rank<MIN_GIFT_RANK:
+    if gift.gift_rank < MIN_GIFT_RANK:
         gift.delete()
-        uploader.gifts_removed=uploader.gifts_removed+1
-        if uploader.gifts_removed>MAX_REMOVED:
-            uploader.is_banned=True
-            uploader.banned_start= datetime.datetime.now()
+        uploader.gifts_removed = uploader.gifts_removed + 1
+        if uploader.gifts_removed > MAX_REMOVED:
+            uploader.is_banned = True
+            uploader.banned_start = datetime.now()
 
     # if the picture is liked, the uploader gets 1 point
-    if like>0:
-        uploader.user_rank= uploader.user_rank+1
+    if like > 0:
+        uploader.user_rank = uploader.user_rank+1
 
     gift.save()
     user.save()
     uploader.save()
+    ans['status'] = 'Like succesfully done.'
+    return HttpResponse(json.dumps(ans), content_type='application/json')
+
 
 def is_logged(request):
     if 'user_id' in request.COOKIES:
@@ -98,7 +110,7 @@ def search_gift(request):
         return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json',status=400)
     rel_rng = None
     for rng in age_ranges:
-        if rng[0] <= ord(age) <= rng[1]:
+        if rng[0] <= int(age) <= rng[1]:
             rel_rng = rng
             break
     if rel_rng is None:
@@ -107,7 +119,7 @@ def search_gift(request):
     if price_range:
         low_price,high_price = price_range.split('-')
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender,\
-                                    price__range=[ord(low_price),ord(high_price)])
+                                    price__range=[int(low_price),int(high_price)])
     else:
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
     truncated_gifts = truncate_by_relation_strength(gifts, relation)
