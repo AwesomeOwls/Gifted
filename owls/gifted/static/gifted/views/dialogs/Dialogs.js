@@ -30,26 +30,30 @@ var UploadDialog = {
         var $description = $('#upload-description'); var $age = $('#upload-age');
         var $gender = $('#upload-gender'); var $price = $('#upload-price');
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
+        var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
 
         // DialogUtils.clearInputs($description, $gender, $relationship, $age, $price, $img_url);
+        UploadDialog.fillRelationships();
 
         $('#upload-modal').modal();
 
         // TODO add listeners of modal's input elements
         //TODO add client side input validations
         //TODO add server failure indication (stretch goal)
-
-        UploadDialog.fillRelationships();
+        var randomRelation = DialogUtils.pickRandomProperty(window.relationships); // TODO random generate
+        $relationship2.text(randomRelation);
 
         $('#upload-submit').click( function() {
-            console.log('submitteddd bro!');
-            var obj = {}
+            console.log('upload form submitteddd bro!');
+            var obj = {};
             obj['description'] = $description.val();
             obj['gender'] = $gender.val();
             obj['relationship'] = $relationship.val();
             obj['age'] = parseInt($age.val());
             obj['img_url'] = $img_url.val();
             obj['price'] = parseInt($price.val());
+            obj['relationship_score'] = parseInt($relationship_score.val());
+            obj['relationship2'] = $relationship2.val();
 
             console.log('obj', obj)
         });
@@ -64,24 +68,6 @@ var UploadDialog = {
     },
 
     fillRelationships: function() {
-        var relationships = {
-            'Parent': 'Parent',
-            'Grandparent': 'Grandparent',
-            'Sibling': 'Sibling',
-            'Cousin': 'Cousin',
-            'Parent in law': 'Parent in law',
-            'Nephew': 'Nephew',
-            'Friend': 'Friend',
-            'Partner': 'Partner',
-            'Child': 'Child',
-            'Child in law': 'Child in law',
-            'Grandparent in law': 'Grandparent in law',
-            'Uncle/Aunt': 'Uncle/Aunt',
-            'Sibling in law': 'Sibling in law',
-            'Acquaintant': 'Acquaintant',
-            'Colleague': 'Colleague',
-            'Grandson': 'Grandson',
-        };
         DialogUtils.addOptionsToSelect(window.relationships, '#upload-relationship');
     }
 
@@ -120,13 +106,12 @@ var DialogUtils = {
        return $input && $input.val('');
     },
 
-    // createJsonFromInputs: function() {
-    //     var obj = {};
-    //     var i;
-    //     for(i = 0; i < arguments.length; i++) {
-    //
-    //         DialogUtils.clearInput(arguments[i]);
-    //     }
-    //     console.log(arguments);
-    // }
+    pickRandomProperty: function(obj) {
+        var result;
+        var count = 0;
+        for (var prop in obj)
+            if (Math.random() < 1/++count)
+                result = prop;
+        return result;
+    }
 };
