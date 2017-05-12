@@ -22,7 +22,7 @@ def is_logged(request):
         req_expiry_time = request.COOKIES.get('expiry_time')
         if not User.objects.filter(user_id=req_user_id).exists():
             return False
-        if req_expiry_time > datetime.utcnow():
+        if req_expiry_time > datetime.now():
             return False
         return True
     else:
@@ -115,7 +115,7 @@ def login(request):
     res.set_cookie('user_id', user_id)
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
-    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=1800))
+    res.set_cookie('expiry_time', datetime.datetime.now() + datetime.timedelta(seconds=1800))
 
     return res
 
