@@ -1,5 +1,4 @@
 
-
 var GoogleAuth = {
 
     onSignIn: function (googleUser) {
@@ -18,12 +17,34 @@ var GoogleAuth = {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
             console.log('user logged out');
-            $status.show();
-            $preloader.show();
             $status.delay(300).fadeOut();
-            $preloader.delay(300).fadeOut('slow', function () {
-                $body.delay(550).css({'overflow': 'visible'});
-                NavBar.hideTopButtons();
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/signout/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    console.log('response data: ', data);
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        NavBar.hideTopButtons();
+                        NavBar.setLoginButton(); // set listener to login function on login button
+                    });
+                },
+                // failure: function(errMsg) {
+                //     console.log(errMsg);
+                //     $preloader.delay(300).fadeOut('slow', function () {
+                //         $body.delay(550).css({'overflow': 'visible'});
+                //         NavBar.hideTopButtons();
+                //         NavBar.setLoginButton(); // set listener to login function on login button
+                //     });
+                // }
             });
         });
     },
@@ -38,29 +59,23 @@ var GoogleAuth = {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data){
-                console.log('Signed in as: ' + data);
+                console.log('Signed in as: ', data);
+                console.log('user_id in cookie: ', GoogleAuth.readCookie('user_id'));
+                console.log('given_name in cookie: ', GoogleAuth.readCookie('given_name'));
+                console.log('picture in cookie: ', GoogleAuth.readCookie('picture'));
                 //TODO check if googleUser is in cookie, then approve
-                GoogleAuth.onValidatedToken(googleUser);
+                var given_name = GoogleAuth.readCookie('given_name');
+                var pictureURL = GoogleAuth.readCookie('picture');
+
+                GoogleAuth.onValidatedUser(given_name, pictureURL);
             },
             failure: function(errMsg) {
-                alert(errMsg);
+                console.log(errMsg);
             }
         });
-        // //TODO validation for id
-        //
-        // //TODO Yehonatan: put real backend post request here to validate token
-        // var xhr = new XMLHttpRequest();
-        // xhr.open('POST', 'http://http://localhost:63343/login');
-        // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        // xhr.onload = function() {
-        //     console.log('Signed in as: ' + xhr.responseText);
-        //     //TODO check if googleUser is in cookie, then approve
-        //     onValidatedToken(googleUser);
-        // };
-        // xhr.send('idtoken=' + id_token);
     },
 
-    onValidatedToken: function(googleUser) {
+    onValidatedUser: function(given_name, pictureURL) {
         var $logout = $('#logout-button');
         var $body = $('body');
         var $search = $('#search-button');
@@ -68,8 +83,6 @@ var GoogleAuth = {
         var $preloader = $('#preloader');
         var $upload = $('#upload-button');
 
-        var profile = googleUser.getBasicProfile();
-        var pictureURL = profile.getImageUrl();
         $logout.click(GoogleAuth.signOut);
         NavBar.hideAllButtons();
         $status.show();
@@ -78,7 +91,7 @@ var GoogleAuth = {
         $preloader.delay(300).fadeOut('slow', function () {
             $body.delay(550).css({'overflow': 'visible'});
             NavBar.showTopButtons();
-            NavBar.showWelcome(profile.getGivenName(), pictureURL);
+            NavBar.showWelcome(given_name, pictureURL);
 
             $search.click(function () {
                 SearchDialog.showDialog();
@@ -88,5 +101,16 @@ var GoogleAuth = {
             });
         });
     },
+
+    readCookie: function(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
 };
 
