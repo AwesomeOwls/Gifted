@@ -22,7 +22,7 @@ def is_logged(request):
         req_expiry_time = request.COOKIES.get('expiry_time')
         if not User.objects.filter(user_id=req_user_id).exists():
             return False
-        if req_expiry_time > datetime.utcnow():
+        if  datetime.strptime(req_expiry_time) > datetime.utcnow():
             return False
         return True
     else:
