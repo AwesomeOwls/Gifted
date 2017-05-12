@@ -4,6 +4,8 @@ import json
 from models import *
 from oauth2client import client
 from datetime import *
+from dateutil import parser
+
 
 MIN_SEARCH_RANK = 10
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
@@ -22,7 +24,7 @@ def is_logged(request):
         req_expiry_time = request.COOKIES.get('expiry_time')
         if not User.objects.filter(user_id=req_user_id).exists():
             return False
-        if  datetime.strptime(req_expiry_time) > datetime.utcnow():
+        if  parser.parse(req_expiry_time) > datetime.utcnow():
             return False
         return True
     else:
