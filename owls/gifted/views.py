@@ -17,24 +17,6 @@ MAX_GIFTS = 50
 PREMIUM_USER_RANK = 4
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'User is not logged-in'
-RELATIONSHIP_CHOICES = (
-        ('Parent', 'Parent'),
-        ('Grandparent', 'Grandparent'),
-        ('Sibling', 'Sibling'),
-        ('Cousin', 'Cousin'),
-        ('Parent in law', 'Parent in law'),
-        ('Nephew', 'Nephew'),
-        ('Friend', 'Friend'),
-        ('Partner', 'Partner'),
-        ('Child', 'Child'),
-        ('Child in law', 'Child in law'),
-        ('Grandparent in law', 'Grandparent in law'),
-        ('Uncle/Aunt', 'Uncle/Aunt'),
-        ('Sibling in law', 'Sibling in law'),
-        ('Acquaintant', 'Acquaintant'),
-        ('Colleague', 'Colleague'),
-        ('Grandson', 'Grandson'),
-    )
 
 
 def index(request):
@@ -248,12 +230,6 @@ def upload_gift(request):
     res = HttpResponse(json.dumps({'status':'OK'}), status=200,content_type='application/json')
     res.set_cookie('user_rank', user.user_rank)
     return res
-
-
-
-
-
-
 
 def test(request):
     r = requests.post("http://localhost:63343",
