@@ -112,7 +112,7 @@ def login(request):
         return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
 
     user_id = idinfo['sub']
-    user_obj = User.objects.filter(user_id=user_id)
+    user_obj = User.objects.get(user_id=user_id)
 
     if not user_obj:
         user = User(user_id=user_id)
