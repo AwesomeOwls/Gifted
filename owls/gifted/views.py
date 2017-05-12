@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import json
 from models import *
-from oauth2client import client, crypt
+from oauth2client import client
 from datetime import *
 from dateutil import parser
 import requests
+
 
 MIN_SEARCH_RANK = 10
 MIN_GIFT_RANK= -5
@@ -25,36 +26,48 @@ def index(request):
 
 def like(request):
 
+    ans = {}
+    if not is_logged(request):
+        ans['status'] = NOT_LOGGED_IN
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+
     body = json.loads(request.body)
-    user_id=body['user_id']
-    like= body['like']
-    gift_id= body['gift_id']
+    user_id = body['user_id']
+    like = body['like']
+    gift_id = body['gift_id']
 
-    gift= Gift.objects.get(gift_id)
-    user = Gift.objects.get(user_id)
-    uploader = Gift.objects.get(gift.uploading_user)
+    try:
+        gift = Gift.objects.get(gift_id)
+        user = User.objects.get(user_id)
+        uploader = User.objects.get(gift.uploading_user)
 
-    gift.gift_rank= gift.gift_rank+like
+    except User.DoesNotExist:
+        return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
+
+    gift.gift_rank = gift.gift_rank + int(like)
 
     # User may like/dislike other gifts only if his rank is high enough.
-    if user.user_rank<TRUST_USER_RANK:
-        return HttpResponse(json.dumps({'ststus':'user rank too low'}),content_type='application/json',status=400)
+    if user.user_rank < TRUST_USER_RANK:
+        return HttpResponse(json.dumps({'status':'user rank too low, cannot like'}),content_type='application/json',status=400)
 
     # Under gift rank of -5, the gift will be removed from the DB.
-    if gift.gift_rank<MIN_GIFT_RANK:
+    if gift.gift_rank < MIN_GIFT_RANK:
         gift.delete()
-        uploader.gifts_removed=uploader.gifts_removed+1
-        if uploader.gifts_removed>MAX_REMOVED:
-            uploader.is_banned=True
-            uploader.banned_start= datetime.datetime.now()
+        uploader.gifts_removed = uploader.gifts_removed + 1
+        if uploader.gifts_removed > MAX_REMOVED:
+            uploader.is_banned = True
+            uploader.banned_start = datetime.now()
 
     # if the picture is liked, the uploader gets 1 point
-    if like>0:
-        uploader.user_rank= uploader.user_rank+1
+    if like > 0:
+        uploader.user_rank = uploader.user_rank+1
 
     gift.save()
     user.save()
     uploader.save()
+    ans['status'] = 'Like succesfully done.'
+    return HttpResponse(json.dumps(ans), content_type='application/json')
+
 
 def is_logged(request):
     if 'user_id' in request.COOKIES:
@@ -97,7 +110,7 @@ def search_gift(request):
         return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json',status=400)
     rel_rng = None
     for rng in age_ranges:
-        if rng[0] <= ord(age) <= rng[1]:
+        if rng[0] <= int(age) <= rng[1]:
             rel_rng = rng
             break
     if rel_rng is None:
@@ -106,7 +119,7 @@ def search_gift(request):
     if price_range:
         low_price,high_price = price_range.split('-')
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender,\
-                                    price__range=[ord(low_price),ord(high_price)])
+                                    price__range=[int(low_price),int(high_price)])
     else:
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
     truncated_gifts = truncate_by_relation_strength(gifts, relation)
@@ -205,15 +218,15 @@ def upload_gift(request):
     except ValueError:
         ans = {'status': 'value error'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
-    if gender is not 'M' or gender is not 'F':
+    if not gender == 'M' and not gender == 'F':
         ans = {'status': 'wrong gender'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
-    if Relation.get(description=relation) is None:
+    if Relation.objects.get(description=relation) is None:
         ans = {'status': 'relation not defind'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     user_id = request.COOKIES.get('user_id')
-    user = User.get(user_id)
+    user = User.objects.get(user_id)
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
     gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=relation)
@@ -221,9 +234,9 @@ def upload_gift(request):
 
     # update relationship matrix value according to user answer
     if user.user_rank > PREMIUM_USER_RANK:
-        other_rel = Relation.get(description=other_relation)
+        other_rel = Relation.objects.get(description=other_relation)
         try:
-            rel_matrix_cell = RelationshipMatrixCell.get(rel1_id=relation.pk, rel2_id=other_rel.pk)
+            rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=relation.pk, rel2_id=other_rel.pk)
             rel_matrix_cell.strength = rel_matrix_cell.strength + (rel_matrix_cell.strength - relation_strength)
         except TypeError:
             return HttpResponse(json.dumps({'status':'relations ratio does not exist in db'}), status=400, content_type='application/json')
@@ -237,13 +250,15 @@ def upload_gift(request):
 
 
 def test(request):
+    tmp_date = datetime.utcnow() + timedelta(seconds=1800)
+    cookie = {'user_id':'117896272606849173314', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
     r = requests.post("http://localhost:63343",
-                      data={'age': 25,
+                      json={'age': 25,
                             'relation': 'Parent',
                             'gender': 'M',
                             'price_range': '10-20',
                             'user_id': '117896272606849173314'
-                            })
+                            }, cookies=cookie)
 
 
 #def user_page(request):
@@ -257,6 +272,7 @@ def test(request):
     #try:
     #    user_gifts= Gift.objects.filter(uploading_user=user.user_id)
     #except
+
 
 
 
