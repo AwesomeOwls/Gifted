@@ -52,6 +52,7 @@ var NavBar = {
     },
 
     showWelcome: function(userName, pictureURL) {
+        pictureURL = pictureURL.replace(/\"/g, "");
         var $welcome = $('#welcome');
         //TODO: check if user is in DB Already, if so present 'welcome back' message or something similar
         $welcome.hide();
