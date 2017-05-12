@@ -34,6 +34,7 @@ class Relation(models.Model):
     description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
 
 
+
 class Gift(models.Model):
     uploading_user = models.ForeignKey(User)
     description = models.CharField(max_length=250)
