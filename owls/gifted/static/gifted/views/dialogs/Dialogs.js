@@ -19,33 +19,40 @@ var UploadDialog = {
 }
 var SearchDialog = {
 
-    fields: {
-      // age is free text
-      gender: {
-          'Male' : 'male',
-          'Female' : 'female',
-          'Other' : 'other'
 
-      },
-      relationship: {
-          //TODO relationship representation
-
-      },
-      price: {
-
-
-      },
-
-    },
 
     showDialog: function() {
         $('#upload-modal').modal();
+
+        SearchDialog.fillRelationships()
         // TODO add listeners of modal's input elements + validation etc.
         //TODO add client side input validations
         //TODO add server failure indication (stretch goal)
     },
     onDialogClose: function() {
         $('#upload-modal').modal('hide');
+    },
+
+    fillRelationships: function() {
+        var relationships = {
+            'Parent': 'Parent',
+            'Grandparent': 'Grandparent',
+            'Sibling': 'Sibling',
+            'Cousin': 'Cousin',
+            'Parent in law': 'Parent in law',
+            'Nephew': 'Nephew',
+            'Friend': 'Friend',
+            'Partner': 'Partner',
+            'Child': 'Child',
+            'Child in law': 'Child in law',
+            'Grandparent in law': 'Grandparent in law',
+            'Uncle/Aunt': 'Uncle/Aunt',
+            'Sibling in law': 'Sibling in law',
+            'Acquaintant': 'Acquaintant',
+            'Colleague': 'Colleague',
+            'Grandson': 'Grandson',
+        };
+        DialogUtils.addOptionsToSelect(relationships, '#search-relationships');
     }
 
 };
