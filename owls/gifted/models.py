@@ -18,20 +18,20 @@ class Relation(models.Model):
         ('Grandparent', 'Grandparent'),
         ('Sibling', 'Sibling'),
         ('Cousin','Cousin'),
-        ('Parent in low', 'Parent in low'),
+        ('Parent in law', 'Parent in law'),
         ('Nephew', 'Nephew'),
         ('Friend', 'Friend'),
         ('Partner', 'Partner'),
         ('Child', 'Child'),
-        ('Child in low', 'Child in low'),
-        ('Grandparent in low', 'Grandparent in low'),
+        ('Child in law', 'Child in law'),
+        ('Grandparent in law', 'Grandparent in law'),
         ('Uncle/Aunt', 'Uncle/Aunt'),
-        ('Sibling in low','Sibling in low'),
+        ('Sibling in law','Sibling in law'),
         ('Acquaintant','Acquaintant'),
-        ('Colleage','Colleage'),
+        ('Colleague','Colleague'),
         ('Grandson','Grandson'),
     )
-    description = models.CharField(max_length=1, choices=RELATIONSHIP_CHOICES)
+    description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
 
 
 class Img(models.Model):
