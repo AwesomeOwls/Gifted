@@ -258,7 +258,7 @@ def test(request):
                             'gender': 'M',
                             'price_range': '10-20',
                             'user_id': '117896272606849173314'
-                            },cookies = cookie)
+                        }, cookies = cookie)
 
 def init_relations(request):
     RELATIONSHIP_CHOICES = (
@@ -283,4 +283,19 @@ def init_relations(request):
         rel = Relation(description=relation[0])
         rel.save()
     return HttpResponse(json.dumps({}),status=200)
+
+
+
+#def user_page(request):
+    #body = json.loads(request.body)
+    #user_id = body['user_id']
+    #try:
+    #    user = User.objects.get(user_id)
+    #except TypeError:
+    #       return HttpResponse(json.dumps({'status':' user does not exist in db'}), status=400, content_type='application/json')
+
+    #try:
+    #    user_gifts= Gift.objects.filter(uploading_user=user.user_id)
+    #except
+
 
