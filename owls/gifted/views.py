@@ -245,8 +245,7 @@ def upload_gift(request):
         rel_matrix_cell.save()
     user.user_rank = user.user_rank + 2
     user.save()
-    res = HttpResponse(json.dumps({'status':'OK'}), status=200,
-                        content_type='application/json')
+    res = HttpResponse(json.dumps({'status':'OK'}), status=200,content_type='application/json')
     res.set_cookie('user_rank', user.user_rank)
     return res
 
