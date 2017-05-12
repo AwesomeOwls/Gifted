@@ -31,7 +31,7 @@ var UploadDialog = {
         var $gender = $('#upload-gender'); var $price = $('#upload-price');
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
-
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
         // DialogUtils.clearInputs($description, $gender, $relationship, $age, $price, $img_url);
         UploadDialog.fillRelationships();
 
@@ -44,7 +44,6 @@ var UploadDialog = {
         $relationship2.text(randomRelation);
 
         $('#upload-submit').click( function() {
-            console.log('upload form submitteddd bro!');
             var obj = {};
             obj['description'] = $description.val();
             obj['gender'] = $gender.val();
@@ -53,9 +52,30 @@ var UploadDialog = {
             obj['img_url'] = $img_url.val();
             obj['price'] = parseInt($price.val());
             obj['relationship_score'] = parseInt($relationship_score.val());
-            obj['relationship2'] = $relationship2.val();
+            obj['relationship2'] = $relationship2.text();
 
-            console.log('obj', obj)
+            console.log('obj', obj);
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/upload/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                beforeSend: function(){
+                    console.log('upload form submitteddd bro!');
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    console.log('response data upload: ', data);
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                    });
+                },
+            });
+
         });
 
         // TODO add listeners of modal's input elements + validation etc.
