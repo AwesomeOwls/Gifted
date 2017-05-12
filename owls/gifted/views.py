@@ -14,7 +14,7 @@ MAX_REMOVED=3
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
-PREMIUM_USER_RANK = 4
+PREMIUM_USER_RANK = 5
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'User is not logged-in'
 
@@ -181,19 +181,19 @@ def logout(request):
     invalidate_cookie(res)
     return res
 
+
 def upload_gift(request):
     if not is_logged(request):
         return HttpResponse(json.dumps({'status': NOT_LOGGED_IN}), status=400)
     body = json.loads(request.body)
-    ans = dict()
     age = body['age']
     gender = body['gender']
     price = body['price']
-    image = body.get('image')
+    image = body.get('img_url')
     description = body['description']
-    relation = body['relation']
-    other_relation = body['other_relation']
-    relation_strength = body['relation_strength']
+    relation = body['relationship']
+    other_relation = body['relationship2']
+    relation_strength = body['relationship_score']
 
     try:
         age = int(age)
@@ -230,6 +230,7 @@ def upload_gift(request):
     res = HttpResponse(json.dumps({'status':'OK'}), status=200,content_type='application/json')
     res.set_cookie('user_rank', user.user_rank)
     return res
+
 
 def test(request):
     r = requests.post("http://localhost:63343",
