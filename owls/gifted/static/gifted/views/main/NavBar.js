@@ -10,13 +10,12 @@ var NavBar = {
 
     hideTopButtons: function() {
         var $login = $('#login-button'); var $logout = $('#logout-button'); var $welcome = $('#welcome');
-        var $search = $('#search-button'); var $upload = $('#upload-button'); var $account = $('#account-button');
+        var $search = $('#search-button'); var $upload = $('#upload-button');
         var $about = $('#about-button');
 
         $logout.hide();
         $search.hide();
         $upload.hide();
-        $account.hide();
         $login.show();
         $about.show();
         $welcome.hide();
@@ -25,13 +24,12 @@ var NavBar = {
 
     hideAllButtons: function() {
         var $login = $('#login-button'); var $logout = $('#logout-button'); var $welcome = $('#welcome');
-        var $search = $('#search-button'); var $upload = $('#upload-button'); var $account = $('#account-button');
+        var $search = $('#search-button'); var $upload = $('#upload-button');
         var $about = $('#about-button');
 
         $logout.hide();
         $search.hide();
         $upload.hide();
-        $account.hide();
         $login.hide();
         $welcome.hide();
         $about.hide();
@@ -40,14 +38,13 @@ var NavBar = {
 
     showTopButtons: function() {
         var $login = $('#login-button'); var $logout = $('#logout-button');
-        var $search = $('#search-button'); var $upload = $('#upload-button'); var $account = $('#account-button');
+        var $search = $('#search-button'); var $upload = $('#upload-button');
         var $about = $('#about-button');
 
         $login.hide();
         $logout.show();
         $search.show();
         $upload.show();
-        $account.show();
         $about.show();
     },
 
