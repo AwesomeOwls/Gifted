@@ -2,12 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import json
 from models import *
+from oauth2client import client, crypt
 
 MIN_SEARCH_RANK = 10
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
-
+GOOGLE_CLIENT_ID = 'http://905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com/'
 
 def index(request):
     context = {}
@@ -25,16 +26,16 @@ def search_gift(request):
     user = User.objects.get(user_id)
     if user.user_rank < MIN_SEARCH_RANK:
         ans['status'] = 'RankTooLow'
-        return HttpResponse(json.dumps(ans), content_type='application/json')
+        return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
     elif user.is_banned:
-        return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json',status=400)
     rel_rng = None
     for rng in age_ranges:
         if rng[0] <= ord(age) <= rng[1]:
             rel_rng = rng
             break
     if rel_rng is None:
-        return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json',status=400)
     # query the DB for the relevant gifts
     if price_range:
         low_price,high_price = price_range.split('-')
@@ -64,4 +65,29 @@ def truncate_by_relation_strength(gifts,relation):
     # gift_strength.sort(key=lambda x: x[1])
 
     return filtered_gifts
+
+def login(request):
+    body = json.loads(request.body)
+    token_id = body['id_token']
+    ans = dict()
+    if token_id is None:
+        ans['status'] = 'Missing token id'
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+
+    idinfo = client.verify_id_token(token_id, GOOGLE_CLIENT_ID)
+
+    if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+        ans['status'] = 'Not reliable issuer.'
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+
+    user_id = idinfo['sub']
+    user = User(user_id=user_id)
+    user.save()
+
+    ans['user_id'] = user_id
+    res = HttpResponse(json.dumps(ans), content_type='application/json')
+    #set cookie for 30 minutes
+    res.set_cookie('user_id', user_id, max_age=1800)
+    return res
+
 
