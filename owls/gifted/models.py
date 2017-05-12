@@ -9,7 +9,7 @@ class User(models.Model):
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
-        return "id:%s, %s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
+        return "id:%s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
 
 
 class Relation(models.Model):
@@ -58,6 +58,9 @@ class Gift(models.Model):
             gift_id=self.pk,
             gift_img=self.gift_img
         )
+
+    def __str__(self):
+        return "description:%s, uploading user:%s, price:%s" % (self.description, self.uploading_user,  self.price)
 
 
 
