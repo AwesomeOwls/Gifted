@@ -24,7 +24,7 @@ def is_logged(request):
         req_expiry_time = request.COOKIES.get('expiry_time')
         if not User.objects.filter(user_id=req_user_id).exists():
             return False
-        if  parser.parse(req_expiry_time) > datetime.utcnow():
+        if  parser.parse(req_expiry_time) < datetime.utcnow():
             return False
         return True
     else:
@@ -35,8 +35,11 @@ def invalidate_cookie(response):
     response.delete_cookie('given_name')
     response.delete_cookie('picture')
     response.delete_cookie('expiry_time')
+    response.delete_cookie('user_rank')
+
 
 def search_gift(request):
+
     ans = dict()
     if not is_logged(request):
         ans['status'] = NOT_LOGGED_IN
@@ -109,15 +112,24 @@ def login(request):
         return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
 
     user_id = idinfo['sub']
-    user = User(user_id=user_id)
-    user.save()
+    user_obj = User.objects.filter(user_id=user_id)
+
+    if not user_obj:
+        user = User(user_id=user_id)
+        user.save()
+    else:
+        if user_obj.is_banned:
+            ans['status'] = 'User banned!'
+            return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
 
     res = HttpResponse(json.dumps(ans), content_type='application/json')
-    #set cookie for 30 minutes
+
     res.set_cookie('user_id', user_id)
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
+    #set cookie for 30 minutes
     res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=1800))
+    res.set_cookie('user_rank', user_obj.user_rank)
 
     return res
 
