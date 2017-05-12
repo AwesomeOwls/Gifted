@@ -45,7 +45,7 @@ class Gift(models.Model):
     )
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     price = models.IntegerField()
-    gift_img = models.CharField(max_length=250)
+    gift_img = models.CharField(max_length=500)
     gift_rank = models.IntegerField(default=0)
     uploading_time = models.DateTimeField(auto_now_add=True)
     relationship = models.ForeignKey(Relation)

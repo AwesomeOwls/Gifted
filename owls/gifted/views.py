@@ -16,6 +16,8 @@ def index(request):
 
 
 def search_gift(request):
+    user_id = request.COOKIES.get('user_id')
+
 
 
     ans = dict()
@@ -69,6 +71,7 @@ def truncate_by_relation_strength(gifts,relation):
     return filtered_gifts
 
 def login(request):
+
     body = json.loads(request.body)
     token_id = body['id_token']
     ans = dict()
@@ -86,10 +89,12 @@ def login(request):
     user = User(user_id=user_id)
     user.save()
 
-    ans['user_id'] = user_id
     res = HttpResponse(json.dumps(ans), content_type='application/json')
     #set cookie for 30 minutes
     res.set_cookie('user_id', user_id, max_age=1800)
+    res.set_cookie('given_name', idinfo['given_name'], max_age=1800)
+    res.set_cookie('picture', idinfo['picture'], max_age=1800)
+
     return res
 
 
