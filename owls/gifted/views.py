@@ -28,6 +28,11 @@ def is_logged(request):
     else:
         return False
 
+def invalidate_cookie(response):
+    response.delete_cookie('user_id')
+    response.delete_cookie('given_name')
+    response.delete_cookie('picture')
+    response.delete_cookie('expiry_time')
 
 def search_gift(request):
     ans = dict()
@@ -114,6 +119,15 @@ def login(request):
 
     return res
 
+def logout(request):
+    ans = dict()
+    if not is_logged(request):
+        ans['status'] = NOT_LOGGED_IN
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+    ans['status'] = 'Logged out'
+    res = HttpResponse(json.dumps(ans), content_type='application/json')
+    invalidate_cookie(res)
+    return res
 
 def upload_gift(request):
     if not is_logged(request):

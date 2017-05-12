@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^upload',views.upload_gift),
     url(r'^$', views.index),
     url(r'^signin/', views.login),
+    url(r'^signout/', views.logout),
+
 ]
