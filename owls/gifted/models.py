@@ -59,6 +59,7 @@ class Gift(models.Model):
         )
 
 
+
 class RelationshipMatrixCell(models.Model):
     rel1 = models.ForeignKey(Relation, related_name='rel1')
     rel2 = models.ForeignKey(Relation, related_name='rel2')
