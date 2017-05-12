@@ -14,6 +14,26 @@ var UploadDialog = {
 
 }
 var SearchDialog = {
+
+    fields: {
+      // age is free text
+      gender: {
+          'Male' : 'male',
+          'Female' : 'female',
+          'Other' : 'other'
+
+      },
+      relationship: {
+          //TODO relationship representation
+
+      },
+      price: {
+
+
+      },
+
+    },
+
     showDialog: function() {
         $('#upload-modal').modal();
         // TODO add listeners of modal's input elements + validation etc.
@@ -24,4 +44,16 @@ var SearchDialog = {
         $('#upload-modal').modal('hide');
     }
 
-}
+};
+
+var DialogUtils = {
+
+    addOptionsToSelect: function(selectValues, $select) {
+        $.each(selectValues, function(key, value) {
+            $($select)
+                .append($("<option></option>")
+                    .attr("value", key)
+                    .text(value));
+        });
+    }
+};
