@@ -56,7 +56,7 @@ var GoogleAuth = {
     validateToken: function () {
         //TODO Yehonatan: put real backend post request here to validate token
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://http://localhost:63343/tokensignin');
+        xhr.open('POST', 'http://http://localhost:63343/login');
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onload = function() {
             console.log('Signed in as: ' + xhr.responseText);
