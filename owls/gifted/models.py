@@ -13,7 +13,6 @@ class User(models.Model):
 
 
 class Relation(models.Model):
-    description = models.CharField(max_length=1, choices=RELATIONSHIP_CHOICES)
     RELATIONSHIP_CHOICES = (
         ('Parent', 'Parent'),
         ('Grandparent', 'Grandparent'),
@@ -31,8 +30,9 @@ class Relation(models.Model):
         ('Acquaintant','Acquaintant'),
         ('Colleage','Colleage'),
         ('Grandson','Grandson'),
-
     )
+    description = models.CharField(max_length=1, choices=RELATIONSHIP_CHOICES)
+
 
 class Img(models.Model):
     file = models.FileField()
