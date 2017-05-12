@@ -52,6 +52,10 @@ def like(request):
     if like>0:
         uploader.user_rank= uploader.user_rank+1
 
+    gift.save()
+    user.save()
+    uploader.save()
+
 def is_logged(request):
     if 'user_id' in request.COOKIES:
         req_user_id = request.COOKIES.get('user_id')
