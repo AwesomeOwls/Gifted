@@ -4,18 +4,35 @@ from django.db import models
 
 
 class User(models.Model):
-    google_client_id = models.CharField(max_length=150, primary_key=True)
-    user_name = models.CharField(max_length=100)
+    user_id = models.CharField(max_length=150, primary_key=True)
     user_rank = models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
-        return "id:%s, %s, rank:%s, banned:%s" %(self.google_client_id,self.user_name,self.user_rank, "yes" if self.is_banned else "no")
+        return "id:%s, %s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
 
 
 class Relation(models.Model):
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=1, choices=RELATIONSHIP_CHOICES)
+    RELATIONSHIP_CHOICES = (
+        ('Parent', 'Parent'),
+        ('Grandparent', 'Grandparent'),
+        ('Sibling', 'Sibling'),
+        ('Cousin','Cousin'),
+        ('Parent in low', 'Parent in low'),
+        ('Nephew', 'Nephew'),
+        ('Friend', 'Friend'),
+        ('Partner', 'Partner'),
+        ('Child', 'Child'),
+        ('Child in low', 'Child in low'),
+        ('Grandparent in low', 'Grandparent in low'),
+        ('Uncle/Aunt', 'Uncle/Aunt'),
+        ('Sibling in low','Sibling in low'),
+        ('Acquaintant','Acquaintant'),
+        ('Colleage','Colleage'),
+        ('Grandson','Grandson'),
 
+    )
 
 class Img(models.Model):
     file = models.FileField()
