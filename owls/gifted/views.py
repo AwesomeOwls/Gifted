@@ -134,4 +134,5 @@ def upload_gift(request):
         return HttpResponse(json.dumps({'status': NOT_LOGGED_IN}), status=400)
     body = json.loads(request.body)
     ans = dict()
-    
+
+
