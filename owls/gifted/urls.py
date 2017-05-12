@@ -11,5 +11,5 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^signin/', views.login),
     url(r'^signout/', views.logout),
-
+    url(r'^test/', views.test),
 ]

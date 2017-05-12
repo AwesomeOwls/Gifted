@@ -5,7 +5,7 @@ from models import *
 from oauth2client import client
 from datetime import *
 from dateutil import parser
-
+import requests
 
 MIN_SEARCH_RANK = 10
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
@@ -112,13 +112,17 @@ def login(request):
         return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
 
     user_id = idinfo['sub']
-    user_obj = User.objects.get(user_id=user_id)
 
-    if not user_obj:
+    try:
+        user = User.objects.get(user_id=user_id)
+    except User.DoesNotExist:
+        user = None
+
+    if not user:
         user = User(user_id=user_id)
         user.save()
     else:
-        if user_obj.is_banned:
+        if user.is_banned:
             ans['status'] = 'User banned!'
             return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
 
@@ -129,7 +133,7 @@ def login(request):
     res.set_cookie('picture', idinfo['picture'])
     #set cookie for 30 minutes
     res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=1800))
-    res.set_cookie('user_rank', user_obj.user_rank)
+    res.set_cookie('user_rank', user.user_rank)
 
     return res
 
@@ -150,3 +154,13 @@ def upload_gift(request):
     ans = dict()
 
 
+
+
+def test(request):
+    r = requests.post("http://localhost:63343",
+                      data={'age': 25,
+                            'relation': 'Parent',
+                            'gender': 'M',
+                            'price_range': '10-20',
+                            'user_id': '117896272606849173314'
+                            })
