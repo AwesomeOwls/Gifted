@@ -3,8 +3,12 @@ from django.http import HttpResponse
 import json
 from models import *
 from oauth2client import client, crypt
+import datetime
 
 MIN_SEARCH_RANK = 10
+MIN_GIFT_RANK= -5
+TRUST_USER_RANK= 5
+MAX_REMOVED=3
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
@@ -14,10 +18,38 @@ def index(request):
     context = {}
     return render(request, 'gifted/index.html', context)
 
+def like(request):
+
+    body = json.loads(request.body)
+    user_id=body['user_id']
+    like= body['like']
+    gift_id= body['gift_id']
+
+    gift= Gift.objects.get(gift_id)
+    user = Gift.objects.get(user_id)
+    uploader = Gift.objects.get(gift.uploading_user)
+
+    gift.gift_rank= gift.gift_rank+like
+
+    # User may like/dislike other gifts only if his rank is high enough.
+    if user.user_rank<TRUST_USER_RANK:
+        return HttpResponse(json.dumps({'ststus':'user rank too low'}),content_type='application/json',status=400)
+
+    # Under gift rank of -5, the gift will be removed from the DB.
+    if gift.gift_rank<MIN_GIFT_RANK:
+        gift.delete()
+        uploader.gifts_removed=uploader.gifts_removed+1
+        if uploader.gifts_removed>MAX_REMOVED:
+            uploader.is_banned=True
+            uploader.banned_start= datetime.datetime.now()
+
+    # if the picture is liked, the uploader gets 1 point
+    if like>0:
+        uploader.user_rank= uploader.user_rank+1
+
 
 def search_gift(request):
     user_id = request.COOKIES.get('user_id')
-
 
 
     ans = dict()

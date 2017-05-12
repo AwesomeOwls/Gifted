@@ -6,7 +6,9 @@ from django.db import models
 class User(models.Model):
     user_id = models.CharField(max_length=150, primary_key=True)
     user_rank = models.IntegerField(default=0)
+    gifts_removed= models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
+    banned_start= models.DateTimeField()
 
     def __str__(self):
         return "id:%s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
@@ -32,6 +34,9 @@ class Relation(models.Model):
         ('Grandson','Grandson'),
     )
     description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
+
+    def __str__(self):
+        return "%s" %(self.description)
 
 
 
