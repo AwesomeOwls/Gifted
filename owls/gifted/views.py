@@ -9,6 +9,7 @@ age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30),
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
+NOT_LOGGED_IN = 'User is not logged-in'
 
 def index(request):
     context = {}
@@ -68,6 +69,7 @@ def truncate_by_relation_strength(gifts,relation):
 
     return filtered_gifts
 
+
 def login(request):
     body = json.loads(request.body)
     token_id = body['id_token']
@@ -93,3 +95,9 @@ def login(request):
     return res
 
 
+def upload_gift(request):
+    if not is_logged(request):
+        return HttpResponse(json.dumps({'status': NOT_LOGGED_IN}), status=400)
+    body = json.loads(request.body)
+    ans = dict()
+    

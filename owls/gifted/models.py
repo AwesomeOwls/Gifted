@@ -9,7 +9,7 @@ class User(models.Model):
     is_banned = models.BooleanField(default=False)
 
     def __str__(self):
-        return "id:%s, %s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
+        return "id:%s, %s, rank:%s, banned:%s" %(self.user_id,self.user_rank, )
 
 
 class Relation(models.Model):
