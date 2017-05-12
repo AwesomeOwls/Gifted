@@ -7,6 +7,7 @@ from datetime import *
 from dateutil import parser
 import requests
 
+
 MIN_SEARCH_RANK = 10
 MIN_GIFT_RANK= -5
 TRUST_USER_RANK= 5
