@@ -205,7 +205,7 @@ def upload_gift(request):
     except ValueError:
         ans = {'status': 'value error'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
-    if gender is not 'M' or gender is not 'F':
+    if gender is not str('M') or gender is not str('F'):
         ans = {'status': 'wrong gender'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
     if Relation.get(description=relation) is None:
