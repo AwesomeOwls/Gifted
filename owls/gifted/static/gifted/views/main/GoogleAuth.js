@@ -17,13 +17,34 @@ var GoogleAuth = {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
             console.log('user logged out');
-            $status.show();
-            $preloader.show();
             $status.delay(300).fadeOut();
-            $preloader.delay(300).fadeOut('slow', function () {
-                $body.delay(550).css({'overflow': 'visible'});
-                NavBar.hideTopButtons();
-                NavBar.setLoginButton(); // set listener to login function on login button
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/signout/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    console.log('response data: ', data);
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        NavBar.hideTopButtons();
+                        NavBar.setLoginButton(); // set listener to login function on login button
+                    });
+                },
+                // failure: function(errMsg) {
+                //     console.log(errMsg);
+                //     $preloader.delay(300).fadeOut('slow', function () {
+                //         $body.delay(550).css({'overflow': 'visible'});
+                //         NavBar.hideTopButtons();
+                //         NavBar.setLoginButton(); // set listener to login function on login button
+                //     });
+                // }
             });
         });
     },
@@ -49,7 +70,7 @@ var GoogleAuth = {
                 GoogleAuth.onValidatedUser(given_name, pictureURL);
             },
             failure: function(errMsg) {
-                alert(errMsg);
+                console.log(errMsg);
             }
         });
     },
