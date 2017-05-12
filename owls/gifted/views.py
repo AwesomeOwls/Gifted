@@ -115,7 +115,7 @@ def login(request):
     res.set_cookie('user_id', user_id)
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
-    res.set_cookie('expiry_time', datetime.datetime.now() + datetime.timedelta(seconds=1800))
+    res.set_cookie('expiry_time', datetime.now() + timedelta(seconds=1800))
 
     return res
 

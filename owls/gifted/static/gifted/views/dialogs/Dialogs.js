@@ -2,6 +2,10 @@
  * Created by ysayag on 09/05/2017.
  */
 var UploadDialog = {
+    // fields: user_id (string), description (250 chars), age (integer), gender ('M', 'F'), price (integer)
+    // , relationship (string), img_url :
+    //
+
     showDialog: function() {
         $('#upload-modal').modal();
         // TODO add listeners of modal's input elements
