@@ -244,3 +244,19 @@ def test(request):
                             'price_range': '10-20',
                             'user_id': '117896272606849173314'
                             })
+
+
+#def user_page(request):
+    #body = json.loads(request.body)
+    #user_id = body['user_id']
+    #try:
+    #    user = User.objects.get(user_id)
+    #except TypeError:
+    #       return HttpResponse(json.dumps({'status':' user does not exist in db'}), status=400, content_type='application/json')
+
+    #try:
+    #    user_gifts= Gift.objects.filter(uploading_user=user.user_id)
+    #except
+
+
+
