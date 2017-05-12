@@ -8,7 +8,7 @@ class User(models.Model):
     user_rank = models.IntegerField(default=0)
     gifts_removed= models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
-    banned_start= models.DateTimeField()
+    banned_start= models.DateTimeField(null=True)
 
     def __str__(self):
         return "id:%s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
