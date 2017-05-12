@@ -216,19 +216,17 @@ def upload_gift(request):
     user = User.get(user_id)
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
-
     gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=relation)
     gift.uploading_user_id = user_id
 
     # update relationship matrix value according to user answer
     if user.user_rank > PREMIUM_USER_RANK:
-        other_rel = Relation.objects.get(description=other_relation)
+        other_rel = Relation.get(description=other_relation)
         try:
-            rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=relation.pk, rel2_id=other_rel.pk)
+            rel_matrix_cell = RelationshipMatrixCell.get(rel1_id=relation.pk, rel2_id=other_rel.pk)
             rel_matrix_cell.strength = rel_matrix_cell.strength + (rel_matrix_cell.strength - relation_strength)
         except TypeError:
             return HttpResponse(json.dumps({'status':'relations ratio does not exist in db'}), status=400, content_type='application/json')
-        # increase user rank and update rel
         user.user_rank = user.user_rank + 1
         rel_matrix_cell.save()
     user.user_rank = user.user_rank + 2
@@ -239,10 +237,12 @@ def upload_gift(request):
 
 
 def test(request):
+    tmp_date = datetime.utcnow() + timedelta(seconds=1800)
+    cookie = {'user_id':'117896272606849173314', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
     r = requests.post("http://localhost:63343",
-                      data={'age': 25,
+                      json={'age': 25,
                             'relation': 'Parent',
                             'gender': 'M',
                             'price_range': '10-20',
                             'user_id': '117896272606849173314'
-                            })
+                            },cookies = cookie)
