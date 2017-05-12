@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import json
 from models import *
-from oauth2client import client, crypt
+from oauth2client import client
+from datetime import *
 
 MIN_SEARCH_RANK = 10
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
@@ -15,13 +16,25 @@ def index(request):
     context = {}
     return render(request, 'gifted/index.html', context)
 
+def is_logged(request):
+    if 'user_id' in request.COOKIES:
+        req_user_id = request.COOKIES.get('user_id')
+        req_expiry_time = request.COOKIES.get('expiry_time')
+        if not User.objects.filter(user_id=req_user_id).exists():
+            return False
+        if req_expiry_time > datetime.now():
+            return False
+        return True
+    else:
+        return False
+
 
 def search_gift(request):
-    user_id = request.COOKIES.get('user_id')
-
-
-
     ans = dict()
+    if not is_logged(request):
+        ans['status'] = NOT_LOGGED_IN
+        return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
+
     body = json.loads(request.body)
     age = body['age']
     relation = body['relation']
@@ -58,6 +71,7 @@ def search_gift(request):
 
 # truncate list of gifts by the strength of their relation to the input relation
 def truncate_by_relation_strength(gifts,relation):
+
     relations = RelationshipMatrixCell.objects.filter(rel1=relation)
     relations_dict = {}
     for rel in relations:
@@ -93,9 +107,10 @@ def login(request):
 
     res = HttpResponse(json.dumps(ans), content_type='application/json')
     #set cookie for 30 minutes
-    res.set_cookie('user_id', user_id, max_age=1800)
-    res.set_cookie('given_name', idinfo['given_name'], max_age=1800)
-    res.set_cookie('picture', idinfo['picture'], max_age=1800)
+    res.set_cookie('user_id', user_id)
+    res.set_cookie('given_name', idinfo['given_name'])
+    res.set_cookie('picture', idinfo['picture'])
+    res.set_cookie('expiry_time', datetime.datetime.now() + datetime.timedelta(seconds=1800))
 
     return res
 
