@@ -44,10 +44,19 @@ var Utils = {
         return result;
     },
 
-    injectMainView: function() {
-        $('.intro-header').load('static/gifted/inner-templates/introHeader.html');
+    injectMainView: function(template, callback) {
+        var $status = $('#status');var $preloader = $('#preloader');
 
-        // $('.intro-header').load();
+        $status.show();
+        $preloader.show();
+        $status.delay(300).fadeOut();
+        return $preloader.delay(300).fadeOut('slow', function () {
+            return $('.intro-header').load(template, null, callback);
+        });
+    },
+
+    clearMainView: function() {
+        $('.intro-header')[0].innerHTML = '';
     }
 };
 

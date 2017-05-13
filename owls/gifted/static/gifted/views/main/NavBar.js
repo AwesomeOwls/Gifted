@@ -14,11 +14,13 @@ var NavBar = {
         var $about = $('#about-button');
 
         $logout.hide();
+        $logout.off('click');
         $search.hide();
         $upload.hide();
         $login.show();
         $about.show();
         $welcome.hide();
+        $welcome.off('click');
         $welcome[0].innerText = '';
     },
 
@@ -28,10 +30,12 @@ var NavBar = {
         var $about = $('#about-button');
 
         $logout.hide();
+        $logout.off('click');
         $search.hide();
         $upload.hide();
         $login.hide();
         $welcome.hide();
+        $welcome.off('click');
         $about.hide();
         $welcome[0].innerText = '';
     },
@@ -43,12 +47,14 @@ var NavBar = {
 
         $login.hide();
         $logout.show();
+        $logout.click(GoogleAuth.signOut);
         $search.show();
         $upload.show();
         $about.show();
     },
 
     showWelcome: function(userName, pictureURL) {
+        var introHeader = 'static/gifted/inner-templates/introHeader.html';
         pictureURL = pictureURL.replace(/\"/g, "");
         var $welcome = $('#welcome');
         //TODO: check if user is in DB Already, if so present 'welcome back' message or something similar
@@ -61,5 +67,20 @@ var NavBar = {
         img.appendTo('#welcome');
         $welcomeText.appendTo('#welcome');
         $welcome.show();
-    }
+        $welcome.click(NavBar.showProfilePage)
+    },
+
+    showProfilePage: function() {
+        Utils.clearMainView();
+        var profilePage = 'static/gifted/inner-templates/profilePage.html';
+        var bindBacktoIntro = function (){ $('#back-to-intro').click(NavBar.showIntroHeader);}
+        Utils.injectMainView(profilePage, bindBacktoIntro);
+
+    },
+
+    showIntroHeader: function() {
+        Utils.clearMainView();
+        var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
+        Utils.injectMainView(IntroHeader);
+    },
 };

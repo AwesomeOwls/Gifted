@@ -55,6 +55,10 @@
   cursor: pointer;
 }
 
+#home-button {
+  cursor: pointer;
+}
+
 .user-img {
   width: 25px;
   height: 25px;
