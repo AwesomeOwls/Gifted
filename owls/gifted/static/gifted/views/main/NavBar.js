@@ -67,15 +67,7 @@ var NavBar = {
         img.appendTo('#welcome');
         $welcomeText.appendTo('#welcome');
         $welcome.show();
-        $welcome.click(NavBar.showProfilePage)
-    },
-
-    showProfilePage: function() {
-        Utils.clearMainView();
-        var profilePage = 'static/gifted/inner-templates/profilePage.html';
-        var bindBacktoIntro = function (){ $('#back-to-intro').click(NavBar.showIntroHeader);}
-        Utils.injectMainView(profilePage, bindBacktoIntro);
-
+        $welcome.click(ProfileView.showProfilePage)
     },
 
     showIntroHeader: function() {
@@ -83,4 +75,5 @@ var NavBar = {
         var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
         Utils.injectMainView(IntroHeader);
     },
+
 };
