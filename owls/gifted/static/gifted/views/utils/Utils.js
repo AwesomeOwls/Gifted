@@ -44,19 +44,22 @@ var Utils = {
         return result;
     },
 
-    injectMainView: function(template, callback) {
-        var $status = $('#status');var $preloader = $('#preloader');
+    injectMainView: function(selector, template, callback) {
+        console.log('template', template);
+        return $(selector).load(template, null, callback);
 
-        $status.show();
-        $preloader.show();
-        $status.delay(300).fadeOut();
-        return $preloader.delay(300).fadeOut('slow', function () {
-            return $('.intro-header').load(template, null, callback);
-        });
+        // TODO may be loading indicator in the future(?)
+        // var $status = $('#status');var $preloader = $('#preloader');
+        // $status.show();
+        // $preloader.show();
+        // $status.delay(300).fadeOut();
+        // return $preloader.delay(300).fadeOut('slow', function () {
+        //     return $(selector).load(template, null, callback);
+        // });
     },
 
-    clearMainView: function() {
-        $('.intro-header')[0].innerHTML = '';
+    clearMainView: function(selector) {
+        $(selector)[0].innerHTML = '';
     }
 };
 

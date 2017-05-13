@@ -71,9 +71,9 @@ var NavBar = {
     },
 
     showIntroHeader: function() {
-        Utils.clearMainView();
+        Utils.clearMainView('.intro-header');
         var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
-        Utils.injectMainView(IntroHeader);
+        Utils.injectMainView('.intro-header', IntroHeader);
     },
 
 };

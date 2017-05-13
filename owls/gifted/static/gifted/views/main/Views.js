@@ -5,9 +5,9 @@
 var ProfileView = {
 
     showProfilePage: function() {
-        Utils.clearMainView();
+        Utils.clearMainView('.intro-header');
         var profilePage = 'static/gifted/inner-templates/profilePage.html';
-        Utils.injectMainView(profilePage, ProfileView.onProfilePageInjected);
+        Utils.injectMainView('.intro-header', profilePage, ProfileView.onProfilePageInjected);
 
     },
 
@@ -31,7 +31,25 @@ var ProfileView = {
 
 
     },
-}
+};
+
+
 var ResultsView = {
     //TODO ResultsView Functions
+};
+
+
+var AboutView = {
+    showAboutView: function() {
+        Utils.clearMainView('#about');
+        var AboutPage = 'static/gifted/inner-templates/AboutPage.html';
+        Utils.injectMainView('#about', AboutPage);
+
+    },
+
+    onAboutViewInjected: function() {
+        $('a[href="#about"]').click(function(){
+            console.log('href to #about');
+        });
+    },
 }

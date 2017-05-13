@@ -75,3 +75,7 @@
 .input-field > label {
   align-self: center;
 }
+
+#back-to-intro {
+  color: black;
+}
