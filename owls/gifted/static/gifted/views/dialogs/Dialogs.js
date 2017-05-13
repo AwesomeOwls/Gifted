@@ -32,7 +32,7 @@ var UploadDialog = {
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
         var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
-        // DialogUtils.clearInputs($description, $gender, $relationship, $age, $price, $img_url);
+        // Utils.clearInputs($description, $gender, $relationship, $age, $price, $img_url);
         UploadDialog.fillRelationships();
 
         $('#upload-modal').modal();
@@ -40,7 +40,7 @@ var UploadDialog = {
         // TODO add listeners of modal's input elements
         //TODO add client side input validations
         //TODO add server failure indication (stretch goal)
-        var randomRelation = DialogUtils.pickRandomProperty(window.relationships); // TODO random generate
+        var randomRelation = Utils.pickRandomProperty(window.relationships); // TODO random generate
         $relationship2.text(randomRelation);
 
         $('#upload-submit').click( function() {
@@ -88,7 +88,7 @@ var UploadDialog = {
     },
 
     fillRelationships: function() {
-        DialogUtils.addOptionsToSelect(window.relationships, '#upload-relationship');
+        Utils.addOptionsToSelect(window.relationships, '#upload-relationship');
     }
 
 };
@@ -102,36 +102,4 @@ var SearchDialog = {
         $('#search-modal').modal('hide');
     },
 
-};
-
-var DialogUtils = {
-
-    addOptionsToSelect: function(selectValues, $select) {
-        $.each(selectValues, function(key, value) {
-            $($select)
-                .append($("<option></option>")
-                    .attr("value", key)
-                    .text(value));
-        });
-    },
-
-    clearInputs: function() {
-        var i;
-        for(i = 0; i < arguments.length; i++) {
-            DialogUtils.clearInput(arguments[i]);
-        }
-    },
-
-    clearInput: function($input) {
-       return $input && $input.val('');
-    },
-
-    pickRandomProperty: function(obj) {
-        var result;
-        var count = 0;
-        for (var prop in obj)
-            if (Math.random() < 1/++count)
-                result = prop;
-        return result;
-    }
 };

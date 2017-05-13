@@ -47,6 +47,7 @@
 	<script src="{% static 'gifted/views/main/GoogleAuth.js' %}"></script>
 	<script src="{% static 'gifted/views/main/NavBar.js' %}"></script>
 	<script src="{% static 'gifted/views/dialogs/Dialogs.js' %}"></script>
+	<script src="{% static 'gifted/views/utils/Utils.js' %}"></script>
 	<script src="{% static 'gifted/views/main/Views.js' %}"></script>
 	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
 	<script src="{% static 'gifted/dependencies/lodash.js' %}"></script>
@@ -76,19 +77,24 @@
 	<script src="https://apis.google.com/js/api:client.js"></script>
 	<script>
 		var GoogleAuthInit = function() {
+
+
+
+			Utils.injectMainView();
+
 			//TODO implement storing the user's session data in session/local storage (for refresh, etc.)
 			gapi.load('auth2', function(){
 				// Retrieve the singleton for the GoogleAuth library and set up the client.
 				auth2 = gapi.auth2.init({
 					client_id: '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com',
 				});
-				if (!GoogleAuth.readCookie('user_id'))
+				if (!Utils.readCookie('user_id'))
 				{
 					NavBar.setLoginButton(); // set listener to login function on login button
 				}
 				else {
-					var given_name = GoogleAuth.readCookie('given_name');
-					var pictureURL = GoogleAuth.readCookie('picture');
+					var given_name = Utils.readCookie('given_name');
+					var pictureURL = Utils.readCookie('picture');
 					GoogleAuth.onValidatedUser(given_name, pictureURL);
 				}
 			});
@@ -136,16 +142,8 @@
 	<div w3-include-html=" {% static 'gifted/inner-templates/uploadDialog.html' %}"></div>
 
     <div class="intro-header">
-		<div class="col-xs-12 text-center abcen1">
-			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
-			<h3 class="h3_home wow fadeIn" data-wow-delay="0.6s">Find The Perfect Gift</h3>
-		</div>
-        <!-- /.container -->
-		<div class="col-xs-12 text-center abcen wow fadeIn">
-			<div class="button_down ">
-				<a class="imgcircle wow bounceInUp" data-wow-duration="1.5s"  href="#about"> <img class="img_scroll" src="{% static 'gifted/flatfy-ui/img/icon/circle.png' %}" alt=""> </a>
-			</div>
-		</div>
+
+		<!--This will change and other templates will be injected to this div-->
     </div>
 
 	<!-- About Us -->

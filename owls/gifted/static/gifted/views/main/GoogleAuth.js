@@ -10,9 +10,8 @@ var GoogleAuth = {
     },
 
     signOut: function () {
-        var $body = $('body');
-        var $status = $('#status');
-        var $preloader = $('#preloader');
+        var $body = $('body'); var $status = $('#status');
+        var $preloader = $('#preloader'); var $logout = $('#logout-button');
         NavBar.hideAllButtons();
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
@@ -30,6 +29,7 @@ var GoogleAuth = {
                     $preloader.show();
                 },
                 success: function(data){
+                    $logout.off('click');
                     console.log('response data: ', data);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
@@ -60,12 +60,12 @@ var GoogleAuth = {
             dataType: "json",
             success: function(data){
                 console.log('Signed in as: ', data);
-                console.log('user_id in cookie: ', GoogleAuth.readCookie('user_id'));
-                console.log('given_name in cookie: ', GoogleAuth.readCookie('given_name'));
-                console.log('picture in cookie: ', GoogleAuth.readCookie('picture'));
+                console.log('user_id in cookie: ', Utils.readCookie('user_id'));
+                console.log('given_name in cookie: ', Utils.readCookie('given_name'));
+                console.log('picture in cookie: ', Utils.readCookie('picture'));
                 //TODO check if googleUser is in cookie, then approve
-                var given_name = GoogleAuth.readCookie('given_name');
-                var pictureURL = GoogleAuth.readCookie('picture');
+                var given_name = Utils.readCookie('given_name');
+                var pictureURL = Utils.readCookie('picture');
 
                 GoogleAuth.onValidatedUser(given_name, pictureURL);
             },
@@ -100,17 +100,7 @@ var GoogleAuth = {
                 UploadDialog.showDialog();
             });
         });
-    },
-
-    readCookie: function(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-        }
-        return null;
     }
+
 };
 
