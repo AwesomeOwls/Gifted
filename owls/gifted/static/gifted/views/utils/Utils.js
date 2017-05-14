@@ -44,7 +44,7 @@ var Utils = {
         return result;
     },
 
-    injectMainView: function(selector, template, callback) {
+    injectView: function(selector, template, callback) {
         console.log('template', template);
         return $(selector).load(template, null, callback);
 
@@ -58,7 +58,7 @@ var Utils = {
         // });
     },
 
-    clearMainView: function(selector) {
+    clearView: function(selector) {
         $(selector)[0].innerHTML = '';
     }
 };

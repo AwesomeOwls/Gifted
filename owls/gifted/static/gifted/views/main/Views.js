@@ -5,9 +5,10 @@
 var ProfileView = {
 
     showProfilePage: function() {
-        Utils.clearMainView('.intro-header');
+        Utils.clearView('.main-container');
+        Utils.clearView('#about');
         var profilePage = 'static/gifted/inner-templates/profilePage.html';
-        Utils.injectMainView('.intro-header', profilePage, ProfileView.onProfilePageInjected);
+        Utils.injectView('.main-container', profilePage, ProfileView.onProfilePageInjected);
 
     },
 
@@ -21,18 +22,79 @@ var ProfileView = {
         var pictureURL = Utils.readCookie('picture');
         pictureURL = pictureURL.replace(/\"/g, "");
 
-        var img = $('<img class="user-img">');
         $picture.attr('src', pictureURL);
-
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
         $rank[0].innerHTML = 'Your Rank is: ' + user_rank;
 
-        backToIntro.click(NavBar.showIntroHeader);
+        backToIntro.click(MainView.showMainView);
 
+        var testGifts = {
+            'some_gift_id' : {
+                'relationship': 'Parent',
+                'img_url' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
+                'uploaded_at' : Date.now(),
+                'gift_rank' : 15,
+                'price' : 150
 
+            },
+
+            'some_gift_id2' : {
+                'relationship': 'Sibling',
+                'img_url' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
+                'uploaded_at' : Date.now(),
+                'gift_rank' : 30,
+                'price' : 200
+
+            },
+
+            'some_gift_id3' : {
+                'relationship': 'Partner',
+                'img_url' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
+                'uploaded_at' : Date.now().toString(),
+                'gift_rank' : -5,
+                'price' : 70
+
+            },
+        };
+
+        console.log(testGifts);
+        ProfileView.insertGifts(testGifts);
+
+    },
+
+    insertGifts: function(GiftsObject) {
+        $.each(GiftsObject, function(giftKey, giftAttrs) {
+            $($('#gifts-list'))
+                .append($("<div id=list_" + giftKey + " class='user-gift'></div>"));
+            $.each(giftAttrs, function(key, value) {
+                if (key == 'img_url') {
+                    var img = $('<img>');
+                    img.attr('src', value);
+                    $('#list_' + giftKey)
+                        .append(img);
+
+                }
+                else {
+                    $($('#list_' + giftKey))
+                        .append($("<p></p>")
+                            .text(key + ':   ' + value));
+                }
+
+            })
+        });
     },
 };
 
+
+var MainView = {
+
+    showMainView: function() {
+        Utils.clearView('.main-container');
+        var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
+        Utils.injectView('.main-container', IntroHeader);
+        AboutView.showAboutView();
+    },
+};
 
 var ResultsView = {
     //TODO ResultsView Functions
@@ -41,9 +103,9 @@ var ResultsView = {
 
 var AboutView = {
     showAboutView: function() {
-        Utils.clearMainView('#about');
+        Utils.clearView('#about');
         var AboutPage = 'static/gifted/inner-templates/AboutPage.html';
-        Utils.injectMainView('#about', AboutPage);
+        Utils.injectView('#about', AboutPage);
 
     },
 

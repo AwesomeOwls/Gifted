@@ -1,6 +1,6 @@
-/*.intro-header {*/
-  /*background: url(../img/background1.jpg) no-repeat center center;*/
-/*}*/
+.main-container {
+overflow-y: scroll;
+}
 
 .menuItem * {
   cursor: pointer;
@@ -78,4 +78,29 @@
 
 #back-to-intro {
   color: black;
+}
+
+.error-message {
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.modal-header {
+  background-color: rgba(46, 122, 156, 0.39);
+}
+.error-header {
+  background-color: rgba(255, 0, 0, 0.46);
+}
+
+.close, .close:hover {
+  color: #000000;
+}
+
+.user-gift {
+  border-bottom: black;
+  border-bottom-style: dotted;
+}
+
+.error-img {
+  height: 200px;
 }

@@ -70,10 +70,5 @@ var NavBar = {
         $welcome.click(ProfileView.showProfilePage)
     },
 
-    showIntroHeader: function() {
-        Utils.clearMainView('.intro-header');
-        var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
-        Utils.injectMainView('.intro-header', IntroHeader);
-    },
 
 };

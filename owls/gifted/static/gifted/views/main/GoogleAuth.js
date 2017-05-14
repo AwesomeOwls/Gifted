@@ -35,7 +35,12 @@ var GoogleAuth = {
                         NavBar.hideTopButtons();
                         NavBar.setLoginButton(); // set listener to login function on login button
                     });
-                }
+                },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
             });
         });
     },
@@ -59,7 +64,10 @@ var GoogleAuth = {
                 var pictureURL = Utils.readCookie('picture');
 
                 GoogleAuth.onValidatedUser(given_name, pictureURL);
-            }
+            },
+            error: function(error){
+                errorDialog.showDialog(error.responseText);
+            },
         });
     },
 

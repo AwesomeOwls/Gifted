@@ -84,12 +84,9 @@
 				auth2 = gapi.auth2.init({
 					client_id: '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com',
 				});
-				var introHeader = 'static/gifted/inner-templates/introHeader.html';
-				Utils.injectMainView('.intro-header', introHeader);
-				AboutView.showAboutView();
+				MainView.showMainView();
 				var $home = $('#home-button');
-				$home.click(NavBar.showIntroHeader);
-                AboutView.showAboutView();
+				$home.click(MainView.showMainView);
                 if (!Utils.readCookie('user_id'))
 				{
 					NavBar.setLoginButton(); // set listener to login function on login button
@@ -142,8 +139,9 @@
 	<!-- FullScreen -->
 	<div w3-include-html=" {% static 'gifted/inner-templates/searchDialog.html' %}"></div>
 	<div w3-include-html=" {% static 'gifted/inner-templates/uploadDialog.html' %}"></div>
+	<div w3-include-html=" {% static 'gifted/inner-templates/errorDialog.html' %}"></div>
 
-    <div class="intro-header">
+    <div class="main-container">
 
 		<!--This will change and other templates will be injected to this div-->
     </div>

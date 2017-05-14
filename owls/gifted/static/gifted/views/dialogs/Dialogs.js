@@ -74,6 +74,11 @@ var UploadDialog = {
                         $body.delay(550).css({'overflow': 'visible'});
                     });
                 },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
             });
 
         });
@@ -83,7 +88,7 @@ var UploadDialog = {
         //TODO add server failure indication (stretch goal)
     },
 
-    onDialogClose: function() {
+    closeDialog: function() {
         $('#upload-modal').modal('hide');
     },
 
@@ -92,14 +97,29 @@ var UploadDialog = {
     }
 
 };
+
 var SearchDialog = {
 
     showDialog: function() {
         $('#search-modal').modal();
 
     },
-    onDialogClose: function() {
+    closeDialog: function() {
         $('#search-modal').modal('hide');
+    },
+
+};
+
+var errorDialog = {
+
+    showDialog: function(errorText) {
+        Utils.clearView('.error-text');
+        $('#error-modal').modal();
+        $('.error-text')[0].innerHTML = errorText;
+
+    },
+    closeDialog: function() {
+        $('#serror-modal').modal('hide');
     },
 
 };
