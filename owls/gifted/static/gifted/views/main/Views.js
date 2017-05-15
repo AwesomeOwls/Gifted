@@ -92,7 +92,6 @@ var MainView = {
         Utils.clearView('.main-container');
         var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
         Utils.injectView('.main-container', IntroHeader);
-        AboutView.showAboutView();
     },
 };
 
