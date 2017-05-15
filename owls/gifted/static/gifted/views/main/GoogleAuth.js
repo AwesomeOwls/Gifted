@@ -6,16 +6,15 @@ var GoogleAuth = {
         var id_token = googleUser.getAuthResponse().id_token;
         //TODO Yehonatan: uncomment this when backend token verification is done
         GoogleAuth.validateToken(id_token, googleUser);
-        console.log('user logged in', googleUser);
     },
 
     signOut: function () {
         var $body = $('body'); var $status = $('#status');
         var $preloader = $('#preloader'); var $logout = $('#logout-button');
         NavBar.hideAllButtons();
+        MainView.showMainView();
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
-            console.log('user logged out');
             $status.delay(300).fadeOut();
 
             $.ajax({
@@ -29,7 +28,6 @@ var GoogleAuth = {
                     $preloader.show();
                 },
                 success: function(data){
-                    console.log('response data: ', data);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         NavBar.hideTopButtons();
@@ -55,11 +53,6 @@ var GoogleAuth = {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data){
-                console.log('Signed in as: ', data);
-                console.log('user_id in cookie: ', Utils.readCookie('user_id'));
-                console.log('given_name in cookie: ', Utils.readCookie('given_name'));
-                console.log('picture in cookie: ', Utils.readCookie('picture'));
-                //TODO check if googleUser is in cookie, then approve
                 var given_name = Utils.readCookie('given_name');
                 var pictureURL = Utils.readCookie('picture');
 

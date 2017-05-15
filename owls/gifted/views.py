@@ -183,7 +183,7 @@ def login(request):
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
     #set cookie for 30 minutes
-    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=1800))
+    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
     res.set_cookie('user_rank', user.user_rank)
 
     return res

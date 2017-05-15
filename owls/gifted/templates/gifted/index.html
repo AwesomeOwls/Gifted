@@ -85,18 +85,8 @@
 				auth2 = gapi.auth2.init({
 					client_id: '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com',
 				});
-				MainView.showMainView();
-				var $home = $('#home-button');
-				$home.click(MainView.showMainView);
-                if (!Utils.readCookie('user_id'))
-				{
-					NavBar.setLoginButton(); // set listener to login function on login button
-				}
-				else {
-					var given_name = Utils.readCookie('given_name');
-					var pictureURL = Utils.readCookie('picture');
-					GoogleAuth.onValidatedUser(given_name, pictureURL);
-				}
+				MainView.initMainView();
+
 			});
 		};
 	</script>

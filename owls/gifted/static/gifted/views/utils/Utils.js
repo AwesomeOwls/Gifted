@@ -45,7 +45,6 @@ var Utils = {
     },
 
     injectView: function(selector, template, callback) {
-        console.log('template', template);
         return $(selector).load(template, null, callback);
 
         // TODO may be loading indicator in the future(?)

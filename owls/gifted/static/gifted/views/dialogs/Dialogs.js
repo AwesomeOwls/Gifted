@@ -51,7 +51,6 @@ var UploadDialog = {
             obj['relationship_score'] = parseInt($relationship_score.val());
             obj['relationship2'] = $relationship2.text();
 
-            console.log('obj', obj);
 
             $.ajax({
                 type: "POST",
@@ -61,12 +60,10 @@ var UploadDialog = {
                 data: JSON.stringify(obj),
                 dataType: "json",
                 beforeSend: function(){
-                    console.log('upload form submitteddd bro!');
                     $status.show();
                     $preloader.show();
                 },
                 success: function(data){
-                    console.log('response data upload: ', data);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                     });

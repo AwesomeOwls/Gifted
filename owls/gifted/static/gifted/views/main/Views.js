@@ -63,7 +63,6 @@ var ProfileView = {
             },
         };
 
-        console.log(testGifts);
         ProfileView.insertGifts(testGifts);
 
     },
@@ -140,6 +139,22 @@ var MainView = {
         var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
         Utils.injectView('.main-container', IntroHeader);
     },
+
+    initMainView: function() {
+        MainView.showMainView();
+        var $home = $('#home-button');
+        $home.click(MainView.showMainView);
+
+        if (!Utils.readCookie('user_id'))
+        {
+            NavBar.setLoginButton(); // set listener to login function on login button
+        }
+        else {
+            var given_name = Utils.readCookie('given_name');
+            var pictureURL = Utils.readCookie('picture');
+            GoogleAuth.onValidatedUser(given_name, pictureURL);
+        }
+    },
 };
 
 var ResultsView = {
@@ -197,7 +212,6 @@ var ResultsView = {
             },
         };
 
-        console.log(testGifts);
         testGifts = {a:1 , b: 2 ,c :3};
         ResultsView.insertGifts(testGifts);
 
@@ -253,7 +267,6 @@ var AboutView = {
 
     onAboutViewInjected: function() {
         $('a[href="#about"]').click(function(){
-            console.log('href to #about');
         });
     },
 }
