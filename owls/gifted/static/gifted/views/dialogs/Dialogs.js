@@ -100,6 +100,10 @@ var SearchDialog = {
     showDialog: function() {
         $('#search-modal').modal();
 
+        $('#search-submit').click( function() {
+            ResultsView.showResultsPage();
+        });
+
     },
     closeDialog: function() {
         $('#search-modal').modal('hide');
