@@ -97,8 +97,8 @@ overflow-y: scroll;
 }
 
 .user-gift {
-  border-bottom: black;
-  border-bottom-style: dotted;
+  border-top: black;
+  border-top-style: dotted;
 }
 
 .error-img {
