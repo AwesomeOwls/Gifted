@@ -68,8 +68,10 @@ class Gift(models.Model):
         return "description:%s, uploading user:%s, price:%s" % (self.description, self.uploading_user,  self.price)
 
 
-
 class RelationshipMatrixCell(models.Model):
     rel1 = models.ForeignKey(Relation, related_name='rel1')
     rel2 = models.ForeignKey(Relation, related_name='rel2')
     strength = models.IntegerField()
+
+    def __str__(self):
+        return "%s, %s, %d" %(self.rel1.description,self.rel2.description,self.strength)
