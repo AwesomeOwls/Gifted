@@ -1,16 +1,16 @@
-,Parent,Grandparent,Sibling,Cousin,Parent in law,Nephew,Friend,Partner,Child,Child in law,Grandparent in law,Sibling in law,Acquaintant,Colleague,Grandson
-Parent,0,2,3,4,1,5,5,5,5,5,3,3,4,5,5
-Grandparent,,0,4,4,2,5,5,5,5,5,0,4,3,5,5
-Sibling,,,0,1,5,3,1,4,4,5,5,1,5,5,5
-Cousin,,,,0,4,3,2,5,5,5,5,3,4,4,5
-Parent in law,,,,,0,5,5,5,5,5,1,3,3,5,5
-Nephew,,,,,,0,4,5,1,3,5,4,5,5,2
-Friend,,,,,,,0,4,5,5,5,1,3,2,5
-Partner,,,,,,,,0,5,5,5,5,5,5,5
-Child,,,,,,,,,0,1,5,4,5,5,2
-Child in law,,,,,,,,,,0,5,3,5,5,4
-Grandparent in law,,,,,,,,,,,0,5,3,4,5
-Sibling in law,,,,,,,,,,,,0,3,3,5
-Acquaintant,,,,,,,,,,,,,0,2,5
-Colleague,,,,,,,,,,,,,,0,5
-Grandson,,,,,,,,,,,,,,,0
+,parent,grandparent,sibling,cousin,parent_in_law,nephew,friend,partner,child,child_in_law,grandparent_in_law,sibling_in_law,acquaintant,colleague,grandson
+parent,0,2,3,4,1,5,5,5,5,5,3,3,4,5,5
+grandparent,,0,4,4,2,5,5,5,5,5,0,4,3,5,5
+sibling,,,0,1,5,3,1,4,4,5,5,1,5,5,5
+cousin,,,,0,4,3,2,5,5,5,5,3,4,4,5
+parent_in_law,,,,,0,5,5,5,5,5,1,3,3,5,5
+nephew,,,,,,0,4,5,1,3,5,4,5,5,2
+friend,,,,,,,0,4,5,5,5,1,3,2,5
+partner,,,,,,,,0,5,5,5,5,5,5,5
+child,,,,,,,,,0,1,5,4,5,5,2
+Child_in_law,,,,,,,,,,0,5,3,5,5,4
+grandparent_in_law,,,,,,,,,,,0,5,3,4,5
+sibling_in_law,,,,,,,,,,,,0,3,3,5
+acquaintant,,,,,,,,,,,,,0,2,5
+colleague,,,,,,,,,,,,,,0,5
+grandson,,,,,,,,,,,,,,,0

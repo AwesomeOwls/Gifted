@@ -553,36 +553,12 @@ def test(request):
                         }, cookies=cookie)
 
 
-def init_relations():
-    RELATIONSHIP_CHOICES = (
-        ('Parent', 'Parent'),
-        ('Grandparent', 'Grandparent'),
-        ('Sibling', 'Sibling'),
-        ('Cousin', 'Cousin'),
-        ('Parent in law', 'Parent in law'),
-        ('Nephew', 'Nephew'),
-        ('Friend', 'Friend'),
-        ('Partner', 'Partner'),
-        ('Child', 'Child'),
-        ('Child in law', 'Child in law'),
-        ('Grandparent in law', 'Grandparent in law'),
-        ('Uncle/Aunt', 'Uncle/Aunt'),
-        ('Sibling in law', 'Sibling in law'),
-        ('Acquaintant', 'Acquaintant'),
-        ('Colleague', 'Colleague'),
-        ('Grandson', 'Grandson'),
-    )
-    for relation in RELATIONSHIP_CHOICES:
-        rel = Relation(description=relation[0])
-        rel.save()
-
-
 def init_relationship_matrix():
     try:
         with open('../Relationship_matrix.csv','r+') as rel_matrix_file:
             reader = csv.reader(rel_matrix_file)
             names = next(reader) # get columns names
-            for name in names:
+            for name in names[:1]:
                 rel1 = Relation(description=name)
                 rel1.save()
             for row in reader:

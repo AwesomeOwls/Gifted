@@ -16,24 +16,24 @@ class User(models.Model):
 
 class Relation(models.Model):
     RELATIONSHIP_CHOICES = (
-        ('Parent', 'Parent'),
-        ('Grandparent', 'Grandparent'),
-        ('Sibling', 'Sibling'),
-        ('Cousin','Cousin'),
-        ('Parent in law', 'Parent in law'),
-        ('Nephew', 'Nephew'),
-        ('Friend', 'Friend'),
-        ('Partner', 'Partner'),
-        ('Child', 'Child'),
-        ('Child in law', 'Child in law'),
-        ('Grandparent in law', 'Grandparent in law'),
-        ('Uncle/Aunt', 'Uncle/Aunt'),
-        ('Sibling in law','Sibling in law'),
-        ('Acquaintant','Acquaintant'),
-        ('Colleague','Colleague'),
-        ('Grandson','Grandson'),
+        ('parent', 'Parent'),
+        ('grandparent', 'Grandparent'),
+        ('sibling', 'Sibling'),
+        ('cousin','Cousin'),
+        ('parent_in_law', 'Parent in law'),
+        ('nephew', 'Nephew'),
+        ('friend', 'Friend'),
+        ('partner', 'Partner'),
+        ('child', 'Child'),
+        ('child_in_law', 'Child in law'),
+        ('grandparent_in_law', 'Grandparent in law'),
+        ('uncle_aunt', 'Uncle/Aunt'),
+        ('sibling_in_law','Sibling in law'),
+        ('acquaintant','Acquaintant'),
+        ('colleague','Colleague'),
+        ('grandson','Grandson'),
     )
-    description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES)
+    description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES,primary_key=True)
 
     def __str__(self):
         return "%s" %(self.description)
