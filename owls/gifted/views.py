@@ -582,6 +582,9 @@ def init_relationship_matrix():
         with open('../Relationship_matrix.csv','r+') as rel_matrix_file:
             reader = csv.reader(rel_matrix_file)
             names = next(reader) # get columns names
+            for name in names:
+                rel1 = Relation(description=name)
+                rel1.save()
             for row in reader:
                 i = 0
                 rel = ""
@@ -603,7 +606,6 @@ def init_relationship_matrix():
 
 def fill_db(request):
     try:
-        init_relations()
         init_relationship_matrix()
     except (IOError, ValueError, TypeError):
         return HttpResponse(json.dumps({'status':'error'}), status=400)
@@ -611,10 +613,10 @@ def fill_db(request):
 
 
 def clear_db(request):
-    Relation.delete()
-    RelationshipMatrixCell.delete()
-    User.delete()
-    Gift.delete()
+    Relation.objects.all().delete()
+    RelationshipMatrixCell.objects.all().delete()
+    User.objects.all().delete()
+    Gift.objects.all().delete()
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
 
 
