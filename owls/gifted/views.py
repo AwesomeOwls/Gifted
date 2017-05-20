@@ -222,7 +222,8 @@ def upload_gift(request):
     if not gender == 'M' and not gender == 'F':
         ans = {'status': 'wrong gender'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
-    if Relation.objects.get(description=relation) is None:
+    rel = Relation.objects.get(description=relation)
+    if rel is None:
         ans = {'status': 'relation not defind'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
@@ -230,8 +231,9 @@ def upload_gift(request):
     user = User.objects.get(user_id=user_id)
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
-    gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=relation)
+    gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=rel)
     gift.uploading_user_id = user_id
+    gift.save()
 
     # update relationship matrix value according to user answer
     if user.user_rank > PREMIUM_USER_RANK:
