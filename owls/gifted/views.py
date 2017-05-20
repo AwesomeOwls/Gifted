@@ -152,7 +152,6 @@ def login(request):
     body = json.loads(request.body)
     token_id = body['id_token']
     ans = dict()
-    return HttpResponse(json.dumps({}), content_type='application/json', status=480)
 
     if token_id is None:
         ans['status'] = 'Missing token id'
