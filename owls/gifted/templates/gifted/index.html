@@ -8,6 +8,7 @@
 	<link rel="shortcut icon" href="{% static 'gifted/style/blue-gift.ico' %}" />
 	<!-- Gifted-UI CSS-->
 	<link href="{% static 'gifted/style/intro.css' %} " rel="stylesheet">
+	<link href="{% static 'gifted/style/gift-list.css' %} " rel="stylesheet">
 
 	<!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -44,9 +45,13 @@
 
 
 	<!-- Gifted-UI JavaScript -->
-	<script src="{% static 'gifted/views/MainView.js' %}"></script>
+	<script src="{% static 'gifted/views/main/GoogleAuth.js' %}"></script>
+	<script src="{% static 'gifted/views/main/NavBar.js' %}"></script>
+	<script src="{% static 'gifted/views/dialogs/Dialogs.js' %}"></script>
+	<script src="{% static 'gifted/views/utils/Utils.js' %}"></script>
+	<script src="{% static 'gifted/views/main/Views.js' %}"></script>
 	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
-
+	<script src="{% static 'gifted/dependencies/lodash.js' %}"></script>
 
 	<!-- StikyMenu -->
 	<script src="{% static 'gifted/flatfy-ui/js/stickUp.min.js' %}"></script>
@@ -73,13 +78,15 @@
 	<script src="https://apis.google.com/js/api:client.js"></script>
 	<script>
 		var GoogleAuthInit = function() {
+
 			//TODO implement storing the user's session data in session/local storage (for refresh, etc.)
 			gapi.load('auth2', function(){
 				// Retrieve the singleton for the GoogleAuth library and set up the client.
 				auth2 = gapi.auth2.init({
 					client_id: '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com',
 				});
-				NavBar.setLoginButton(); // set listener to login function on login button
+				MainView.initMainView();
+
 			});
 		};
 	</script>
@@ -99,15 +106,14 @@
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" id="home-button" href="#home">Gifted</a>
-				<a id="welcome"></a>
+				<a id="welcome" href="#account"></a>
 			</div>
 
 			<div class="collapse navbar-collapse navbar-right navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-					<li class="menuItem" id="account-button" style="display: none;"><a href="#account">My Account</a></li>
 					<li class="menuItem" id="search-button" style="display: none;"><a href="#search">Search Gift</a></li>
 					<li class="menuItem" id="upload-button" style="display: none;"><a href="#upload-gift">Upload Gift</a></li>
-                    <li class="menuItem" id="about-button"><a href="#about">About Us</a></li>
+                    <li class="menuItem" id="about-button"><a  onclick="AboutView.showAboutView()" href="#about">About Us</a></li>
                     <li class="menuItem" id="logout-button" style="display: none;"><a>Log Out&nbsp;&nbsp;<img class="logout-door" src="{% static 'gifted/img/logout-door.svg' %}"></a></li>
                     <li class="menuItem" id="login-button"><a>Log In&nbsp;&nbsp;<img class="google-icon" src=" {% static 'gifted/img/google-icon.png' %}"></a></li>
 
@@ -122,97 +128,18 @@
 	</div>
 
 	<!-- FullScreen -->
-	<div w3-include-html=" {% static 'gifted/inner-templates/searchModal.html' %}"></div>
-	<div w3-include-html=" {% static 'gifted/inner-templates/uploadModal.html' %}"></div>
+	<div w3-include-html=" {% static 'gifted/inner-templates/searchDialog.html' %}"></div>
+	<div w3-include-html=" {% static 'gifted/inner-templates/uploadDialog.html' %}"></div>
+	<div w3-include-html=" {% static 'gifted/inner-templates/errorDialog.html' %}"></div>
 
-    <div class="intro-header">
-		<div class="col-xs-12 text-center abcen1">
-			<h1 class="h1_home wow fadeIn" data-wow-delay="0.4s">Gifted</h1>
-			<h3 class="h3_home wow fadeIn" data-wow-delay="0.6s">Find The Perfect Gift</h3>
-		</div>
-        <!-- /.container -->
-		<div class="col-xs-12 text-center abcen wow fadeIn">
-			<div class="button_down ">
-				<a class="imgcircle wow bounceInUp" data-wow-duration="1.5s"  href="#about"> <img class="img_scroll" src="{% static 'gifted/flatfy-ui/img/icon/circle.png' %}" alt=""> </a>
-			</div>
-		</div>
+    <div class="main-container">
+
+		<!--This will change and other templates will be injected to this div-->
     </div>
 
-	<!-- About Us -->
+	 <!--About Us-->
 	<div id="about" class="content-section-b" style="border-top: 0">
-		<div class="container">
 
-			<div class="col-md-6 col-md-offset-3 text-center wrap_title">
-				<h2>About Us</h2>
-				<p class="lead" style="margin-top:0">Creators of Gifted</p>
-
-			</div>
-			
-			<div class="row">
-				<div class="col-sm-4 wow fadeInDown text-center">
-					<img class="rotate authors" src=" {% static 'gifted/img/evgeny.png' %}" alt="Generic placeholder image">
-					<h3>Evgeny Agronsky</h3>
-					<p class="lead">Co-Founder, Backend Team.<br>Software Engineer at imVision<br>
-                        <a href="https://www.linkedin.com/in/evgeny-agronsky-a61322104" target="_blank">
-                            <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
-                        </a>
-                    </p>
-					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
-
-				<div class="col-sm-4 wow fadeInDown text-center">
-					<img class="rotate authors" src="{% static 'gifted/img/yotam.png'%}" alt="Generic placeholder image">
-					<h3>Yotam Ronen</h3>
-					<p class="lead">Co-Founder, Frontend Team.<br>Software Engineer at cTex<br>
-                        <a href="https://www.linkedin.com/in/yotam-ronen-092542a2/" target="_blank">
-                            <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
-                        </a>
-                    </p>
-					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
-
-				<div class="col-sm-4 wow fadeInDown text-center">
-					<img class="rotate authors" src="{% static 'gifted/img/yehonatan.png' %}" alt="Generic placeholder image">
-					<h3>Yehonatan Sayag</h3>
-					<p class="lead">Co-Founder, Frontend Team.<br>Software Engineer at INFINIDAT<br>
-                        <a href="https://www.linkedin.com/in/ysayag/" target="_blank">
-                            <img class="{% static 'gifted/img/linkedin-icon.png' %}">
-                        </a>
-                    </p>
-					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
-
-
-
-			</div><!-- /.row -->
-				
-			<div class="row tworow">
-			
-				<div class="col-sm-4  wow fadeInDown text-center">
-				  <img class="rotate authors" src="{% static 'gifted/img/tomer.png' %}" alt="Generic placeholder image">
-				  <h3>Tomer Ben-Kereth</h3>
-				  <p class="lead">Co-Founder, Backend/Database Team.<br>Software Engineer at imVision<br>
-                      <a href="https://www.linkedin.com/in/bktomer/" target="_blank">
-                          <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
-                      </a>
-                  </p>
-				 <!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
-				<div class="col-sm-4 wow fadeInDown text-center">
-					<img class="rotate authors" src="{% static 'gifted/img/amit.png' %}" alt="Generic placeholder image">
-					<h3>Amit Chen</h3>
-					<p class="lead">Co-Founder, Database Team.<br>Freelance Software Engineer<br>
-                        <a href="https://www.linkedin.com/in/amit-chen-54013aa6/" target="_blank">
-                            <img class="linkedin-icon" src="{% static 'gifted/img/linkedin-icon.png' %}">
-                        </a>
-                    </p>
-					<!-- <p><a class="btn btn-embossed btn-primary view" role="button">View Details</a></p> -->
-				</div><!-- /.col-lg-4 -->
-
-
-
-			</div><!-- /.row -->
-		</div>
 	</div>
 </body>
 <footer class="bottom-bar">

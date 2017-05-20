@@ -1,0 +1,66 @@
+<!-- Modal -->
+<div class="modal fade" id="upload-modal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Tell us about the gifts you bought</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div>
+                        <label>Description</label>
+                        <input id="upload-description" maxlength="250">
+                    </div>
+                    <div>
+                        <label>Age</label>
+                        <input id="upload-age" maxlength="3">
+                    </div>
+                    <div>
+                        <label>Gender</label>
+                        <select id="upload-gender">
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Price (₪)</label>
+                        <input id="upload-price">
+                    </div>
+                    <div>
+                        <label>Relationship</label>
+                        <select id="upload-relationship">
+                        </select>
+                    </div>
+                    <div>
+                        <label>Image URL</label>
+                        <input id="upload-img-url">
+                    </div>
+                    <br>
+                    <br>
+                    <div class="premium-visible">
+                        <label>Would you recommend this gift to your  </label> <span id="upload-relationship2"></span>
+                        <div>( 1 - No Way!, 5 - They are the same person! )</div>
+                            <div>
+                                <label></label>
+                                <select id="upload-relationship-score">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="upload-submit">Upload</button>
+            </div>
+        </div>
+
+    </div>
+</div>
