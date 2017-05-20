@@ -227,7 +227,7 @@ def upload_gift(request):
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     user_id = request.COOKIES.get('user_id')
-    user = User.objects.get(user_id)
+    user = User.objects.get(user_id=user_id)
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
     gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=relation)
