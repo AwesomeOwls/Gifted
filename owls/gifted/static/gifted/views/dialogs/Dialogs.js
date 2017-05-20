@@ -51,7 +51,7 @@ var UploadDialog = {
             obj['relationship_score'] = parseInt($relationship_score.val());
             obj['relationship2'] = $relationship2.text();
 
-
+            $('#upload-submit').off('click');
             $.ajax({
                 type: "POST",
                 url: "http://localhost:63343/upload/",
