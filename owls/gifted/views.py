@@ -504,8 +504,8 @@ def upload_gift(request):
     try:
         age = int(age)
         price = int(price)
-    except ValueError:
-        ans = {'status': 'value error'}
+    except (TypeError, ValueError):
+        ans = {'status': 'invalid age or price. Should be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
     if not gender == 'M' and not gender == 'F':
         ans = {'status': 'wrong gender'}
