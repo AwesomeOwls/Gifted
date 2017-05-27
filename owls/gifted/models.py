@@ -71,7 +71,7 @@ class Gift(models.Model):
 class RelationshipMatrixCell(models.Model):
     rel1 = models.ForeignKey(Relation, related_name='rel1')
     rel2 = models.ForeignKey(Relation, related_name='rel2')
-    strength = models.IntegerField()
+    strength = models.FloatField()
 
     def __str__(self):
-        return "%s, %s, %d" %(self.rel1.description,self.rel2.description,self.strength)
+        return "%s, %s, %f" %(self.rel1.description,self.rel2.description,self.strength)
