@@ -1,17 +1,16 @@
 from __future__ import unicode_literals
-import os
 from django.db import models
 
 
 class User(models.Model):
     user_id = models.CharField(max_length=150, primary_key=True)
     user_rank = models.IntegerField(default=0)
-    gifts_removed= models.IntegerField(default=0)
+    gifts_removed = models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
-    banned_start= models.DateTimeField(null=True)
+    banned_start = models.DateTimeField(null=True)
 
     def __str__(self):
-        return "id:%s, rank:%s, banned:%s" %(self.user_id,self.user_rank, "yes" if self.is_banned else "no")
+        return "id:%s, rank:%s, banned:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no")
 
 
 class Relation(models.Model):
@@ -33,11 +32,10 @@ class Relation(models.Model):
         ('colleague','Colleague'),
         ('grandson','Grandson'),
     )
-    description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES,primary_key=True)
+    description = models.CharField(max_length=30, choices=RELATIONSHIP_CHOICES, primary_key=True)
 
     def __str__(self):
-        return "%s" %(self.description)
-
+        return "%s" % self.description
 
 
 class Gift(models.Model):
@@ -71,7 +69,7 @@ class Gift(models.Model):
 class RelationshipMatrixCell(models.Model):
     rel1 = models.ForeignKey(Relation, related_name='rel1')
     rel2 = models.ForeignKey(Relation, related_name='rel2')
-    strength = models.IntegerField()
+    strength = models.FloatField()
 
     def __str__(self):
-        return "%s, %s, %d" %(self.rel1.description,self.rel2.description,self.strength)
+        return "%s, %s, %f" % (self.rel1.description, self.rel2.description, self.strength)
