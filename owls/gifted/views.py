@@ -21,9 +21,11 @@ NOT_LOGGED_IN = 'User is not logged-in'
 COOKIE_EXPIRED = 'Cookie expired'
 NOT_CHOSEN = 6
 
+BAN_TIME = timedelta(1)
 ERR_USR_NOT_FOUND = 0
 ERR_COOKIE_EXPIRED = 1
 LOGGED_OK = 2
+
 
 def index(request):
     context = {}
@@ -60,7 +62,7 @@ def like(request):
 
     # User may like/dislike other gifts only if his rank is high enough.
     if user.user_rank < TRUST_USER_RANK:
-        return HttpResponse(json.dumps({'status': 'user rank too low, cannot like'}),
+        return HttpResponse(json.dumps({'status': 'User rank too low, cannot like'}),
                             content_type='application/json', status=400)
 
     gift.gift_rank = gift.gift_rank + int(like)
@@ -75,7 +77,7 @@ def like(request):
         uploader.gifts_removed = uploader.gifts_removed + 1
         if uploader.gifts_removed > MAX_REMOVED:
             uploader.is_banned = True
-            uploader.banned_start = datetime.now()
+            uploader.banned_start = datetime.utcnow()
             uploader.save()
             ans['status'] = 'Sorry you are getting temporarily banned, suspected as spammer.'
             response = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
@@ -102,7 +104,6 @@ def check_logged(request):
         return 2
     else:
         return 0
-
 
 
 def invalidate_cookie(response):
@@ -160,12 +161,14 @@ def search_gift(request):
                                     price__range=[int(low_price),int(high_price)])
     else:
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
-    truncated_gifts = truncate_by_relation_strength(gifts, relation)
-    truncated_gifts.sort(key=lambda gift: gift.gift_rank, reverse=True)
-    truncated_gifts = truncated_gifts[:MAX_GIFTS]
-    ans['gifts'] = [x.as_json() for x in truncated_gifts]
-    ans['status'] = 'OK'
 
+    if gifts is not None:
+        truncated_gifts = truncate_by_relation_strength(gifts, relation)
+        truncated_gifts.sort(key=lambda gift: gift.gift_rank, reverse=True)
+        truncated_gifts = truncated_gifts[:MAX_GIFTS]
+        ans['gifts'] = [x.as_json() for x in truncated_gifts]
+
+    ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), status=200)
     extend_cookie(response)
     return response
@@ -187,7 +190,6 @@ def truncate_by_relation_strength(gifts,relation):
 
         if strength <= MIN_RELATION_STRENGTH:
             filtered_gifts.append(gift)
-    # gift_strength.sort(key=lambda x: x[1])
 
     return filtered_gifts
 
@@ -220,7 +222,7 @@ def login(request):
     else:
         if user.is_banned:
             #check if 24hrs passed since ban
-            if (datetime.utcnow() - user.banned_start) < timedelta(1):
+            if (datetime.utcnow().replace(tzinfo=None) - user.banned_start.replace(tzinfo=None)) < BAN_TIME:
                 ans['status'] = 'Sorry you are banned!'
                 return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
             else:
@@ -238,6 +240,7 @@ def login(request):
     res.set_cookie('user_rank', user.user_rank)
 
     return res
+
 
 def logout(request):
 
@@ -338,17 +341,23 @@ def upload_gift(request):
 
 
 def test(request):
-    tmp_date = datetime.utcnow() + timedelta(seconds=1800)
-    cookie = {'user_id':'112279187589484342184', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
-    r = requests.post("http://localhost:63343/search/",
-                      json={'age': 25,
-                            'relation': 'Parent',
-                            'gender': 'M',
-                            'price_range': '10-25',
-                            'user_id': '112279187589484342184'
-                        }, cookies = cookie)
-    return HttpResponse(json.dumps({}), status=200)
 
+    ban_date = datetime.utcnow()
+    user = User.objects.get(user_id='112573066830407886679')
+    user.banned_start = ban_date
+    user.save()
+
+    #tmp_date = datetime.utcnow() + timedelta(seconds=1800)
+    #cookie = {'user_id':'112279187589484342184', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
+    #r = requests.post("http://localhost:63343/search/",
+    #                  json={'age': 25,
+    #                        'relation': 'Parent',
+    #                        'gender': 'M',
+    #                        'price_range': '10-25',
+    #                        'user_id': '112279187589484342184'
+    #                    }, cookies = cookie)
+
+    return HttpResponse(json.dumps({}), status=200)
 
 
 def init_relationship_matrix():
@@ -413,7 +422,7 @@ def user_page(request):
 
     try:
         user = User.objects.get(user_id=user_id)
-        user_gifts = Gift.objects.filter(uploading_user=user.user_id)
+        user_gifts = Gift.objects.filter(uploading_user=user)
 
     except User.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'User/Gifts not found'}), status=400)
