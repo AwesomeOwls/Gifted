@@ -12,7 +12,7 @@ MIN_SEARCH_RANK = 10
 MIN_GIFT_RANK= -5
 TRUST_USER_RANK= 5
 MAX_REMOVED=3
-age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40)]
+age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40),(41,120)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 5
@@ -103,7 +103,13 @@ def search_gift(request):
     gender = body['gender']
     price_range = body.get('price_range')
     user_id = body['user_id']
-    user = User.objects.get(user_id)
+
+    try:
+        user = User.objects.get(user_id=user_id)
+    except User.DoesNotExist:
+        ans['status'] = 'User id from search request does not exist in DB.'
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+
     if user.user_rank < MIN_SEARCH_RANK:
         ans['status'] = 'RankTooLow'
         return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
@@ -140,8 +146,12 @@ def truncate_by_relation_strength(gifts,relation):
         relations_dict[rel.rel2] = rel.strength
     filtered_gifts = []
     for gift in gifts:
-        strength = relations_dict.get(gift.relationship)
-        if strength > MIN_RELATION_STRENGTH:
+        if gift.relationship == relation:
+            strength = 0
+        else:
+            strength = relations_dict.get(gift.relationship)
+
+        if strength <= MIN_RELATION_STRENGTH:
             filtered_gifts.append(gift)
     # gift_strength.sort(key=lambda x: x[1])
 
@@ -254,14 +264,16 @@ def upload_gift(request):
 
 def test(request):
     tmp_date = datetime.utcnow() + timedelta(seconds=1800)
-    cookie = {'user_id':'117896272606849173314', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
-    r = requests.post("http://localhost:63343",
+    cookie = {'user_id':'112279187589484342184', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
+    r = requests.post("http://localhost:63343/search/",
                       json={'age': 25,
                             'relation': 'Parent',
                             'gender': 'M',
-                            'price_range': '10-20',
-                            'user_id': '117896272606849173314'
+                            'price_range': '10-25',
+                            'user_id': '112279187589484342184'
                         }, cookies = cookie)
+    return HttpResponse(json.dumps({}), status=200)
+
 
 
 def init_relationship_matrix():
