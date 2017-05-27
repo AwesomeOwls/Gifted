@@ -319,16 +319,25 @@ def clear_db(request):
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
 
 
-#def user_page(request):
-    #body = json.loads(request.body)
-    #user_id = body['user_id']
-    #try:
-    #    user = User.objects.get(user_id)
-    #except TypeError:
-    #       return HttpResponse(json.dumps({'status':' user does not exist in db'}), status=400, content_type='application/json')
 
-    #try:
-    #    user_gifts= Gift.objects.filter(uploading_user=user.user_id)
-    #except
+def user_page(request):
+    ans = {}
+    if not is_logged(request):
+        ans['status'] = NOT_LOGGED_IN
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
 
+    body = json.loads(request.body)
+    user_id = body['user_id']
+
+
+    try:
+        user = User.objects.get(user_id)
+        user_gifts = Gift.objects.filter(uploading_user=user.user_id)
+
+    except User.DoesNotExist:
+        return HttpResponse(json.dumps({'status': 'User/Gifts not found'}), status=400)
+
+    ans['rank']= user.user_rank
+    ans['gifts'] = [x.as_json() for x in user_gifts]
+    ans['status'] = 'OK'
 
