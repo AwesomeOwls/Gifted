@@ -52,6 +52,11 @@
 	<script src="{% static 'gifted/views/main/Views.js' %}"></script>
 	<script src="{% static 'gifted/dependencies/w3data.js' %}"></script>
 	<script src="{% static 'gifted/dependencies/lodash.js' %}"></script>
+    <!-- Bootstrap slider -->
+    <script src="{% static 'gifted/dependencies/bootstrap-slider.js' %}"></script>
+    <link href="{% static 'gifted/style/bootstrap-slider.min.css' %} " rel="stylesheet">
+    <!--<link rel="script" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/bootstrap-slider.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.css">-->
 
 	<!-- StikyMenu -->
 	<script src="{% static 'gifted/flatfy-ui/js/stickUp.min.js' %}"></script>
@@ -165,5 +170,10 @@
 <script>
 	GoogleAuthInit();
 	w3IncludeHTML();
+    var mySlider = $("#sld").slider({min: 1,
+            max: 1000,
+            step: 10,
+            value: [100, 200],
+            range: true});
 </script>
 

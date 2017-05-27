@@ -48,7 +48,7 @@ var UploadDialog = {
             obj['age'] = parseInt($age.val());
             obj['img_url'] = $img_url.val();
             obj['price'] = parseInt($price.val());
-            obj['relationship_score'] = parseInt($relationship_score.val());
+            obj['relationship_score'] = 6 - parseInt($relationship_score.val());
             obj['relationship2'] = $relationship2.text();
 
             $('#upload-submit').off('click');
