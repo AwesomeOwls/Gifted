@@ -37,9 +37,10 @@ var Utils = {
 
     pickRandomProperty: function(obj) {
         var result;
-        var keys = Object.keys(obj);
-        var key = keys[Math.floor(Math.random()*keys.length)];
-        result = obj[key];
+        var count = 0;
+        for (var prop in obj)
+            if (Math.random() < 1/++count)
+                result = prop;
         return result;
     },
 
