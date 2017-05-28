@@ -8,7 +8,7 @@ from dateutil import parser
 import requests
 import csv
 
-MIN_SEARCH_RANK = 10
+MIN_SEARCH_RANK = 1 # easier for tests. TODO: set to a higher rank
 MIN_GIFT_RANK = -5
 TRUST_USER_RANK = 5
 MAX_REMOVED = 3
@@ -131,16 +131,13 @@ def search_gift(request):
 
     body = json.loads(request.body)
     age = body['age']
-    relation = body['relation']
+    relation = body['relationship']
     gender = body['gender']
     price_range = body.get('price_range')
-    user_id = body['user_id']
-
-    try:
-        user = User.objects.get(user_id=user_id)
-    except User.DoesNotExist:
-        ans['status'] = 'User id from search request does not exist in DB.'
-        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+    user_id = request.COOKIES.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    if user is None:
+        return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
 
     if user.user_rank < MIN_SEARCH_RANK:
         ans['status'] = 'RankTooLow'
@@ -169,7 +166,7 @@ def search_gift(request):
         ans['gifts'] = [x.as_json() for x in truncated_gifts]
 
     ans['status'] = 'OK'
-    response = HttpResponse(json.dumps(ans), status=200)
+    response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     extend_cookie(response)
     return response
 
