@@ -87,7 +87,7 @@ var UploadDialog = {
     },
 
     fillRelationships: function() {
-        Utils.addOptionsToSelect(window.relationships, '#upload-relationship');
+        Utils.setOptionsToSelect(window.relationships, '#upload-relationship');
     }
 
 };
