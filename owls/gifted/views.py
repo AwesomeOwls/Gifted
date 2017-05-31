@@ -7,6 +7,8 @@ from datetime import *
 from dateutil import parser
 import requests
 import csv
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 MIN_SEARCH_RANK = 1 # easier for tests. TODO: set to a higher rank
 MIN_GIFT_RANK = -5
@@ -278,7 +280,7 @@ def upload_gift(request):
     age = body['age']
     gender = body['gender']
     price = body['price']
-    image = body.get('img_url')
+    image_url = body.get('img_url')
     description = body['description']
     relation = body['relationship']
     other_relation = body['relationship2']
@@ -294,6 +296,12 @@ def upload_gift(request):
         ans = {'status': 'age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
+    try:
+        URLValidator()(image_url)
+    except ValidationError:
+        ans = {'status': 'image url is invalid'}
+        return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
+
     if not gender == 'M' and not gender == 'F':
         ans = {'status': 'wrong gender'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
@@ -306,7 +314,7 @@ def upload_gift(request):
     user = User.objects.get(user_id=user_id)
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
-    gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image, relationship=rel)
+    gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image_url, relationship=rel)
     gift.uploading_user_id = user_id
     gift.save()
 
