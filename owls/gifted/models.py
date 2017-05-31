@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
-
+import json
 
 class User(models.Model):
     user_id = models.CharField(max_length=150, primary_key=True)
@@ -8,9 +8,18 @@ class User(models.Model):
     gifts_removed = models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
     banned_start = models.DateTimeField(null=True)
+    liked_gift_ids = models.TextField(default='[]')
+
+    def add_liked_gift_id(self, gift_id):
+        liked_gifts = self.get_liked_gift_ids()
+        liked_gifts.append(gift_id)
+        self.liked_gift_ids = json.dumps(liked_gifts)
+
+    def get_liked_gift_ids(self):
+        return json.loads(self.foo)
 
     def __str__(self):
-        return "id:%s, rank:%s, banned:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no")
+        return "id:%s, rank:%s, banned:%s, liked gift ids:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no", self.liked_gift_ids)
 
 
 class Relation(models.Model):

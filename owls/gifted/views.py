@@ -50,7 +50,7 @@ def like(request):
         return res
 
     body = json.loads(request.body)
-    user_id = body['user_id']
+    user_id = request.COOKIES.get('user_id')
     like = body['like']
     gift_id = body['gift_id']
 
@@ -61,6 +61,14 @@ def like(request):
 
     except User.DoesNotExist, Gift.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
+
+    #check if user already liked/disliked this gift
+    if gift_id in user.get_liked_gift_ids():
+        return HttpResponse(json.dumps({'status': 'User already liked/disliked this gift'}),
+                            content_type='application/json', status=400)
+    #add liked gift id to list
+    user.add_liked_gift_id(gift_id)
+    user.save()
 
     # User may like/dislike other gifts only if his rank is high enough.
     if user.user_rank < TRUST_USER_RANK:
@@ -307,7 +315,7 @@ def upload_gift(request):
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
     rel = Relation.objects.get(description=relation)
     if rel is None:
-        ans = {'status': 'relation not defind'}
+        ans = {'status': 'relation not defined'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     user_id = request.COOKIES.get('user_id')
