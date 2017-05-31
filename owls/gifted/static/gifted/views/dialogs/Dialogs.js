@@ -34,22 +34,23 @@ var UploadDialog = {
 
         $('#upload-modal').modal();
 
-        // TODO add listeners of modal's input elements
-        //TODO add client side input validations
+        //TODO add client side input validations (stretch goal)
         //TODO add server failure indication (stretch goal)
         var randomRelation = Utils.pickRandomProperty(window.relationships); // TODO random generate
-        $relationship2.text(randomRelation);
+        var obj = {};
+
+        obj['relationship2'] = randomRelation;
+        $relationship2.text(window.relationships[randomRelation]);
 
         $('#upload-submit').click( function() {
-            var obj = {};
+
             obj['description'] = $description.val();
             obj['gender'] = $gender.val();
             obj['relationship'] = $relationship.val();
             obj['age'] = parseInt($age.val());
             obj['img_url'] = $img_url.val();
             obj['price'] = parseInt($price.val());
-            obj['relationship_score'] = parseInt($relationship_score.val());
-            obj['relationship2'] = $relationship2.text();
+            obj['relationship_score'] = 6 - parseInt($relationship_score.val());
 
             $('#upload-submit').off('click');
             $.ajax({
@@ -87,7 +88,7 @@ var UploadDialog = {
     },
 
     fillRelationships: function() {
-        Utils.addOptionsToSelect(window.relationships, '#upload-relationship');
+        Utils.setOptionsToSelect(window.relationships, '#upload-relationship');
     }
 
 };
@@ -95,16 +96,57 @@ var UploadDialog = {
 var SearchDialog = {
 
     showDialog: function() {
+        var $age = $('#search-age'); var $gender = $('#search-gender'); var $price = $('#search-price');
+        var $relationship = $('#search-relationship'); var $status = $('#status');
+        var $preloader = $('#preloader'); var $body = $('body');
+        SearchDialog.fillRelationships();
+
         $('#search-modal').modal();
 
         $('#search-submit').click( function() {
-            ResultsView.showResultsPage();
+
+
+            var obj = {};
+            obj['gender'] = $gender.val();
+            obj['relationship'] = $relationship.val();
+            obj['age'] = parseInt($age.val());
+            obj['price'] = parseInt($price.val());
+
+            $('#search-submit').off('click');
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/search/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        ResultsView.showResultsPage(data.gifts);
+                    });
+                },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
+            });
         });
 
     },
     closeDialog: function() {
         $('#search-modal').modal('hide');
     },
+
+
+    fillRelationships: function() {
+        Utils.setOptionsToSelect(window.relationships, '#search-relationship');
+    }
 
 };
 

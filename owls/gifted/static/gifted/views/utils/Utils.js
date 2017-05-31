@@ -15,7 +15,8 @@ var Utils = {
         return null;
     },
 
-    addOptionsToSelect: function(selectValues, $select) {
+    setOptionsToSelect: function(selectValues, $select) {
+        $($select)[0].innerHTML = ''
         $.each(selectValues, function(key, value) {
             $($select)
                 .append($("<option></option>")

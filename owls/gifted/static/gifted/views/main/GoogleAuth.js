@@ -4,7 +4,6 @@ var GoogleAuth = {
     onSignIn: function (googleUser) {
 
         var id_token = googleUser.getAuthResponse().id_token;
-        //TODO Yehonatan: uncomment this when backend token verification is done
         GoogleAuth.validateToken(id_token, googleUser);
     },
 
@@ -44,6 +43,12 @@ var GoogleAuth = {
     },
 
     validateToken: function (id_token, googleUser) {
+        var $logout = $('#logout-button');
+        var $status = $('#status');var $preloader = $('#preloader');
+        $logout.click(GoogleAuth.signOut);
+        NavBar.hideAllButtons();
+        $status.show();
+        $preloader.show();
 
         $.ajax({
             type: "POST",
