@@ -287,9 +287,13 @@ def upload_gift(request):
     try:
         age = int(age)
         price = int(price)
-    except (TypeError,ValueError):
-        ans = {'status': 'invalid age/price'}
+        if age <= 0 or age >= 200 or price <= 0:
+            ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
+            return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
+    except (TypeError, ValueError):
+        ans = {'status': 'age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
+
     if not gender == 'M' and not gender == 'F':
         ans = {'status': 'wrong gender'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
