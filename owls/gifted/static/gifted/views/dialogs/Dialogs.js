@@ -96,10 +96,17 @@ var UploadDialog = {
 var SearchDialog = {
 
     showDialog: function() {
-        var $age = $('#search-age'); var $gender = $('#search-gender'); var $price = $('#search-price');
-        var $relationship = $('#search-relationship'); var $status = $('#status');
-        var $preloader = $('#preloader'); var $body = $('body');
+        var $age = $('#search-age'); var $gender = $('#search-gender'); var $price_from = $('#search-price-from');
+        var $price_to = $('#search-price-to');var $relationship = $('#search-relationship');
+        var $status = $('#status');var $preloader = $('#preloader'); var $body = $('body');
+
         SearchDialog.fillRelationships();
+
+        // $price.slider({min: 1,
+        //     max: 1000,
+        //     step: 10,
+        //     value: [1, 100],
+        //     range: true});
 
         $('#search-modal').modal();
 
@@ -110,7 +117,7 @@ var SearchDialog = {
             obj['gender'] = $gender.val();
             obj['relationship'] = $relationship.val();
             obj['age'] = parseInt($age.val());
-            obj['price'] = parseInt($price.val());
+            obj['price'] = $price_from.val() + '-' + $price_to.val();
 
             $('#search-submit').off('click');
             $.ajax({
