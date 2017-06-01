@@ -13,7 +13,6 @@ var ProfileView = {
     },
 
     onProfilePageInjected: function() {
-        var backToIntro = $('#back-to-intro');
         var $picture = $('#profile-picture');
         var $name = $('#profile-name');
         var $rank = $('#profile-rank');
@@ -25,14 +24,6 @@ var ProfileView = {
         $picture.attr('src', pictureURL);
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
         $rank[0].innerHTML = 'Your Rank is: ' + user_rank;
-
-        // backToIntro.click(MainView.showMainView);
-
-
-        $('#list').click(function(event){event.preventDefault();$('#products .item').addClass('list-group-item');});
-        $('#grid').click(function(event){event.preventDefault();$('#products .item').removeClass('list-group-item');$('#products .item').addClass('grid-group-item');});
-
-
 
         var testGifts = [
             {
@@ -76,21 +67,21 @@ var ProfileView = {
 
     createGiftElement: function(gift) {
 
-        return '<div class="item  col-xs-4 col-lg-4">'+
+        return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
             '<div class="thumbnail">' +
             '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
             '<div class="caption">' +
             '<h4 class="group inner list-group-item-heading">' +
             gift.description + '</h4>' +
-            '<p class="group inner list-group-item-text">' +
-            'Likes: ' + gift.gift_rank +
-            '</p>' +
             '<div class="row">' +
             '<div class="col-xs-12 col-md-6">' +
-            '<p class="lead">' + 'Price:' +
+            '<p class="lead">' + 'Price: ' +
             gift.price + ' $' + '</p>' +
             '</div>' +
             '<div class="col-xs-12 col-md-6">' +
+            '<p class="lead">' +
+            'Likes: ' + gift.gift_rank +
+            '</p>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -127,13 +118,6 @@ var MainView = {
 };
 
 var ResultsView = {
-    //TODO ResultsView Functions
-    /*
-     $(document).ready(function() {
-     $('#list').click(function(event){event.preventDefault();$('#products .item').addClass('list-group-item');});
-     $('#grid').click(function(event){event.preventDefault();$('#products .item').removeClass('list-group-item');$('#products .item').addClass('grid-group-item');});
-     });
-     */
 
     showResultsPage: function(data) {
         window.gifts = data;
@@ -145,13 +129,6 @@ var ResultsView = {
     },
 
     onResultsPageInjected: function() {
-        var backToIntro = $('#back-to-intro');
-
-        backToIntro.click(MainView.showMainView);
-
-        $('#list').click(function(event){event.preventDefault();$('#products .item').addClass('list-group-item');});
-        $('#grid').click(function(event){event.preventDefault();$('#products .item').removeClass('list-group-item');$('#products .item').addClass('grid-group-item');});
-
         ResultsView.insertGifts(window.gifts);
 
     },
@@ -167,24 +144,29 @@ var ResultsView = {
 
     createGiftElement: function(gift) {
 
-        return '<div class="item  col-xs-4 col-lg-4">'+
+        return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
                     '<div class="thumbnail">' +
                             '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
                             '<div class="caption">' +
                                     '<h4 class="group inner list-group-item-heading">' +
                                     gift.description + '</h4>' +
-                                '<p class="group inner list-group-item-text">' +
-                                'Likes:' + gift.gift_rank +
-                                '</p>' +
+                                    '<div class="btn-group">' +
+                                         '<button  onclick="ResultsView.likeGift(this.id, 1)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
+                                             '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
+                                          '</button>' +
+                                          '<button  onclick="ResultsView.likeGift(this.id, -1)" class="btn btn-dislike" id=' + '"' + gift.gift_id + '"' + '>' + 'Dislike ' +
+                                             '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
+                                          '</button>' +
+                                    '</div>' +
                                  '<div class="row">' +
                                      '<div class="col-xs-12 col-md-6">' +
-                                         '<p class="lead">' + 'Price:' +
+                                         '<p class="lead">' + 'Price: ' +
                                         gift.price + ' $' + '</p>' +
                                     '</div>' +
                                      '<div class="col-xs-12 col-md-6">' +
-                                          '<button  onclick="ResultsView.likeGift(this.id)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
-                                             '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
-                                          '</button>' +
+                                        '<p class="lead">' +
+                                           'Likes: ' + gift.gift_rank +
+                                        '</p>' +
                                     '</div>' +
                                  '</div>' +
                             '</div>' +
@@ -193,8 +175,36 @@ var ResultsView = {
     },
 
 
-    likeGift: function(giftID) {
+    likeGift: function(giftID, like) {
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+
+
         console.log('gift id: ', giftID);
+        var obj = {};
+        obj.gift_id = giftID;
+        obj.like = like;
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:63343/like/",
+            // The key needs to match your method's input parameter (case-sensitive).
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(obj),
+            dataType: "json",
+            beforeSend: function(){
+                $status.show();
+                $preloader.show();
+            },
+            success: function(data){
+                $preloader.delay(300).fadeOut('slow', function () {
+                    $body.delay(550).css({'overflow': 'visible'});
+                });
+            },
+            error: function(error){
+                $status.hide();
+                $preloader.hide();
+                errorDialog.showDialog(error.responseText);
+            },
+        });
     },
 
 };
