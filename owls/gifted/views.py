@@ -10,7 +10,7 @@ import csv
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
-MIN_SEARCH_RANK = 1 # easier for tests. TODO: set to a higher rank
+MIN_SEARCH_RANK = 0 # easier for tests. TODO: set to a higher rank
 MIN_GIFT_RANK = -5
 TRUST_USER_RANK = 5
 MAX_REMOVED = 3
