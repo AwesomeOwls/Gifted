@@ -19,9 +19,6 @@ window.relationships = {
 };
 
 var UploadDialog = {
-    // fields: user_id (string), description (250 chars), age (integer), gender ('M', 'F'), price (integer)
-    // , relationship (string), img_url :
-    //
 
     showDialog: function() {
         var $description = $('#upload-description'); var $age = $('#upload-age');
@@ -34,9 +31,11 @@ var UploadDialog = {
 
         $('#upload-modal').modal();
 
-        //TODO add client side input validations (stretch goal)
+        $('#upload-modal').on('hidden.bs.modal',UploadDialog.onDialogClose);
+
+        //TODO add client side input validations + required fields (stretch goal)
         //TODO add server failure indication (stretch goal)
-        var randomRelation = Utils.pickRandomProperty(window.relationships); // TODO random generate
+        var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
         obj['relationship2'] = randomRelation;
@@ -77,14 +76,15 @@ var UploadDialog = {
             });
 
         });
-
-        // TODO add listeners of modal's input elements + validation etc.
-        //TODO add client side input validations
-        //TODO add server failure indication (stretch goal)
     },
 
     closeDialog: function() {
         $('#upload-modal').modal('hide');
+    },
+
+    onDialogClose: function() {
+        $('#upload-submit').off('click');
+        $('#upload-modal').off('hidden.bs.modal');
     },
 
     fillRelationships: function() {
@@ -109,6 +109,8 @@ var SearchDialog = {
         //     range: true});
 
         $('#search-modal').modal();
+
+        $('#search-modal').on('hidden.bs.modal',SearchDialog.onDialogClose);
 
         $('#search-submit').click( function() {
 
@@ -150,6 +152,10 @@ var SearchDialog = {
         $('#search-modal').modal('hide');
     },
 
+    onDialogClose: function() {
+        $('#search-submit').off('click');
+        $('#search-modal').off('hidden.bs.modal');
+    },
 
     fillRelationships: function() {
         Utils.setOptionsToSelect(window.relationships, '#search-relationship');

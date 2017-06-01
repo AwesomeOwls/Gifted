@@ -4,7 +4,7 @@ var GoogleAuth = {
     onSignIn: function (googleUser) {
 
         var id_token = googleUser.getAuthResponse().id_token;
-        GoogleAuth.validateToken(id_token, googleUser);
+        GoogleAuth.validateToken(id_token);
     },
 
     signOut: function () {
@@ -42,7 +42,7 @@ var GoogleAuth = {
         });
     },
 
-    validateToken: function (id_token, googleUser) {
+    validateToken: function (id_token) {
         var $logout = $('#logout-button');
         var $status = $('#status');var $preloader = $('#preloader');
         $logout.click(GoogleAuth.signOut);

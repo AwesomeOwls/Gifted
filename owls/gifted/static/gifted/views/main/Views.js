@@ -26,7 +26,7 @@ var ProfileView = {
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
         $rank[0].innerHTML = 'Your Rank is: ' + user_rank;
 
-        backToIntro.click(MainView.showMainView);
+        // backToIntro.click(MainView.showMainView);
 
 
         $('#list').click(function(event){event.preventDefault();$('#products .item').addClass('list-group-item');});
@@ -34,95 +34,63 @@ var ProfileView = {
 
 
 
-        var testGifts = {
-            'some_gift_id' : {
+        var testGifts = [
+            {
                 'relationship': 'Parent',
-                'img_url' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                'uploaded_at' : Date.now(),
+                'description': 'cool giftttt',
+                'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
                 'gift_rank' : 15,
                 'price' : 150
 
             },
 
-            'some_gift_id2' : {
+            {
                 'relationship': 'Sibling',
-                'img_url' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                'uploaded_at' : Date.now(),
+                'description': 'amazing giftttt',
+                'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
                 'gift_rank' : 30,
                 'price' : 200
 
             },
-
-            'some_gift_id3' : {
+            {
                 'relationship': 'Partner',
-                'img_url' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                'uploaded_at' : Date.now().toString(),
+                'description': 'some giftttt',
+                'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
                 'gift_rank' : -5,
                 'price' : 70
 
             },
-        };
+        ];
 
         ProfileView.insertGifts(testGifts);
 
     },
 
-    // insertGifts: function(GiftsObject) {
-    //     $.each(GiftsObject, function(giftKey, giftAttrs) {
-    //         $($('#gifts-list'))
-    //             .append($("<div id=list_" + giftKey + " class='user-gift'></div>"));
-    //         $.each(giftAttrs, function(key, value) {
-    //             if (key == 'img_url') {
-    //                 var img = $('<img>');
-    //                 img.attr('src', value);
-    //                 $('#list_' + giftKey)
-    //                     .append(img);
-    //
-    //             }
-    //             else {
-    //                 $($('#list_' + giftKey))
-    //                     .append($("<p></p>")
-    //                         .text(key + ':   ' + value));
-    //             }
-    //
-    //         })
-    //     });
-    // },
-    //
-    // createGiftElement: function() {
-    //
-    // },
-
     insertGifts: function(GiftsObject) {
-        // $.each(GiftsObject, function(giftKey, giftAttrs) {
-        //     $($('#products'))
-        //         .append($(ResultsView.createGiftElement()))
-        // });
+        var $products = $('#products');
         var i;
-        for (i = 0; i < 50; i++) {
-            $($('#products'))
-                .append($(ProfileView.createGiftElement()))
+        for (i = 0; i < GiftsObject.length; i++) {
+            $($products).append($(ProfileView.createGiftElement(GiftsObject[i])))
         }
     },
 
-    createGiftElement: function() {
+    createGiftElement: function(gift) {
 
         return '<div class="item  col-xs-4 col-lg-4">'+
             '<div class="thumbnail">' +
-            '<img class="group list-group-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM" alt="" />' +
+            '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
             '<div class="caption">' +
             '<h4 class="group inner list-group-item-heading">' +
-            'Gift Name</h4>' +
+            gift.description + '</h4>' +
             '<p class="group inner list-group-item-text">' +
-            'Gift details and fields goes here... Lorem ipsum dolor sit amet, consectetuer adipiscing elit,' +
-            'sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>' +
+            'Likes: ' + gift.gift_rank +
+            '</p>' +
             '<div class="row">' +
             '<div class="col-xs-12 col-md-6">' +
-            '<p class="lead">' +
-            '$21.000</p>' +
+            '<p class="lead">' + 'Price:' +
+            gift.price + ' $' + '</p>' +
             '</div>' +
             '<div class="col-xs-12 col-md-6">' +
-            '<a class="btn btn-primary" href="http://www.jquery2dotnet.com">Like Gift</a>' +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -141,8 +109,9 @@ var MainView = {
     },
 
     initMainView: function() {
-        MainView.showMainView();
         var $home = $('#home-button');
+
+        MainView.showMainView();
         $home.click(MainView.showMainView);
 
         if (!Utils.readCookie('user_id'))
@@ -183,56 +152,12 @@ var ResultsView = {
         $('#list').click(function(event){event.preventDefault();$('#products .item').addClass('list-group-item');});
         $('#grid').click(function(event){event.preventDefault();$('#products .item').removeClass('list-group-item');$('#products .item').addClass('grid-group-item');});
 
-
-        var testGifts = [
-                {
-                    'gift_id': '123',
-                    'description': 'weee',
-                    'relationship': 'Parent',
-                    'gift_img' : 'http://compass.microsoft.com/assets/4b/d0/4bd0d69b-f194-4364-b5f7-d7bc95e795bc.jpg?n=mk_ambi_blk_large.jpg',
-                    'gift_rank' : 15,
-                    'price' : 150
-
-                },
-                {
-                    'gift_id': '123',
-                    'description': 'weee',
-                    'relationship': 'Parent',
-                    'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                    'gift_rank' : 15,
-                    'price' : 150
-
-                },
-                {
-                    'gift_id': '123',
-                    'description': 'weee',
-                    'relationship': 'Parent',
-                    'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                    'gift_rank' : 15,
-                    'price' : 150
-
-                },
-                {
-                    'gift_id': '123',
-                    'description': 'weee',
-                    'relationship': 'Parent',
-                    'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                    'gift_rank' : 15,
-                    'price' : 150
-
-                }
-            ];
-        testGifts = window.gifts;
-        ResultsView.insertGifts(testGifts);
+        ResultsView.insertGifts(window.gifts);
 
     },
 
     insertGifts: function(GiftsObject) {
         var $products = $('#products');
-        // $.each(GiftsObject, function(giftKey, giftAttrs) {
-        //     $($('#products'))
-        //         .append($(ResultsView.createGiftElement()))
-        // });
         var i;
         for (i = 0; i < GiftsObject.length; i++) {
             $($products)
@@ -249,7 +174,7 @@ var ResultsView = {
                                     '<h4 class="group inner list-group-item-heading">' +
                                     gift.description + '</h4>' +
                                 '<p class="group inner list-group-item-text">' +
-                                'Rank:' + gift.gift_rank +
+                                'Likes:' + gift.gift_rank +
                                 '</p>' +
                                  '<div class="row">' +
                                      '<div class="col-xs-12 col-md-6">' +
@@ -257,12 +182,19 @@ var ResultsView = {
                                         gift.price + ' $' + '</p>' +
                                     '</div>' +
                                      '<div class="col-xs-12 col-md-6">' +
-                                          '<a class="btn btn-primary" href="http://www.jquery2dotnet.com">Like Gift</a>' +
+                                          '<button  onclick="ResultsView.likeGift(this.id)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
+                                             '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
+                                          '</button>' +
                                     '</div>' +
                                  '</div>' +
                             '</div>' +
                     '</div>' +
               '</div>'
+    },
+
+
+    likeGift: function(giftID) {
+        console.log('gift id: ', giftID);
     },
 
 };
