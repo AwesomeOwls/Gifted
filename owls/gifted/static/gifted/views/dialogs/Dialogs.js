@@ -51,7 +51,7 @@ var UploadDialog = {
             obj['price'] = parseInt($price.val());
             obj['relationship_score'] = 6 - parseInt($relationship_score.val());
 
-            $('#upload-submit').off('click');
+            UploadDialog.onDialogClose();
             $.ajax({
                 type: "POST",
                 url: "http://localhost:63343/upload/",
@@ -121,7 +121,7 @@ var SearchDialog = {
             obj['age'] = parseInt($age.val());
             obj['price'] = $price_from.val() + '-' + $price_to.val();
 
-            $('#search-submit').off('click');
+            SearchDialog.onDialogClose();
             $.ajax({
                 type: "POST",
                 url: "http://localhost:63343/search/",
