@@ -4,7 +4,7 @@ window.relationships = {
     'grandparent': 'Grandparent',
     'sibling': 'Sibling',
     'cousin': 'Cousin',
-    'parent in law': 'Parent in law',
+    'parent_in_law': 'Parent in law',
     'nephew': 'Nephew',
     'friend': 'Friend',
     'partner': 'Partner',

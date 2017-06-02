@@ -4,11 +4,11 @@
 
 var ProfileView = {
 
-    showProfilePage: function() {
+    showProfilePage: function(gifts) {
+        window.userGifts = gifts
         Utils.clearView('.main-container');
-        Utils.clearView('#about');
         var profilePage = 'static/gifted/inner-templates/profilePage.html';
-        Utils.injectView('.main-container', profilePage, ProfileView.onProfilePageInjected);
+        Utils.injectView('.main-container', profilePage, ProfileView.onProfilePageInjected, 'background1_80.jpg');
 
     },
 
@@ -25,35 +25,7 @@ var ProfileView = {
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
         $rank[0].innerHTML = 'Your Rank is: ' + user_rank;
 
-        var testGifts = [
-            {
-                'relationship': 'Parent',
-                'description': 'cool giftttt',
-                'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                'gift_rank' : 15,
-                'price' : 150
-
-            },
-
-            {
-                'relationship': 'Sibling',
-                'description': 'amazing giftttt',
-                'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                'gift_rank' : 30,
-                'price' : 200
-
-            },
-            {
-                'relationship': 'Partner',
-                'description': 'some giftttt',
-                'gift_img' : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLf_4lq5fH2GyiX94B7o8wKNXmDwPcQE3KIFBn8eMFdHwPwozM',
-                'gift_rank' : -5,
-                'price' : 70
-
-            },
-        ];
-
-        ProfileView.insertGifts(testGifts);
+        ProfileView.insertGifts(window.userGifts);
 
     },
 
@@ -96,7 +68,7 @@ var MainView = {
     showMainView: function() {
         Utils.clearView('.main-container');
         var IntroHeader = 'static/gifted/inner-templates/IntroHeader.html';
-        Utils.injectView('.main-container', IntroHeader);
+        Utils.injectView('.main-container', IntroHeader, null, 'background1.jpg');
     },
 
     initMainView: function() {
@@ -119,26 +91,31 @@ var MainView = {
 
 var ResultsView = {
 
-    showResultsPage: function(data) {
-        window.gifts = data;
+    showResultsPage: function(gifts) {
+        window.resultsGifts = gifts;
         Utils.clearView('.main-container');
-        Utils.clearView('#about');
         var ResultsPage = 'static/gifted/inner-templates/searchResultsPage.html';
-        Utils.injectView('.main-container', ResultsPage, ResultsView.onResultsPageInjected);
+        Utils.injectView('.main-container', ResultsPage, ResultsView.onResultsPageInjected, 'background1_80.jpg');
 
     },
 
     onResultsPageInjected: function() {
-        ResultsView.insertGifts(window.gifts);
+        ResultsView.insertGifts(window.resultsGifts);
 
     },
 
     insertGifts: function(GiftsObject) {
         var $products = $('#products');
+
+
+        if (!GiftsObject.length) {
+            $($products).append($('<h3 class="h3_home wow fadeIn" data-wow-delay="0.4s">No Results</h3>'));
+
+
+        }
         var i;
         for (i = 0; i < GiftsObject.length; i++) {
-            $($products)
-                .append($(ResultsView.createGiftElement(GiftsObject[i])))
+            $($products).append($(ResultsView.createGiftElement(GiftsObject[i])));
         }
     },
 
@@ -169,6 +146,9 @@ var ResultsView = {
                                         '</p>' +
                                     '</div>' +
                                  '</div>' +
+                                '<div class="row">' +
+                                          gift.description +
+                                '</div>' +
                             '</div>' +
                     '</div>' +
               '</div>'
@@ -212,14 +192,9 @@ var ResultsView = {
 
 var AboutView = {
     showAboutView: function() {
-        Utils.clearView('#about');
+        Utils.clearView('.main-container');
         var AboutPage = 'static/gifted/inner-templates/AboutPage.html';
-        Utils.injectView('#about', AboutPage);
+        Utils.injectView('.main-container', AboutPage, null, 'background1_80.jpg');
 
-    },
-
-    onAboutViewInjected: function() {
-        $('a[href="#about"]').click(function(){
-        });
     },
 }

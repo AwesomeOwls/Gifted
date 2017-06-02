@@ -45,17 +45,10 @@ var Utils = {
         return result;
     },
 
-    injectView: function(selector, template, callback) {
-        return $(selector).load(template, null, callback);
+    injectView: function(selector, template, callback, background) {
+        if (background) $(selector).css('background-image', 'url(static/gifted/img/' + background + ')');
 
-        // TODO may be loading indicator in the future(?)
-        // var $status = $('#status');var $preloader = $('#preloader');
-        // $status.show();
-        // $preloader.show();
-        // $status.delay(300).fadeOut();
-        // return $preloader.delay(300).fadeOut('slow', function () {
-        //     return $(selector).load(template, null, callback);
-        // });
+        return $(selector).load(template, null, callback);
     },
 
     clearView: function(selector) {

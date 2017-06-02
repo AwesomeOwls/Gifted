@@ -1,3 +1,7 @@
+body {
+  overflow: hidden!important;
+}
+
 .main-container {
 overflow-y: scroll;
 }

@@ -54,6 +54,8 @@ var NavBar = {
     },
 
     showWelcome: function(userName, pictureURL) {
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+
         var introHeader = 'static/gifted/inner-templates/introHeader.html';
         pictureURL = pictureURL.replace(/\"/g, "");
         var $welcome = $('#welcome');
@@ -67,8 +69,36 @@ var NavBar = {
         img.appendTo('#welcome');
         $welcomeText.appendTo('#welcome');
         $welcome.show();
-        $welcome.click(ProfileView.showProfilePage)
+
+        $welcome.click( function() {
+
+            var obj = {};
+            obj['user_id'] = Utils.readCookie('user_id');
+
+            // $welcome.off('click');
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/profile/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        ProfileView.showProfilePage(data.gifts);
+                    });
+                },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
+            });
+        });
     },
-
-
 };
