@@ -17,7 +17,7 @@ MAX_REMOVED = 3
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40),(41,120)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
-PREMIUM_USER_RANK = 25 # TODO Yehonatan uncomment this!
+PREMIUM_USER_RANK = 10 # TODO Yehonatan uncomment this!
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'User is not logged-in'
 COOKIE_EXPIRED = 'Cookie expired'
@@ -58,10 +58,8 @@ def like(request):
         gift = Gift.objects.get(pk=gift_id)
         user = User.objects.get(user_id=user_id)
         uploader = User.objects.get(user_id=gift.uploading_user.user_id)
-
     except User.DoesNotExist, Gift.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
-
     #check if user already liked/disliked this gift
     if gift_id in user.get_liked_gift_ids():
         return HttpResponse(json.dumps({'status': 'User already liked/disliked this gift'}),
@@ -155,6 +153,7 @@ def search_gift(request):
         age = int(age)
         low_price = int(low_price)
         high_price = int(high_price)
+        # ////input validations////
 
         if low_price <= 0 or high_price <= 0 or high_price < low_price:
             ans = {'status': 'prices must be positive integers and high price must be higher then lower price'}
@@ -163,6 +162,8 @@ def search_gift(request):
         if age <= 0 or age >= 200:
             ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
+
+        # ////end of input validations////
 
     except (TypeError, ValueError):
         ans = {'status': 'age/price must be integers'}
@@ -176,16 +177,19 @@ def search_gift(request):
         return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
     elif user.is_banned:
         return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json', status=400)
+
     rel_rng = None
     for rng in age_ranges:
         if rng[0] <= int(age) <= rng[1]:
             rel_rng = rng
             break
     if rel_rng is None:
+        # should not get here at all
         return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json',status=400)
+
     # query the DB for the relevant gifts
     if price_range:
-        gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender,\
+        gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender,
                                     price__range=[int(low_price), int(high_price)])
     else:
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
@@ -249,7 +253,7 @@ def login(request):
         user.save()
     else:
         if user.is_banned:
-            #check if 24hrs passed since ban
+            # check if ban is over
             if (datetime.utcnow().replace(tzinfo=None) - user.banned_start.replace(tzinfo=None)) < BAN_TIME:
                 ans['status'] = 'Sorry you are banned!'
                 return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
@@ -263,7 +267,7 @@ def login(request):
     res.set_cookie('user_id', user_id)
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
-    #set cookie for 30 minutes
+    # set cookie for 30 minutes
     res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
     res.set_cookie('user_rank', user.user_rank)
 
@@ -326,7 +330,7 @@ def upload_gift(request):
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     try:
-        URLValidator()(image_url)
+        URLValidator(image_url)
     except ValidationError:
         ans = {'status': 'image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
@@ -351,22 +355,22 @@ def upload_gift(request):
     if relation_strength != NOT_CHOSEN and user.user_rank > PREMIUM_USER_RANK:
         other_rel = Relation.objects.get(description=other_relation)
         try:
-            rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=relation.pk, rel2_id=other_rel.pk)
-            #if user improved the relationship decrease the strength by 0.01 thus making it closer
+            rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=rel.pk, rel2_id=other_rel.pk)
+            # if user improved the relationship decrease the strength by 0.01 thus making it closer
             if (rel_matrix_cell.strength - relation_strength) > 0:
                 rel_matrix_cell.strength -= 0.01
-            else: #else make it farer by increasing(can't be zero)
+            else: # else decrease the strength
                 rel_matrix_cell.strength += 0.01
-            #normalize values
+
+            # normalize values
             if rel_matrix_cell.strength < 1:
                 rel_matrix_cell.strength = 1
             elif rel_matrix_cell.strength > 5:
                 rel_matrix_cell.strength = 5
 
-            #rel_matrix_cell.strength = rel_matrix_cell.strength + (rel_matrix_cell.strength - relation_strength)
         except TypeError:
-            return HttpResponse(json.dumps({'status':'relations ratio does not exist in db'}), status=400, content_type='application/json')
-        user.user_rank = user.user_rank + 1
+            return HttpResponse(json.dumps({'status':'relations ratio does not exist in db'}), status=401, content_type='application/json')
+        user.user_rank += 1
         rel_matrix_cell.save()
 
     user.user_rank = user.user_rank + 2
@@ -420,6 +424,7 @@ def init_relationship_matrix():
                                                                           rel2=second_rel, strength=int(row[indx]))
                         relationship_matrix_cell.save()
                     i = i + 1
+
     except IOError:
         return HttpResponse(json.dumps({'status':'file not found'}), status=400)
     return HttpResponse(json.dumps({}), status=200)
@@ -431,6 +436,33 @@ def fill_db(request):
     except (IOError, ValueError, TypeError):
         return HttpResponse(json.dumps({'status':'error'}), status=400)
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
+
+
+def add_gifts(request):
+    try:
+        with open('../gifts.csv', 'r+') as rel_matrix_file:
+            reader = csv.reader(rel_matrix_file)
+            next(reader)  # skip columns names
+            user = User.objects.all()[:1].get()
+            i=0
+            for row in reader:
+                row = row[1:]
+                descreption = row[0]
+                age = row[1]
+                gender = row[2]
+                price = row[3]
+                gift_img = row[4]
+                rank = row[5]
+                relationship = row[6]
+                gift = Gift(relationship=relationship,gift_img=gift_img,
+                            age=age,description=descreption,price=price,gender=gender,gift_rank=rank)
+                i += 1
+                gift.save()
+            user.user_rank += 2*i
+            user.save()
+    except IOError:
+        return HttpResponse(json.dumps({'status': 'file not found'}), status=400)
+    return HttpResponse(json.dumps({}), status=200)
 
 
 def clear_db(request):

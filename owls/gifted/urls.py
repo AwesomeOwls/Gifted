@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^fill_db/', views.fill_db),
     url(r'^clear/', views.clear_db),
     url(r'^profile/', views.user_page),
-    url(r'^like/', views.like)
+    url(r'^like/', views.like),
+    url(r'^add_gifts/',views.add_gifts)
 ]
