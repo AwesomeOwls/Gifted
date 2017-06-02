@@ -55,7 +55,7 @@ def like(request):
     gift_id = body['gift_id']
 
     try:
-        gift = Gift.objects.get(gift_id=gift_id)
+        gift = Gift.objects.get(pk=gift_id)
         user = User.objects.get(user_id=user_id)
         uploader = User.objects.get(user_id=gift.uploading_user.user_id)
 
@@ -143,9 +143,10 @@ def search_gift(request):
     age = body['age']
     relation = body['relationship']
     gender = body['gender']
-    price_range = body.get('price_range')
+    price_range = body.get('price')
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
+    low_price = high_price = None
 
     if price_range:
         low_price, high_price = price_range.split('-')
@@ -464,7 +465,6 @@ def user_page(request):
     except User.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'User/Gifts not found'}), status=400)
 
-    ans['rank'] = user.user_rank
     ans['gifts'] = [x.as_json() for x in user_gifts]
     ans['status'] = 'OK'
 

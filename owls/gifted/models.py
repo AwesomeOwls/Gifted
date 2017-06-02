@@ -16,7 +16,7 @@ class User(models.Model):
         self.liked_gift_ids = json.dumps(liked_gifts)
 
     def get_liked_gift_ids(self):
-        return json.loads(self.foo)
+        return json.loads(self.liked_gift_ids)
 
     def __str__(self):
         return "id:%s, rank:%s, banned:%s, liked gift ids:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no", self.liked_gift_ids)

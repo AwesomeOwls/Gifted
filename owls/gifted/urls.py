@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^test/', views.test),
     url(r'^fill_db/', views.fill_db),
     url(r'^clear/', views.clear_db),
-    url(r'^profile/', views.user_page)
+    url(r'^profile/', views.user_page),
+    url(r'^like/', views.like)
 ]
