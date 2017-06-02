@@ -146,6 +146,27 @@ def search_gift(request):
     price_range = body.get('price_range')
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
+
+    if price_range:
+        low_price, high_price = price_range.split('-')
+
+    try:
+        age = int(age)
+        low_price = int(low_price)
+        high_price = int(high_price)
+
+        if low_price <= 0 or high_price <= 0 or high_price < low_price:
+            ans = {'status': 'prices must be positive integers and high price must be higher then lower price'}
+            return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
+
+        if age <= 0 or age >= 200:
+            ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
+            return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
+
+    except (TypeError, ValueError):
+        ans = {'status': 'age/price must be integers'}
+        return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
+
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
 
@@ -153,7 +174,7 @@ def search_gift(request):
         ans['status'] = 'RankTooLow'
         return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
     elif user.is_banned:
-        return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json',status=400)
+        return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json', status=400)
     rel_rng = None
     for rng in age_ranges:
         if rng[0] <= int(age) <= rng[1]:
@@ -163,14 +184,13 @@ def search_gift(request):
         return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json',status=400)
     # query the DB for the relevant gifts
     if price_range:
-        low_price,high_price = price_range.split('-')
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender,\
-                                    price__range=[int(low_price),int(high_price)])
+                                    price__range=[int(low_price), int(high_price)])
     else:
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
 
     if gifts is not None:
-        truncated_gifts = truncate_by_relation_strength(gifts, relation)
+        truncated_gifts = truncate_by_relation_strength(gifts, relation, user_id)
         truncated_gifts.sort(key=lambda gift: gift.gift_rank, reverse=True)
         truncated_gifts = truncated_gifts[:MAX_GIFTS]
         ans['gifts'] = [x.as_json() for x in truncated_gifts]
@@ -182,7 +202,7 @@ def search_gift(request):
 
 
 # truncate list of gifts by the strength of their relation to the input relation
-def truncate_by_relation_strength(gifts,relation):
+def truncate_by_relation_strength(gifts,relation,user_id):
 
     relations = RelationshipMatrixCell.objects.filter(rel1=relation)
     relations_dict = {}
@@ -195,7 +215,7 @@ def truncate_by_relation_strength(gifts,relation):
         else:
             strength = relations_dict.get(gift.relationship)
 
-        if strength <= MIN_RELATION_STRENGTH:
+        if strength <= MIN_RELATION_STRENGTH and gift.uploading_user.user_id != user_id:
             filtered_gifts.append(gift)
 
     return filtered_gifts
