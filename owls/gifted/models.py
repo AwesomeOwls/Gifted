@@ -7,8 +7,8 @@ class User(models.Model):
     user_rank = models.IntegerField(default=0)
     gifts_removed = models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
-    banned_start = models.DateTimeField(null=True)
-    liked_gift_ids = models.TextField(default='[]')
+    banned_start = models.DateTimeField(null=True, blank=True)
+    liked_gift_ids = models.TextField(default='[]', blank=True)
 
     def add_liked_gift_id(self, gift_id):
         liked_gifts = self.get_liked_gift_ids()
