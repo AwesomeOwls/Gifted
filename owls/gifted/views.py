@@ -151,11 +151,11 @@ def search_gift(request):
         return res
 
     body = json.loads(request.body)
-    age = body['age']
-    try :
-        age_range = body['age_range']
-    except KeyError:
-        age_range = None
+    age = age_range = None
+    if '-' in body['age']:
+        age_range = body['age']
+    else:
+        age = body['age']
     relation = body['relationship']
     gender = body['gender']
     price_range = body.get('price')
@@ -168,7 +168,8 @@ def search_gift(request):
         low_price, high_price = price_range.split('-')
 
     try:
-        age = int(age)
+        if age:
+            age = int(age)
         low_price = int(low_price)
         high_price = int(high_price)
         # ////input validations////
@@ -180,8 +181,10 @@ def search_gift(request):
         if age and age <= 0 or age >= 200:
             ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
-        elif age_range is not None:
+        elif age_range:
             low_age, high_age = age_range.split('-')
+            low_age = int(low_age)
+            high_age = int(high_age)
             if low_age <= 0 or high_age <= 0 or high_age < low_age:
                 ans = {'status': 'ages must be positive integers and high age must be higher then lower agr'}
                 return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
