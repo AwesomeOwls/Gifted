@@ -27,7 +27,7 @@ var UploadDialog = {
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
         var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
-        // Utils.clearInputs($description, $gender, $relationship, $age, $price, $img_url);
+        Utils.clearInputs($description, $title, $gender, $relationship, $age, $price, $img_url);
         UploadDialog.fillRelationships();
 
         $('#upload-modal').modal();
@@ -42,7 +42,7 @@ var UploadDialog = {
         obj['relationship2'] = randomRelation;
         $relationship2.text(window.relationships[randomRelation]);
 
-        $('#upload-submit').click( function(e) {
+        $('#upload-submit').click( function() {
 
             if (!UploadDialog.uploadFormValidation()) return false;
 
@@ -162,14 +162,8 @@ var SearchDialog = {
         var $age = $('#search-age'); var $gender = $('#search-gender'); var $price_from = $('#search-price-from');
         var $price_to = $('#search-price-to');var $relationship = $('#search-relationship');
         var $status = $('#status');var $preloader = $('#preloader'); var $body = $('body');
-
+        Utils.clearInputs($age, $price_from, $price_to);
         SearchDialog.fillRelationships();
-
-        // $price.slider({min: 1,
-        //     max: 1000,
-        //     step: 10,
-        //     value: [1, 100],
-        //     range: true});
 
         $('#search-modal').modal();
 
@@ -209,6 +203,7 @@ var SearchDialog = {
                     errorDialog.showDialog(error.responseText);
                 },
             });
+            return false;
         });
 
     },

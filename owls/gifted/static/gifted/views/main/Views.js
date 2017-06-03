@@ -159,32 +159,20 @@ var ResultsView = {
 
 
     likeGift: function(giftID, like) {
-        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
 
-
-        console.log('gift id: ', giftID);
         var obj = {};
         obj.gift_id = giftID;
         obj.like = like;
         $.ajax({
             type: "POST",
             url: "http://localhost:63343/like/",
-            // The key needs to match your method's input parameter (case-sensitive).
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(obj),
             dataType: "json",
-            beforeSend: function(){
-                $status.show();
-                $preloader.show();
-            },
             success: function(data){
-                $preloader.delay(300).fadeOut('slow', function () {
-                    $body.delay(550).css({'overflow': 'visible'});
-                });
+                console.log('gift liked!')
             },
             error: function(error){
-                $status.hide();
-                $preloader.hide();
                 errorDialog.showDialog(error.responseText);
             },
         });
