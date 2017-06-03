@@ -11,11 +11,12 @@ import csv
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
-MIN_SEARCH_RANK = 5
+MIN_SEARCH_RANK = 4
 MIN_GIFT_RANK = -5
-TRUST_USER_RANK = -1
+MIN_GIFTS_TH = 5
+TRUST_USER_RANK = 5
 MAX_REMOVED = 3
-age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40),(41,120)]
+age_ranges = [(0,1), (0,2), (3,6), (7,10), (11,14), (15,19), (20,25), (26,30), (31,40),(41,60), (61,70), (71,90), (91,200)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
@@ -151,12 +152,17 @@ def search_gift(request):
 
     body = json.loads(request.body)
     age = body['age']
+    try :
+        age_range = body['age_range']
+    except KeyError:
+        age_range = None
     relation = body['relationship']
     gender = body['gender']
     price_range = body.get('price')
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
     low_price = high_price = None
+    low_age = high_age = None
 
     if price_range:
         low_price, high_price = price_range.split('-')
@@ -171,10 +177,14 @@ def search_gift(request):
             ans = {'status': 'prices must be positive integers and high price must be higher then lower price'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
-        if age <= 0 or age >= 200:
+        if age and age <= 0 or age >= 200:
             ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
-
+        elif age_range is not None:
+            low_age, high_age = age_range.split('-')
+            if low_age <= 0 or high_age <= 0 or high_age < low_age:
+                ans = {'status': 'ages must be positive integers and high age must be higher then lower agr'}
+                return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
         # ////end of input validations////
 
     except (TypeError, ValueError):
@@ -191,20 +201,29 @@ def search_gift(request):
         return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json', status=400)
 
     rel_rng = None
-    for rng in age_ranges:
-        if rng[0] <= int(age) <= rng[1]:
-            rel_rng = rng
-            break
-    if rel_rng is None:
-        # should not get here at all
-        return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json',status=400)
-
+    if age_range is None:
+        for rng in age_ranges:
+            if rng[0] <= int(age) <= rng[1]:
+                rel_rng = rng
+                break
+        if rel_rng is None:
+            # should not get here at all
+            return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json',status=400)
+    else:
+        rel_rng = [int(low_age),int(high_age)]
     # query the DB for the relevant gifts
     if price_range:
-        gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender,
+        if gender != 'U':
+            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]] , gender=gender,
+                                    price__range=[int(low_price), int(high_price)])
+        else:
+            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]],
                                     price__range=[int(low_price), int(high_price)])
     else:
-        gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
+        if gender != 'U':
+            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
+        else:
+            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]])
 
     if gifts:
         truncated_gifts = truncate_by_relation_strength(gifts, relation, user_id)
@@ -225,14 +244,17 @@ def truncate_by_relation_strength(gifts,relation,user_id):
     for rel in relations:
         relations_dict[rel.rel2] = rel.strength
     filtered_gifts = []
-    for gift in gifts:
-        if gift.relationship.description.lower() == relation.lower():
-            strength = 0
-        else:
-            strength = relations_dict.get(gift.relationship)
+    for addition in xrange(5-MIN_RELATION_STRENGTH):
+        for gift in gifts:
+            if gift.relationship.description.lower() == relation.lower():
+                strength = 0
+            else:
+                strength = relations_dict.get(gift.relationship)
 
-        if strength <= MIN_RELATION_STRENGTH and gift.uploading_user.user_id != user_id:
-            filtered_gifts.append(gift)
+            if strength <= MIN_RELATION_STRENGTH + addition and gift.uploading_user.user_id != user_id:
+                filtered_gifts.append(gift)
+        if len(filtered_gifts) >= MIN_GIFTS_TH:
+            break
 
     return filtered_gifts
 
