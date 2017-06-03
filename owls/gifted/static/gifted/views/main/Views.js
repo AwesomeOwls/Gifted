@@ -44,7 +44,7 @@ var ProfileView = {
             '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
             '<div class="caption">' +
             '<h4 class="group inner list-group-item-heading">' +
-            gift.description + '</h4>' +
+            gift.title + '</h4>' +
             '<div class="row">' +
             '<div class="col-xs-12 col-md-6">' +
             '<p class="lead">' + 'Price: ' +
@@ -129,7 +129,7 @@ var ResultsView = {
                             '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
                             '<div class="caption">' +
                                     '<h4 class="group inner list-group-item-heading">' +
-                                    gift.description + '</h4>' +
+                                    gift.title + '</h4>' +
                                     '<div class="btn-group">' +
                                          '<button  onclick="ResultsView.likeGift(this.id, 1)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
                                              '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
