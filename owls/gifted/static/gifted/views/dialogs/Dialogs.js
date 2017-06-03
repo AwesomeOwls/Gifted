@@ -166,7 +166,10 @@ var SearchDialog = {
 
         $('#search-modal').modal();
 
+
         $('#search-modal').on('hidden.bs.modal',SearchDialog.onDialogClose);
+
+        $('[data-toggle="tooltip"]').tooltip();
 
         $('#search-submit').click( function() {
 
@@ -234,9 +237,18 @@ var SearchDialog = {
         var isValid = true;
 
         // age
-        if(!age || +age >= '200' || +age <= '0') {
+        if (age.indexOf('-') != -1) {
+            var age_from = age.split('-')[0];
+            var age_to = age.split('-')[1];
+            if (+age_from > +age_to) {
+                $age.closest('.form-group').addClass('has-error');
+                $age.siblings('.error')[0].innerText = 'Age should be between 1 to 199. examples: "45", "20-30"';
+                isValid = false;
+            }
+        }
+        else if(+age >= '200' || +age <= '0') {
             $age.closest('.form-group').addClass('has-error');
-            $age.siblings('.error')[0].innerText = 'Age is required (between 1 to 199)';
+            $age.siblings('.error')[0].innerText = 'Age should be between 1 to 199. examples: "45", "20-30"';
             isValid = false;
         }
         else {

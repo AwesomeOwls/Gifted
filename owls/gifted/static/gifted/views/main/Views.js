@@ -31,6 +31,9 @@ var ProfileView = {
 
     insertGifts: function(GiftsObject) {
         var $products = $('#products');
+        if (!GiftsObject || !GiftsObject.length) {
+            return $($products).append($('<h3 class="h3_home wow fadeIn" data-wow-delay="0.4s">No Gifts</h3>'));
+        }
         var i;
         for (i = 0; i < GiftsObject.length; i++) {
             $($products).append($(ProfileView.createGiftElement(GiftsObject[i])))
@@ -110,11 +113,8 @@ var ResultsView = {
     insertGifts: function(GiftsObject) {
         var $products = $('#products');
 
-
-        if (!GiftsObject.length) {
-            $($products).append($('<h3 class="h3_home wow fadeIn" data-wow-delay="0.4s">No Results</h3>'));
-
-
+        if (!GiftsObject || !GiftsObject.length) {
+            return $($products).append($('<h3 class="h3_home wow fadeIn" data-wow-delay="0.4s">No Results</h3>'));
         }
         var i;
         for (i = 0; i < GiftsObject.length; i++) {
@@ -123,6 +123,7 @@ var ResultsView = {
     },
 
     createGiftElement: function(gift) {
+        var rank = gift.gift_rank;
 
         return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
                     '<div class="thumbnail">' +
@@ -131,10 +132,10 @@ var ResultsView = {
                                     '<h4 class="group inner list-group-item-heading">' +
                                     gift.title + '</h4>' +
                                     '<div class="btn-group">' +
-                                         '<button  onclick="ResultsView.likeGift(this.id, 1)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
+                                         '<button  onclick="ResultsView.likeGift(this.id, 1, this)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
                                              '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
                                           '</button>' +
-                                          '<button  onclick="ResultsView.likeGift(this.id, -1)" class="btn btn-dislike" id=' + '"' + gift.gift_id + '"' + '>' + 'Dislike ' +
+                                          '<button  onclick="ResultsView.likeGift(this.id, -1, this)" class="btn btn-dislike" id=' + '"' + gift.gift_id + '"' + '>' + 'Dislike ' +
                                              '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
                                           '</button>' +
                                     '</div>' +
@@ -144,7 +145,7 @@ var ResultsView = {
                                         gift.price + ' ₪' + '</p>' +
                                     '</div>' +
                                      '<div class="col-xs-12 col-md-6">' +
-                                        '<p class="lead">' +
+                                        '<p class="lead likes_' + gift.gift_id + '">' +
                                            'Likes: ' + gift.gift_rank +
                                         '</p>' +
                                     '</div>' +
@@ -158,8 +159,10 @@ var ResultsView = {
     },
 
 
-    likeGift: function(giftID, like) {
-
+    likeGift: function(giftID, like, el) {
+        var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
+        var currentRank = giftObject.gift_rank;
+        var newRank = giftObject.gift_rank = currentRank + like;
         var obj = {};
         obj.gift_id = giftID;
         obj.like = like;
@@ -169,10 +172,17 @@ var ResultsView = {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(obj),
             dataType: "json",
+            beforeSend: function(data){
+                el.disabled = true;
+                $('.likes_' + giftID)[0].innerText = 'Likes: ' + '...';
+            },
             success: function(data){
-                console.log('gift liked!')
+                el.disabled = false;
+                $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
             },
             error: function(error){
+                el.disabled = false;
+                $('.likes_' + giftID)[0].innerText = 'Likes: ' + currentRank;
                 errorDialog.showDialog(error.responseText);
             },
         });
