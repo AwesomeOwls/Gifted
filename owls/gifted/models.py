@@ -49,6 +49,7 @@ class Relation(models.Model):
 
 class Gift(models.Model):
     uploading_user = models.ForeignKey(User)
+    title = models.CharField(max_length=50)
     description = models.CharField(max_length=250)
     age = models.IntegerField()
     GENDER_CHOICES = (
@@ -65,6 +66,7 @@ class Gift(models.Model):
     def as_json(self):
         return dict(
             description=self.description,
+            title=self.title,
             price=self.price,
             gift_rank=self.gift_rank,
             gift_id=self.pk,
@@ -72,7 +74,7 @@ class Gift(models.Model):
         )
 
     def __str__(self):
-        return "description:%s, uploading user:%s, price:%s" % (self.description, self.uploading_user,  self.price)
+        return "title:%s, description:%s, uploading user:%s, price:%s" % (self.title, self.description, self.uploading_user,  self.price)
 
 
 class RelationshipMatrixCell(models.Model):

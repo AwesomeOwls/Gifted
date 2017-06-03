@@ -6,6 +6,7 @@ from oauth2client import client
 from datetime import *
 from dateutil import parser
 import requests
+import re
 import csv
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
@@ -315,6 +316,7 @@ def upload_gift(request):
     price = body['price']
     image_url = body.get('img_url')
     description = body['description']
+    title = body['title']
     relation = body['relationship']
     other_relation = body['relationship2']
     relation_strength = body['relationship_score']
@@ -346,8 +348,12 @@ def upload_gift(request):
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
     if user is None:
-        return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
-    gift = Gift(description=description, age=age, price=price, gender=gender, gift_img=image_url, relationship=rel)
+        return HttpResponse(json.dumps({'status': 'user does not exist'}), status=400, content_type='application/json')
+    if not re.match('^[A-Za-z0-9]*',title):
+        return HttpResponse(json.dumps({'status': 'title is not legal'}), status=403, content_type='application/json')
+
+    gift = Gift(title=title, description=description, age=age, price=price,
+                gender=gender, gift_img=image_url, relationship=rel)
     gift.uploading_user_id = user_id
     gift.save()
 
@@ -359,7 +365,7 @@ def upload_gift(request):
             # if user improved the relationship decrease the strength by 0.01 thus making it closer
             if (rel_matrix_cell.strength - relation_strength) > 0:
                 rel_matrix_cell.strength -= 0.01
-            else: # else decrease the strength
+            else: # else weaken the strength
                 rel_matrix_cell.strength += 0.01
 
             # normalize values
