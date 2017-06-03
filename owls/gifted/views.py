@@ -10,14 +10,14 @@ import csv
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
-MIN_SEARCH_RANK = 0 # easier for tests. TODO Yehonatan: set to a higher rank
+MIN_SEARCH_RANK = 5
 MIN_GIFT_RANK = -5
 TRUST_USER_RANK = -1
 MAX_REMOVED = 3
 age_ranges = [(0,2), (3,6), (7,10), (11,14), (15,17), (18,21), (22,25), (26,30), (31,40),(41,120)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
-PREMIUM_USER_RANK = 10 # TODO Yehonatan uncomment this!
+PREMIUM_USER_RANK = 10
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'User is not logged-in'
 COOKIE_EXPIRED = 'Cookie expired'
