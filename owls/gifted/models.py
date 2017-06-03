@@ -71,7 +71,8 @@ class Gift(models.Model):
             price=self.price,
             gift_rank=self.gift_rank,
             gift_id=self.pk,
-            gift_img=self.gift_img
+            gift_img=self.gift_img,
+            relationship=self.relationship
         )
 
     def __str__(self):

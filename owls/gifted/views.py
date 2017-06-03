@@ -61,11 +61,12 @@ def like(request):
         uploader = User.objects.get(user_id=gift.uploading_user.user_id)
     except User.DoesNotExist, Gift.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
-    #check if user already liked/disliked this gift
+
+    # check if user already liked/disliked this gift
     if gift_id in user.get_liked_gift_ids():
         return HttpResponse(json.dumps({'status': 'User already liked/disliked this gift'}),
                             content_type='application/json', status=400)
-    #add liked gift id to list
+    # add liked gift id to list
     user.add_liked_gift_id(gift_id)
     user.save()
 
@@ -87,15 +88,10 @@ def like(request):
         if uploader.gifts_removed > MAX_REMOVED:
             uploader.is_banned = True
             uploader.banned_start = datetime.utcnow()
-            uploader.save()
-            ans['status'] = 'Sorry you are getting temporarily banned, suspected as spammer.'
-            response = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(response)
-            return response
 
     else:
         gift.save()
-
+    uploader.save()
     ans['status'] = 'Like succesfully done.'
     response = HttpResponse(json.dumps(ans), status=200)
     extend_cookie(response)
