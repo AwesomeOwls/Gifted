@@ -79,7 +79,7 @@ var UploadDialog = {
                     errorDialog.showDialog(error.responseText);
                 },
             });
-
+            return false;
         });
     },
 
@@ -106,20 +106,20 @@ var UploadDialog = {
         var price = $price.val();
         var img_url = $img_url.val();
 
-        var urlregex = new RegExp( "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
-
+        // var urlregex = new RegExp( "/[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi");
         var isValid = true;
 
-        // image url
-        if(img_url && !urlregex.test(img_url)) {
-            $img_url.closest('.form-group').addClass('has-error');
-            $img_url.siblings('.error')[0].innerText = 'Invalid URL address';
-            isValid = false;
-        }
-        else {
-            $img_url.closest('.form-group').removeClass('has-error');
-            $img_url.siblings('.error')[0].innerText = '';
-        }
+        // image url validation is done in server side
+        // if(img_url && !urlregex.test(img_url)) {
+        //     $img_url.closest('.form-group').addClass('has-error');
+        //     $img_url.siblings('.error')[0].innerText = 'Invalid URL address';
+        //     isValid = false;
+        // }
+        // else {
+        //     $img_url.closest('.form-group').removeClass('has-error');
+        //     $img_url.siblings('.error')[0].innerText = '';
+        // }
+
         // age
         if(!age || +age >= '200' || +age <= '0') {
             $age.closest('.form-group').addClass('has-error');
