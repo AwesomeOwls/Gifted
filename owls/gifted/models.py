@@ -11,9 +11,9 @@ class User(models.Model):
     banned_start = models.DateTimeField(null=True, blank=True)
     liked_gift_ids = models.TextField(default='[]', blank=True)
 
-    def add_liked_gift_id(self, gift_id):
+    def add_liked_gift_id(self, gift_obj):
         liked_gifts = self.get_liked_gift_ids()
-        liked_gifts.append(gift_id)
+        liked_gifts.append(gift_obj)
         self.liked_gift_ids = json.dumps(liked_gifts)
 
     def get_liked_gift_ids(self):
@@ -72,7 +72,7 @@ class Gift(models.Model):
             gift_rank=self.gift_rank,
             gift_id=self.pk,
             gift_img=self.gift_img,
-            relationship=self.relationship
+            relationship=str(self.relationship)
         )
 
     def __str__(self):

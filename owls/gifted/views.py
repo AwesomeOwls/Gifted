@@ -62,18 +62,29 @@ def like(request):
     except User.DoesNotExist, Gift.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
 
-    # check if user already liked/disliked this gift
-    if gift_id in user.get_liked_gift_ids():
-        return HttpResponse(json.dumps({'status': 'User already liked/disliked this gift'}),
-                            content_type='application/json', status=400)
-    # add liked gift id to list
-    user.add_liked_gift_id(gift_id)
-    user.save()
-
     # User may like/dislike other gifts only if his rank is high enough.
     if user.user_rank < TRUST_USER_RANK:
         return HttpResponse(json.dumps({'status': 'User rank too low, cannot like'}),
                             content_type='application/json', status=400)
+
+    search_query = {'gift_id':gift_id,'is_like': 1 if like>0 else 0}
+
+    liked_gifts_ids = user.get_liked_gift_ids()
+    # check if user already liked/disliked this gift
+    if search_query in liked_gifts_ids:
+        return HttpResponse(json.dumps({'status': 'User already liked/disliked this gift'}),
+                            content_type='application/json', status=400)
+
+    elif {'gift_id':gift_id, 'is_like': 1-search_query['is_like']} in liked_gifts_ids:
+        for gift_obj in liked_gifts_ids:
+            if gift_obj['gift_id'] == gift_id:
+                gift_obj['is_like'] = 1 - gift_obj['is_like']
+                break
+        user.liked_gift_ids = json.dumps(liked_gifts_ids)
+    else:
+        # add liked gift id to list
+        user.add_liked_gift_id(search_query)
+    user.save()
 
     gift.gift_rank = gift.gift_rank + int(like)
 
@@ -91,24 +102,28 @@ def like(request):
 
     else:
         gift.save()
+
     uploader.save()
     ans['status'] = 'Like succesfully done.'
     response = HttpResponse(json.dumps(ans), status=200)
     extend_cookie(response)
     return response
 
-
 def check_logged(request):
+    req_user_id = request.COOKIES.get('user_id')
+    req_expiry_time = request.COOKIES.get('expiry_time')
+
     if 'user_id' in request.COOKIES:
-        req_user_id = request.COOKIES.get('user_id')
-        req_expiry_time = request.COOKIES.get('expiry_time')
-        if not User.objects.filter(user_id=req_user_id).exists():
-            return 0
-        if  parser.parse(req_expiry_time) < datetime.utcnow():
-            return 1
-        return 2
+
+            if not User.objects.filter(user_id=req_user_id).exists():
+                return ERR_USR_NOT_FOUND
+
+            if parser.parse(req_expiry_time) < datetime.utcnow():
+                return ERR_COOKIE_EXPIRED
+
+            return LOGGED_OK
     else:
-        return 0
+        return ERR_USR_NOT_FOUND
 
 
 def invalidate_cookie(response):
@@ -191,7 +206,7 @@ def search_gift(request):
     else:
         gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
 
-    if gifts is not None:
+    if gifts:
         truncated_gifts = truncate_by_relation_strength(gifts, relation, user_id)
         truncated_gifts.sort(key=lambda gift: gift.gift_rank, reverse=True)
         truncated_gifts = truncated_gifts[:MAX_GIFTS]
@@ -205,7 +220,6 @@ def search_gift(request):
 
 # truncate list of gifts by the strength of their relation to the input relation
 def truncate_by_relation_strength(gifts,relation,user_id):
-
     relations = RelationshipMatrixCell.objects.filter(rel1=relation)
     relations_dict = {}
     for rel in relations:
@@ -488,15 +502,14 @@ def profile_page(request):
             invalidate_cookie(res)
         return res
 
-    body = json.loads(request.body)
-    user_id = body['user_id']
+    user_id = request.COOKIES.get('user_id')
 
     try:
         user = User.objects.get(user_id=user_id)
         user_gifts = Gift.objects.filter(uploading_user=user)
 
     except User.DoesNotExist:
-        return HttpResponse(json.dumps({'status': 'User/Gifts not found'}), status=400)
+        return HttpResponse(json.dumps({'status': 'User not found'}), status=400)
 
     ans['gifts'] = [x.as_json() for x in user_gifts]
     ans['status'] = 'OK'
