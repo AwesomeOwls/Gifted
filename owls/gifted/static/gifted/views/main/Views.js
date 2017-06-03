@@ -48,7 +48,7 @@ var ProfileView = {
             '<div class="row">' +
             '<div class="col-xs-12 col-md-6">' +
             '<p class="lead">' + 'Price: ' +
-            gift.price + ' $' + '</p>' +
+            gift.price + ' ₪' + '</p>' +
             '</div>' +
             '<div class="col-xs-12 col-md-6">' +
             '<p class="lead">' +
@@ -141,7 +141,7 @@ var ResultsView = {
                                  '<div class="row">' +
                                      '<div class="col-xs-12 col-md-6">' +
                                          '<p class="lead">' + 'Price: ' +
-                                        gift.price + ' $' + '</p>' +
+                                        gift.price + ' ₪' + '</p>' +
                                     '</div>' +
                                      '<div class="col-xs-12 col-md-6">' +
                                         '<p class="lead">' +

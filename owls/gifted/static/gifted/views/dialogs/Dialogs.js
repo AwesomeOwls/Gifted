@@ -27,7 +27,7 @@ var UploadDialog = {
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
         var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
-        Utils.clearInputs($description, $title, $gender, $relationship, $age, $price, $img_url);
+        Utils.clearInputs($description, $title, $age, $price, $img_url);
         UploadDialog.fillRelationships();
 
         $('#upload-modal').modal();
