@@ -56,6 +56,9 @@ var ProfileView = {
             '</p>' +
             '</div>' +
             '</div>' +
+            '<div class="row">' +
+            gift.description +
+            '</div>' +
             '</div>' +
             '</div>' +
             '</div>'

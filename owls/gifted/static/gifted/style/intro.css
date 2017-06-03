@@ -116,3 +116,7 @@ overflow-y: scroll;
   font-size: 10px!important;
   padding: 2px 2px 2px 5px!important;
 }
+
+p.error {
+  color: #e74c3c;
+}

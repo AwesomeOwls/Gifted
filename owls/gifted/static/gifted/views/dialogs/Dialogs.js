@@ -22,6 +22,7 @@ var UploadDialog = {
 
     showDialog: function() {
         var $description = $('#upload-description'); var $age = $('#upload-age');
+        var $title = $('#upload-title');
         var $gender = $('#upload-gender'); var $price = $('#upload-price');
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
@@ -41,8 +42,11 @@ var UploadDialog = {
         obj['relationship2'] = randomRelation;
         $relationship2.text(window.relationships[randomRelation]);
 
-        $('#upload-submit').click( function() {
+        $('#upload-submit').click( function(e) {
 
+            if (!UploadDialog.uploadFormValidation()) return false;
+
+            obj['title'] = $title.val();
             obj['description'] = $description.val();
             obj['gender'] = $gender.val();
             obj['relationship'] = $relationship.val();
@@ -51,6 +55,7 @@ var UploadDialog = {
             obj['price'] = parseInt($price.val());
             obj['relationship_score'] = 6 - parseInt($relationship_score.val());
 
+            UploadDialog.closeDialog();
             UploadDialog.onDialogClose();
             $.ajax({
                 type: "POST",
@@ -89,6 +94,64 @@ var UploadDialog = {
 
     fillRelationships: function() {
         Utils.setOptionsToSelect(window.relationships, '#upload-relationship');
+    },
+
+    uploadFormValidation: function() {
+        var $age = $('#upload-age');
+        var $title = $('#upload-title');
+        var $price = $('#upload-price');
+        var $img_url = $('#upload-img-url');
+        var age = $age.val();
+        var title = $title.val();
+        var price = $price.val();
+        var img_url = $img_url.val();
+
+        var urlregex = new RegExp( "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
+
+        var isValid = true;
+
+        // image url
+        if(img_url && !urlregex.test(img_url)) {
+            $img_url.closest('.form-group').addClass('has-error');
+            $img_url.siblings('.error')[0].innerText = 'Invalid URL address';
+            isValid = false;
+        }
+        else {
+            $img_url.closest('.form-group').removeClass('has-error');
+            $img_url.siblings('.error')[0].innerText = '';
+        }
+        // age
+        if(!age || +age >= '200' || +age <= '0') {
+            $age.closest('.form-group').addClass('has-error');
+            $age.siblings('.error')[0].innerText = 'Age is required (between 1 to 199)';
+            isValid = false;
+        }
+        else {
+            $age.closest('.form-group').removeClass('has-error');
+            $age.siblings('.error')[0].innerText = '';
+        }
+        // title
+        if(!title) {
+            $title.closest('.form-group').addClass('has-error');
+            $title.siblings('.error')[0].innerText = 'Gift Title is required';
+            isValid = false;
+        }
+        else {
+            $title.closest('.form-group').removeClass('has-error');
+            $title.siblings('.error')[0].innerText = '';
+        }
+        // price
+        if(!price || +price <= '0') {
+            $price.closest('.form-group').addClass('has-error');
+            $price.siblings('.error')[0].innerText = 'Price is required (positive number)';
+            isValid = false;
+        }
+        else {
+            $price.closest('.form-group').removeClass('has-error');
+            $price.siblings('.error')[0].innerText = '';
+        }
+
+       return isValid;
     }
 
 };
@@ -114,13 +177,14 @@ var SearchDialog = {
 
         $('#search-submit').click( function() {
 
+            if (!SearchDialog.searchFormValidation()) return false;
 
             var obj = {};
             obj['gender'] = $gender.val();
             obj['relationship'] = $relationship.val();
             obj['age'] = parseInt($age.val());
             obj['price'] = $price_from.val() + '-' + $price_to.val();
-
+            SearchDialog.closeDialog();
             SearchDialog.onDialogClose();
             $.ajax({
                 type: "POST",
@@ -159,6 +223,51 @@ var SearchDialog = {
 
     fillRelationships: function() {
         Utils.setOptionsToSelect(window.relationships, '#search-relationship');
+    },
+
+
+    searchFormValidation: function() {
+        var $age = $('#search-age');
+        var $price_from = $('#search-price-from');
+        var $price_to = $('#search-price-to');
+        var age = $age.val();
+        var price_from = $price_from.val();
+        var price_to = $price_to.val();
+
+        var urlregex = new RegExp( "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
+
+        var isValid = true;
+
+        // age
+        if(!age || +age >= '200' || +age <= '0') {
+            $age.closest('.form-group').addClass('has-error');
+            $age.siblings('.error')[0].innerText = 'Age is required (between 1 to 199)';
+            isValid = false;
+        }
+        else {
+            $age.closest('.form-group').removeClass('has-error');
+            $age.siblings('.error')[0].innerText = '';
+        }
+        // price
+        if(!price_from || !price_to) {
+            $price_from.closest('.form-group').addClass('has-error');
+            $price_to.closest('.form-group').addClass('has-error');
+            $price_from.siblings('.error')[0].innerText = 'Price range is required';
+            isValid = false;
+        }
+        else if(+price_from >= +price_to) {
+            $price_from.closest('.form-group').addClass('has-error');
+            $price_to.closest('.form-group').addClass('has-error');
+            $price_from.siblings('.error')[0].innerText = 'Price range invalid';
+            isValid = false;
+        }
+        else {
+            $price_from.closest('.form-group').removeClass('has-error');
+            $price_to.closest('.form-group').removeClass('has-error');
+            $price_from.siblings('.error')[0].innerText = '';
+        }
+
+        return isValid;
     }
 
 };

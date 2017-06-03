@@ -13,32 +13,43 @@
                     <div class="row">
                         <div class="form-group col-sm-4">
                             <label for="upload-age">Age</label>
-                            <input required class="form-control" type="number" id="upload-age" maxlength="3" placeholder="Age of recipient">
+                            <input class="form-control" type="number" min="0" max="200" id="upload-age" maxlength="3" placeholder="Age of recipient">
+                            <p class="error"></p>
                         </div>
                         <div class="form-group col-sm-4">
                             <label for="upload-gender">Gender of recipient</label>
-                            <select required class="form-control" id="upload-gender">
+                            <select class="form-control" id="upload-gender">
                                 <option value="M">Male</option>
                                 <option value="F">Female</option>
                             </select>
+                            <p class="error"></p>
                         </div>
                         <div class="form-group col-sm-4">
                             <label for="upload-relationship">Relation to recipient</label>
-                            <select required class="form-control" id="upload-relationship">
+                            <select class="form-control" id="upload-relationship">
                             </select>
+                            <p class="error"></p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="upload-price">Price (₪)</label>
-                        <input required class="form-control" id="upload-price" placeholder="The gift's total price">
+                        <label for="upload-title">Title</label>
+                        <input class="form-control" maxlength="50" id="upload-title" placeholder="Gift Title">
+                        <p class="error"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="upload-price">Price ($)</label>
+                        <input type="number" class="form-control" id="upload-price" placeholder="The gift's total price">
+                        <p class="error"></p>
                     </div>
                     <div class="form-group">
                         <label for="upload-img-url">Image URL</label>
-                        <input type="url" class="form-control" id="upload-img-url" placeholder="Include an image via URL">
+                        <input class="form-control required" id="upload-img-url" placeholder="Include an image via URL">
+                        <p class="error"></p>
                     </div>
                     <div class="form-group">
                         <label for="upload-description">Description</label>
-                        <textarea required rows="2" type="text" class="form-control" id="upload-description" maxlength="250" placeholder="Describe the gift in a few words"></textarea>
+                        <textarea rows="2" type="text" class="form-control" id="upload-description" maxlength="250" placeholder="Describe the gift in a few words"></textarea>
+                        <p class="error"></p>
                     </div>
                     <hr>
                     <div class="premium-visible">
@@ -56,7 +67,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" data-dismiss="modal" id="upload-submit">Upload</button>
+                    <button type="submit" class="btn btn-primary" id="upload-submit">Upload</button>
                 </div>
             </form>
         </div>
