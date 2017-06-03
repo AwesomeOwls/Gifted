@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 import json
 
+
 class User(models.Model):
     user_id = models.CharField(max_length=150, primary_key=True)
     user_rank = models.IntegerField(default=0)
@@ -48,16 +49,16 @@ class Relation(models.Model):
 
 
 class Gift(models.Model):
-    uploading_user = models.ForeignKey(User)
+    uploading_user = models.ForeignKey(User,db_index=True)
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=250)
-    age = models.IntegerField()
+    age = models.IntegerField(db_index=True)
     GENDER_CHOICES = (
         ('M', 'Male'),
         ('F', 'Female'),
     )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    price = models.IntegerField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, db_index=True)
+    price = models.IntegerField(db_index=True)
     gift_img = models.CharField(max_length=500)
     gift_rank = models.IntegerField(default=0)
     uploading_time = models.DateTimeField(auto_now_add=True)
@@ -78,8 +79,8 @@ class Gift(models.Model):
 
 
 class RelationshipMatrixCell(models.Model):
-    rel1 = models.ForeignKey(Relation, related_name='rel1')
-    rel2 = models.ForeignKey(Relation, related_name='rel2')
+    rel1 = models.ForeignKey(Relation, related_name='rel1',db_index=True)
+    rel2 = models.ForeignKey(Relation, related_name='rel2',db_index=True)
     strength = models.FloatField()
 
     def __str__(self):

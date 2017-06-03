@@ -444,7 +444,7 @@ def fill_db(request):
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
 
 
-def add_gifts(request):
+def add_initial_gifts(request):
     try:
         with open('../gifts.csv', 'r+') as rel_matrix_file:
             reader = csv.reader(rel_matrix_file)
@@ -452,7 +452,6 @@ def add_gifts(request):
             user = User.objects.all()[:1].get()
             i=0
             for row in reader:
-                row = row[1:]
                 descreption = row[0]
                 age = row[1]
                 gender = row[2]
@@ -479,7 +478,7 @@ def clear_db(request):
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
 
 
-def user_page(request):
+def profile_page(request):
     ans = {}
 
     login_status = check_logged(request)
