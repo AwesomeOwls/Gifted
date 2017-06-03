@@ -27,7 +27,6 @@ var UploadDialog = {
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
         var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
-        Utils.clearInputs($description, $title, $age, $price, $img_url);
         UploadDialog.fillRelationships();
 
         $('#upload-modal').modal();
@@ -69,6 +68,7 @@ var UploadDialog = {
                     $preloader.show();
                 },
                 success: function(data){
+                    Utils.clearInputs($description, $title, $age, $price, $img_url);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                     });
@@ -162,7 +162,6 @@ var SearchDialog = {
         var $age = $('#search-age'); var $gender = $('#search-gender'); var $price_from = $('#search-price-from');
         var $price_to = $('#search-price-to');var $relationship = $('#search-relationship');
         var $status = $('#status');var $preloader = $('#preloader'); var $body = $('body');
-        Utils.clearInputs($age, $price_from, $price_to);
         SearchDialog.fillRelationships();
 
         $('#search-modal').modal();
@@ -192,6 +191,7 @@ var SearchDialog = {
                     $preloader.show();
                 },
                 success: function(data){
+                    Utils.clearInputs($age, $price_from, $price_to);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         ResultsView.showResultsPage(data.gifts);
