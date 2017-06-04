@@ -178,7 +178,7 @@ var SearchDialog = {
             var obj = {};
             obj['gender'] = $gender.val();
             obj['relationship'] = $relationship.val();
-            obj['age'] = parseInt($age.val());
+            obj['age'] = $age.val();
             obj['price'] = $price_from.val() + '-' + $price_to.val();
             SearchDialog.closeDialog();
             SearchDialog.onDialogClose();
