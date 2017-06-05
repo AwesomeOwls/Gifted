@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^clear/', views.clear_db),
     url(r'^profile/', views.profile_page),
     url(r'^like/', views.like),
-    url(r'^add_gifts/',views.add_initial_gifts),
+    url(r'^add_gifts/', views.add_initial_gifts),
+    url(r'^ask_user/', views.ask_user),
     url(r'^$', views.index)
 ]

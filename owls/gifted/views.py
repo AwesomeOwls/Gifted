@@ -135,6 +135,40 @@ def invalidate_cookie(response):
     response.delete_cookie('user_rank')
 
 
+def ask_user(request):
+    ans = dict()
+
+    login_status = check_logged(request)
+    if login_status != LOGGED_OK:
+        if login_status == ERR_USR_NOT_FOUND:
+            ans['status'] = NOT_LOGGED_IN
+            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+        else:
+            ans['status'] = COOKIE_EXPIRED
+            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+            invalidate_cookie(res)
+        return res
+
+    user_id = request.COOKIES.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    body = json.loads(request.body)
+
+    try:
+        rel = Relation.objects.get(description=body['relation'])
+        other_rel = Relation.objects.get(description=body['other_relation'])
+    except TypeError:
+        return HttpResponse(json.dumps({'status': 'relation does not exist in db'}), status=400,
+                            content_type='application/json')
+
+    relation_strength = body['strength']
+    update_rmatrix(rel, other_rel, relation_strength, user)
+
+    ans['status'] = 'OK'
+    response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
+    extend_cookie(response)
+    return response
+
+
 def search_gift(request):
 
     ans = dict()
@@ -404,24 +438,7 @@ def upload_gift(request):
     # update relationship matrix value according to user answer
     if relation_strength != NOT_CHOSEN and user.user_rank > PREMIUM_USER_RANK:
         other_rel = Relation.objects.get(description=other_relation)
-        try:
-            rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=rel.pk, rel2_id=other_rel.pk)
-            # if user improved the relationship decrease the strength by 0.01 thus making it closer
-            if (rel_matrix_cell.strength - relation_strength) > 0:
-                rel_matrix_cell.strength -= 0.01
-            else: # else weaken the strength
-                rel_matrix_cell.strength += 0.01
-
-            # normalize values
-            if rel_matrix_cell.strength < 1:
-                rel_matrix_cell.strength = 1
-            elif rel_matrix_cell.strength > 5:
-                rel_matrix_cell.strength = 5
-
-        except TypeError:
-            return HttpResponse(json.dumps({'status':'relations ratio does not exist in db'}), status=401, content_type='application/json')
-        user.user_rank += 1
-        rel_matrix_cell.save()
+        update_rmatrix(rel, other_rel, relation_strength, user)
 
     user.user_rank = user.user_rank + 2
     user.save()
@@ -430,6 +447,28 @@ def upload_gift(request):
     res.set_cookie('user_rank', user.user_rank)
     extend_cookie(res)
     return res
+
+
+def update_rmatrix(rel, other_rel, rel_strength, user):
+    try:
+        rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=rel.pk, rel2_id=other_rel.pk)
+        # if user improved the relationship decrease the strength by 0.01 thus making it closer
+        if (rel_matrix_cell.strength - rel_strength) > 0:
+            rel_matrix_cell.strength -= 0.01
+        else:  # else weaken the strength
+            rel_matrix_cell.strength += 0.01
+
+        # normalize values
+        if rel_matrix_cell.strength < 1:
+            rel_matrix_cell.strength = 1
+        elif rel_matrix_cell.strength > 5:
+            rel_matrix_cell.strength = 5
+
+    except TypeError:
+        return HttpResponse(json.dumps({'status': 'relations ratio does not exist in db'}), status=401,
+                            content_type='application/json')
+    user.user_rank += 1
+    rel_matrix_cell.save()
 
 
 def test(request):
