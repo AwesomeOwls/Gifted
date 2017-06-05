@@ -504,6 +504,7 @@ pre {
   max-height: 340px;
 }
 .thumbnail {
+  height: 350px;
   display: block;
   padding: 4px;
   margin-bottom: 5px;

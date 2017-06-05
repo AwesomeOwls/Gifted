@@ -41,10 +41,12 @@ var ProfileView = {
     },
 
     createGiftElement: function(gift) {
+        var img_url = gift.gift_img || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReMxYxGBiScljKXJ3De1t8vLewNDml3yDPYlgL_19Jkzgh6VyZ2mtTUA';
+
 
         return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
             '<div class="thumbnail">' +
-            '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
+            '<img class="group list-group-image" src=' + '"' + img_url + '"' + 'alt="" />' +
             '<div class="caption">' +
             '<h4 class="group inner list-group-item-heading">' +
             gift.title + '</h4>' +
@@ -123,11 +125,12 @@ var ResultsView = {
     },
 
     createGiftElement: function(gift) {
-        var rank = gift.gift_rank;
+        var img_url = gift.gift_img || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReMxYxGBiScljKXJ3De1t8vLewNDml3yDPYlgL_19Jkzgh6VyZ2mtTUA';
 
         return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
                     '<div class="thumbnail">' +
-                            '<img class="group list-group-image" src=' + '"' + gift.gift_img + '"' + 'alt="" />' +
+                            '<img class="help-us help_' + gift.gift_id + '" onclick="ResultsView.showQuestionDialog(this)" src="static/gifted/img/help-us1.jpeg">' +
+                            '<img class="group list-group-image" src=' + '"' + img_url + '"' + 'alt="" />' +
                             '<div class="caption">' +
                                     '<h4 class="group inner list-group-item-heading">' +
                                     gift.title + '</h4>' +
@@ -173,19 +176,23 @@ var ResultsView = {
             data: JSON.stringify(obj),
             dataType: "json",
             beforeSend: function(data){
-                el.disabled = true;
+                $(el).addClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + '...';
             },
             success: function(data){
-                el.disabled = false;
+                $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
             },
             error: function(error){
-                el.disabled = false;
+                $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + currentRank;
                 errorDialog.showDialog(error.responseText);
             },
         });
+    },
+    showQuestionDialog: function( el) {
+        var giftID = parseInt(el.className.replace(/[^0-9\.]/g, ''), 10);
+        console.log('should pop question regarding gift id:', giftID);
     },
 
 };

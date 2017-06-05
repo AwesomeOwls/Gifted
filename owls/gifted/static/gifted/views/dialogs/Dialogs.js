@@ -282,9 +282,13 @@ var SearchDialog = {
 var errorDialog = {
 
     showDialog: function(errorText) {
-        Utils.clearView('.error-text');
+        var errObj = JSON.parse(errorText);
+        var errMsg = errObj.status || 'Internal Server Error';
+        console.log('err', errMsg);
+
+        Utils.clearView('.error-message');
         $('#error-modal').modal();
-        $('.error-text')[0].innerHTML = errorText;
+        $('.error-message')[0].innerHTML = errMsg;
 
     },
     closeDialog: function() {
