@@ -63,6 +63,15 @@ class Gift(models.Model):
     gift_rank = models.IntegerField(default=0)
     uploading_time = models.DateTimeField(auto_now_add=True)
     relationship = models.ForeignKey(Relation)
+    liked_users = models.TextField(default='[]', blank=True)
+
+    def add_liked_user(self, like_obj):
+        liked_users = self.get_liked_users()
+        liked_users.append(like_obj)
+        self.liked_users = json.dumps(liked_users)
+
+    def get_liked_users(self):
+        return json.loads(self.liked_users)
 
     def as_json(self):
         return dict(
@@ -72,11 +81,12 @@ class Gift(models.Model):
             gift_rank=self.gift_rank,
             gift_id=self.pk,
             gift_img=self.gift_img,
-            relationship=str(self.relationship)
+            relationship=str(self.relationship),
+            liked_users=self.liked_users
         )
 
     def __str__(self):
-        return "title:%s, description:%s, uploading user:%s, price:%s" % (self.title, self.description, self.uploading_user,  self.price)
+        return "title:%s, description:%s, uploading user:%s, price:%s, liked users:%s" % (self.title, self.description, self.uploading_user, self.price, self.liked_users)
 
 
 class RelationshipMatrixCell(models.Model):

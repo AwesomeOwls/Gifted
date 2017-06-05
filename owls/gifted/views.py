@@ -1,15 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-import json
 from models import *
 from oauth2client import client
 from datetime import *
 from dateutil import parser
-import requests
 import re
 import csv
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 
 MIN_SEARCH_RANK = 4
 MIN_GIFT_RANK = -5
@@ -89,9 +85,13 @@ def like(request):
 
     gift.gift_rank = gift.gift_rank + int(like)
 
-    # if the picture is liked, the uploader gets 1 point
+    # if the picture is liked, the uploader gets 1 point and save liked user for this gift
     if like > 0:
         uploader.user_rank = uploader.user_rank + 1
+        gift.add_liked_user({'user_id': user_id, 'is_like': 1})
+    else:
+        gift.add_liked_user({'user_id': user_id, 'is_like': 0})
+
 
     # Under gift rank of -5, the gift will be removed from the DB.
     if gift.gift_rank < MIN_GIFT_RANK:
