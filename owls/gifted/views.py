@@ -356,6 +356,8 @@ def upload_gift(request):
     other_relation = body['relationship2']
     relation_strength = body['relationship_score']
 
+    ##### input validation #####
+
     try:
         age = int(age)
         price = int(price)
@@ -366,15 +368,23 @@ def upload_gift(request):
         ans = {'status': 'age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
-    try:
-        URLValidator(image_url)
-    except ValidationError:
+    if not re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',image_url):
         ans = {'status': 'image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
+
+    if not re.match('(\w+(\s\w+)?)',title):
+        return HttpResponse(json.dumps({'status': 'title is not legal'}), status=400, content_type='application/json')
+
+    if not re.match('(\w+(\s\w+)?)?',description):
+        return HttpResponse(json.dumps({'status':'The descreption is not legal.Please use only English letters or digits'}),
+                            status=400, content_type='application/json')
 
     if not gender == 'M' and not gender == 'F':
         ans = {'status': 'wrong gender'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
+
+    ##### end of input validation #####
+
     rel = Relation.objects.get(description=relation)
     if rel is None:
         ans = {'status': 'relation not defined'}
@@ -384,8 +394,7 @@ def upload_gift(request):
     user = User.objects.get(user_id=user_id)
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}), status=400, content_type='application/json')
-    if not re.match('^[A-Za-z0-9]*',title):
-        return HttpResponse(json.dumps({'status': 'title is not legal'}), status=403, content_type='application/json')
+
 
     gift = Gift(title=title, description=description, age=age, price=price,
                 gender=gender, gift_img=image_url, relationship=rel)
