@@ -126,6 +126,16 @@ var ResultsView = {
 
     createGiftElement: function(gift) {
         var img_url = gift.gift_img || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReMxYxGBiScljKXJ3De1t8vLewNDml3yDPYlgL_19Jkzgh6VyZ2mtTUA';
+        var disableLike = false;
+        var disableDislike = false;
+        var liked_users = JSON.parse(gift.liked_users);
+        var userID = Utils.readCookie('user_id');
+        var rated_by_user = _.find(liked_users, { 'user_id': userID});
+        if (rated_by_user) {
+            if (rated_by_user.is_like) disableLike = true;
+            else disableDislike = true;
+        }
+
 
         return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
                     '<div class="thumbnail">' +
@@ -135,10 +145,10 @@ var ResultsView = {
                                     '<h4 class="group inner list-group-item-heading">' +
                                     gift.title + '</h4>' +
                                     '<div class="btn-group">' +
-                                         '<button  onclick="ResultsView.likeGift(this.id, 1, this)" class="btn btn-like" id=' + '"' + gift.gift_id + '"' + '>' + 'Like ' +
+                                         '<button  onclick="ResultsView.likeGift(1, this)" class="btn btn-like" like-id=' + '"' + gift.gift_id + '"' + (disableLike ? 'disabled' : '') + '>' + 'Like ' +
                                              '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
                                           '</button>' +
-                                          '<button  onclick="ResultsView.likeGift(this.id, -1, this)" class="btn btn-dislike" id=' + '"' + gift.gift_id + '"' + '>' + 'Dislike ' +
+                                          '<button  onclick="ResultsView.likeGift(-1, this)" class="btn btn-dislike" dislike-id=' + '"' + gift.gift_id + '"' + (disableDislike ? 'disabled' : '') + '>' + 'Dislike ' +
                                              '<img class="owl-like" src="static/gifted/img/owl_like.png">' +
                                           '</button>' +
                                     '</div>' +
@@ -162,7 +172,8 @@ var ResultsView = {
     },
 
 
-    likeGift: function(giftID, like, el) {
+    likeGift: function(like, el) {
+        var giftID = el.getAttribute('like-id') || el.getAttribute('dislike-id');
         var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
         var currentRank = giftObject.gift_rank;
         var newRank = giftObject.gift_rank = currentRank + like;
@@ -180,6 +191,8 @@ var ResultsView = {
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + '...';
             },
             success: function(data){
+                // el.disabled = true;
+                // TODO Yehonatan: toggling!
                 $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
             },
