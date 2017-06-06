@@ -429,7 +429,7 @@ def upload_gift(request):
 
     rel = Relation.objects.get(description=relation)
     if rel is None:
-        ans = {'status': 'relation not defined'}
+        ans = {'status': 'relation is not defined'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     user_id = request.COOKIES.get('user_id')
@@ -437,6 +437,10 @@ def upload_gift(request):
     if user is None:
         return HttpResponse(json.dumps({'status': 'user does not exist'}), status=400, content_type='application/json')
 
+    #check if gift already exists in DB
+    if Gift.objects.filter(title=title, description=description, age=age, price=price,
+                            gender=gender, gift_img=image_url, relationship=rel).exists():
+        return HttpResponse(json.dumps({'status': 'gift you are trying to upload already exists'}), status=400, content_type='application/json')
 
     gift = Gift(title=title, description=description, age=age, price=price,
                 gender=gender, gift_img=image_url, relationship=rel)
