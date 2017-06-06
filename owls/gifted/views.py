@@ -78,20 +78,26 @@ def like(request):
                 gift_obj['is_like'] = 1 - gift_obj['is_like']
                 break
         user.liked_gift_ids = json.dumps(liked_gifts_ids)
+
+        liked_users = gift.get_liked_users()
+        for user_obj in liked_users:
+            if user_obj['user_id'] == user.user_id:
+                user_obj['is_like'] = 1 - user_obj['is_like']
+                break
+        gift.liked_users = json.dumps(liked_users)
+
     else:
         # add liked gift id to list
         user.add_liked_gift_id(search_query)
+        gift.add_liked_user({'user_id': user_id, 'is_like': 1 if like > 0 else 0 })
+
     user.save()
 
     gift.gift_rank = gift.gift_rank + int(like)
 
-    # if the picture is liked, the uploader gets 1 point and save liked user for this gift
+    # if the picture is liked, the uploader gets 1 point
     if like > 0:
-        uploader.user_rank = uploader.user_rank + 1
-        gift.add_liked_user({'user_id': user_id, 'is_like': 1})
-    else:
-        gift.add_liked_user({'user_id': user_id, 'is_like': 0})
-
+        uploader.user_rank += 1
 
     # Under gift rank of -5, the gift will be removed from the DB.
     if gift.gift_rank < MIN_GIFT_RANK:
@@ -109,6 +115,7 @@ def like(request):
     response = HttpResponse(json.dumps(ans), status=200)
     extend_cookie(response)
     return response
+
 
 def check_logged(request):
     req_user_id = request.COOKIES.get('user_id')
@@ -280,7 +287,7 @@ def truncate_by_relation_strength(gifts,relation,user_id):
     relations_dict = {}
     for rel in relations:
         relations_dict[rel.rel2] = rel.strength
-    filtered_gifts = []
+    filtered_gifts = set()
     for addition in xrange(5-MIN_RELATION_STRENGTH):
         for gift in gifts:
             if gift.relationship.description.lower() == relation.lower():
@@ -289,11 +296,12 @@ def truncate_by_relation_strength(gifts,relation,user_id):
                 strength = relations_dict.get(gift.relationship)
 
             if strength <= MIN_RELATION_STRENGTH + addition and gift.uploading_user.user_id != user_id:
-                filtered_gifts.append(gift)
+                if gift not in filtered_gifts:
+                    filtered_gifts.add(gift)
         if len(filtered_gifts) >= MIN_GIFTS_TH:
             break
 
-    return filtered_gifts
+    return [gift for gift in filtered_gifts]
 
 
 def login(request):
