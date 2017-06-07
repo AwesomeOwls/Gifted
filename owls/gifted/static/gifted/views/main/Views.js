@@ -85,16 +85,41 @@ var MainView = {
         MainView.showMainView();
         $home.click(MainView.showMainView);
 
-        if (!Utils.readCookie('user_id'))
+        // check if cookie from server exists and valid
+        if (Utils.readCookie('expiry_time') && MainView.checkExpiry())
         {
-            NavBar.setLoginButton(); // set listener to login function on login button
-        }
-        else {
             var given_name = Utils.readCookie('given_name');
             var pictureURL = Utils.readCookie('picture');
             GoogleAuth.onValidatedUser(given_name, pictureURL);
         }
+        else {
+            MainView.deleteAllCookies();
+
+            NavBar.setLoginButton(); // set listener to login function on login button
+
+        }
     },
+
+    checkExpiry: function() {
+        var now = new Date();
+        var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+        var expiry_time_str = Utils.readCookie('expiry_time').replace(/\"/g, "")
+        var expiry_time = new Date(expiry_time_str);
+        return now_utc.getTime() <= expiry_time.getTime();
+
+
+    },
+
+    deleteAllCookies: function () {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
 };
 
 var ResultsView = {
@@ -191,8 +216,10 @@ var ResultsView = {
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + '...';
             },
             success: function(data){
-                // el.disabled = true;
-                // TODO Yehonatan: toggling!
+                var negEl = like == 1 ? $('[dislike-id="' + giftID + '"]')[0] : $('[like-id="' + giftID + '"]')[0];
+                el.disabled = true;
+                negEl.disabled = false;
+
                 $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
             },
@@ -203,9 +230,11 @@ var ResultsView = {
             },
         });
     },
-    showQuestionDialog: function( el) {
+    showQuestionDialog: function(el) {
         var giftID = parseInt(el.className.replace(/[^0-9\.]/g, ''), 10);
-        console.log('should pop question regarding gift id:', giftID);
+        var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
+        var giftRelationship = giftObject.relationship;
+        QuestionDialog.showDialog(giftRelationship);
     },
 
 };

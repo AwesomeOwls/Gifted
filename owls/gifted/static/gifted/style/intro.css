@@ -90,9 +90,12 @@ overflow-y: scroll;
 .error-header {
   background-color: rgba(255, 0, 0, 0.46);
 }
+.success-header {
+  background-color: rgba(45, 255, 18, 0.46);
+}
 
 .close, .close:hover {
-  color: #000000;
+  color: #000000!important;
 }
 
 .user-gift {

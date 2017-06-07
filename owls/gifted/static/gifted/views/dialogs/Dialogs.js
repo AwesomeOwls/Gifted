@@ -33,8 +33,6 @@ var UploadDialog = {
 
         $('#upload-modal').on('hidden.bs.modal',UploadDialog.onDialogClose);
 
-        //TODO add client side input validations + required fields (stretch goal)
-        //TODO add server failure indication (stretch goal)
         var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
@@ -71,6 +69,7 @@ var UploadDialog = {
                     Utils.clearInputs($description, $title, $age, $price, $img_url);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
+                        successDialog.showDialog('Gift Uploaded Successfully');
                     });
                 },
                 error: function(error){
@@ -100,27 +99,12 @@ var UploadDialog = {
         var $age = $('#upload-age');
         var $title = $('#upload-title');
         var $price = $('#upload-price');
-        var $img_url = $('#upload-img-url');
         var age = $age.val();
         var title = $title.val();
         var price = $price.val();
-        var img_url = $img_url.val();
 
-        // var urlregex = new RegExp( "/[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi");
         var isValid = true;
 
-        // image url validation is done in server side
-        // if(img_url && !urlregex.test(img_url)) {
-        //     $img_url.closest('.form-group').addClass('has-error');
-        //     $img_url.siblings('.error')[0].innerText = 'Invalid URL address';
-        //     isValid = false;
-        // }
-        // else {
-        //     $img_url.closest('.form-group').removeClass('has-error');
-        //     $img_url.siblings('.error')[0].innerText = '';
-        // }
-
-        // age
         if(!age || +age >= '200' || +age <= '0') {
             $age.closest('.form-group').addClass('has-error');
             $age.siblings('.error')[0].innerText = 'Age is required (between 1 to 199)';
@@ -232,8 +216,6 @@ var SearchDialog = {
         var price_from = $price_from.val();
         var price_to = $price_to.val();
 
-        var urlregex = new RegExp( "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
-
         var isValid = true;
 
         // age
@@ -292,7 +274,83 @@ var errorDialog = {
 
     },
     closeDialog: function() {
-        $('#serror-modal').modal('hide');
+        $('#error-modal').modal('hide');
     },
+
+};
+
+var successDialog = {
+
+    showDialog: function(successMsg) {
+        console.log('err', successMsg);
+
+        Utils.clearView('.success-message');
+        $('#success-modal').modal();
+        $('.success-message')[0].innerHTML = successMsg;
+
+    },
+    closeDialog: function() {
+        $('#success-modal').modal('hide');
+    },
+
+};
+
+var QuestionDialog = {
+
+    showDialog: function(giftRelationship) {
+        var $relationship_score = $('#question-relationship-score'); var $relationship2 = $('#question-relationship2');
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+
+        $('#question-modal').modal();
+
+        $('#question-modal').on('hidden.bs.modal',QuestionDialog.onDialogClose);
+
+        var randomRelation = Utils.pickRandomProperty(window.relationships);
+        var obj = {};
+
+        obj['other_relation'] = randomRelation;
+        $relationship2.text(window.relationships[randomRelation]);
+
+        $('#question-submit').click( function() {
+            obj['relation'] = giftRelationship;
+            obj['strength'] = 6 - parseInt($relationship_score.val());
+
+            QuestionDialog.closeDialog();
+            QuestionDialog.onDialogClose();
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/ask_user/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        successDialog.showDialog('Thanks for your answer!');
+                    });
+                },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
+            });
+            return false;
+        });
+    },
+
+    closeDialog: function() {
+        $('#question-modal').modal('hide');
+    },
+
+    onDialogClose: function() {
+        $('#question-submit').off('click');
+        $('#question-modal').off('hidden.bs.modal');
+    }
 
 };
