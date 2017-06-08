@@ -87,6 +87,13 @@ var GoogleAuth = {
                 SearchDialog.showDialog();
             });
             $upload.click(function () {
+                $(function () {
+                    $("#upload-relationship-score").rateYo({
+                        starWidth: "40px",
+                        fullStar: true
+                    });
+
+                });
                 UploadDialog.showDialog();
             });
         });

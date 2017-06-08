@@ -234,6 +234,13 @@ var ResultsView = {
         var giftID = parseInt(el.className.replace(/[^0-9\.]/g, ''), 10);
         var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
         var giftRelationship = giftObject.relationship;
+        $(function () {
+            $("#question-relationship-score").rateYo({
+                starWidth: "40px",
+                fullStar: true
+            });
+
+        });
         QuestionDialog.showDialog(giftRelationship);
     },
 

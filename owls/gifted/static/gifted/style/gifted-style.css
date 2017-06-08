@@ -142,3 +142,8 @@ p.error {
 .like-glow  {
   box-shadow: 3px -1px 24px rgba(10, 84, 132, 0.6);
 }
+
+.stars {
+  display: flex;
+  align-items: flex-end;
+}

@@ -50,7 +50,7 @@ var UploadDialog = {
             obj['age'] = parseInt($age.val());
             obj['img_url'] = $img_url.val();
             obj['price'] = parseInt($price.val());
-            obj['relationship_score'] = 6 - parseInt($relationship_score.val());
+            obj['relationship_score'] = 6 - parseInt($relationship_score.rateYo("option", "rating"));
 
             UploadDialog.closeDialog();
             UploadDialog.onDialogClose();
@@ -264,9 +264,13 @@ var SearchDialog = {
 var errorDialog = {
 
     showDialog: function(errorText) {
-        var errObj = JSON.parse(errorText);
-        var errMsg = errObj.status || 'Internal Server Error';
-        console.log('err', errMsg);
+        try {
+            var errObj = JSON.parse(errorText);
+            var errMsg = errObj.status || 'Internal Server Error';
+        } catch (e) {
+            errMsg = 'Internal Server Error';
+        }
+        console.error('err', errMsg);
 
         Utils.clearView('.error-message');
         $('#error-modal').modal();
@@ -313,7 +317,7 @@ var QuestionDialog = {
 
         $('#question-submit').click( function() {
             obj['relation'] = giftRelationship;
-            obj['strength'] = 6 - parseInt($relationship_score.val());
+            obj['strength'] = 6 - parseInt($relationship_score.rateYo("option", "rating"));
 
             QuestionDialog.closeDialog();
             QuestionDialog.onDialogClose();
