@@ -50,7 +50,7 @@ var UploadDialog = {
             obj['age'] = parseInt($age.val());
             obj['img_url'] = $img_url.val();
             obj['price'] = parseInt($price.val());
-            obj['relationship_score'] = 6 - parseInt($relationship_score.rateYo("option", "rating"));
+            obj['relationship_score'] = 6 - parseFloat($relationship_score.rateYo("option", "rating"));
 
             UploadDialog.closeDialog();
             UploadDialog.onDialogClose();
@@ -317,7 +317,7 @@ var QuestionDialog = {
 
         $('#question-submit').click( function() {
             obj['relation'] = giftRelationship;
-            obj['strength'] = 6 - parseInt($relationship_score.rateYo("option", "rating"));
+            obj['strength'] = 6 - parseFloat($relationship_score.rateYo("option", "rating"));
 
             QuestionDialog.closeDialog();
             QuestionDialog.onDialogClose();

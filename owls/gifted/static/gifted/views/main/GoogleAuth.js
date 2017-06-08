@@ -89,8 +89,7 @@ var GoogleAuth = {
             $upload.click(function () {
                 $(function () {
                     $("#upload-relationship-score").rateYo({
-                        starWidth: "40px",
-                        fullStar: true
+                        starWidth: "40px"
                     });
 
                 });

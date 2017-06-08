@@ -236,8 +236,7 @@ var ResultsView = {
         var giftRelationship = giftObject.relationship;
         $(function () {
             $("#question-relationship-score").rateYo({
-                starWidth: "40px",
-                fullStar: true
+                starWidth: "40px"
             });
 
         });
