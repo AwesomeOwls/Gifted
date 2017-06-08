@@ -410,7 +410,7 @@ def upload_gift(request):
         ans = {'status': 'age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
-    if not re.match('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',image_url):
+    if not re.match('(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)?',image_url):
         ans = {'status': 'image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
