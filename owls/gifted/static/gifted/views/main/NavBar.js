@@ -107,7 +107,7 @@ var NavBar = {
     getRankBar: function() {
         var userRank = Utils.getUserRank();
         var barValue;
-        barValue = Math.max(35,userRank);
+        barValue = Math.max(0,userRank) + 35;
         barValue = Math.min(100,barValue);
         var rank_color = Utils.getRankColor();
         if (rank_color != 'red') {
