@@ -68,6 +68,8 @@ var NavBar = {
         $welcomeText.css('padding-left', '5px');
         img.appendTo('#welcome');
         $welcomeText.appendTo('#welcome');
+        var rankBar = NavBar.getRankBar();
+        rankBar.appendTo('#welcome');
         $welcome.show();
 
         $welcome.click( function() {
@@ -101,4 +103,32 @@ var NavBar = {
             });
         });
     },
+
+    getRankBar: function() {
+        var userRank = Utils.getUserRank();
+        var barValue;
+        barValue = Math.max(35,userRank);
+        barValue = Math.min(100,barValue);
+        var rank_color = Utils.getRankColor();
+        if (rank_color != 'red') {
+            return $(
+                '<div class="progress progress-rank">' +
+                '<div class="progress-bar ' + rank_color + '-gifter" role="progressbar" aria-valuenow="' + barValue + '"' +
+                'aria-valuemin="0" aria-valuemax="100" style="width:' + barValue + '%">' +
+                    'Rank: ' + userRank +
+                '</div>' +
+                '</div>'
+            );
+        }
+        else {
+            return $(
+                '<div class="progress progress-rank">' +
+                '<div class="progress-bar red-gifter" role="progressbar" aria-valuenow="100"' +
+                'aria-valuemin="0" aria-valuemax="100" style="width:100%">' +
+                    'User under warning' +
+                '</div>' +
+                '</div>'
+            );
+        }
+    }
 };

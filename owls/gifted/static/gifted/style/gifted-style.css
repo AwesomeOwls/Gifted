@@ -49,7 +49,7 @@ overflow-y: scroll;
 
 #welcome {
   display: flex;
-  align-self: center;
+  align-items: center;
   font-family: arvo;
   padding-left: 50px;
 }
@@ -146,4 +146,65 @@ p.error {
 .stars {
   display: flex;
   align-items: flex-end;
+}
+
+.profile {
+  height: 250px;
+  margin: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile > h3 {
+  color: black;
+}
+.progress.progress-rank-profile {
+  width: auto;
+  background: #acc6d3!important;
+  margin-bottom: 0px!important;
+  align-self: center;
+  margin-left: 5px;
+  height: 50px;
+}
+/*.thumbnail {*/
+  /*!*background-image: url(../img/background1.jpg);*!*/
+  /*background-size: cover;*/
+/*}*/
+
+.progress.progress-rank{
+  background: #acc6d3!important;
+  width: 160px;
+  margin-bottom: 0px!important;
+  align-self: center;
+  margin-left: 5px;
+  height: 25px;
+}
+
+.bronze-gifter,.silver-gifter,.gold-gifter,.diamond-gifter,.red-gifter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background-size: cover;
+}
+.bronze-gifter{
+  background-color: #CD7F32!important;
+  /*background-image: url(../img/bronze.jpeg);*/
+
+}
+.silver-gifter{
+  background-color: #C0C0C0!important;
+  /*background-image: url(../img/silver.jpeg);*/
+}
+.gold-gifter{
+  background-color: #D4AF37!important;
+  /*background-image: url(../img/gold.jpeg);*/
+}
+.diamond-gifter {
+  background-color: #e9b5bb !important;
+  /*background-image: url(../img/diamond.jpeg)!important;*/
+}
+.red-gifter {
+  /*background-color: #9099E9!important;*/
+  background: red!important;
 }

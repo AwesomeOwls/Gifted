@@ -17,14 +17,12 @@ var ProfileView = {
         var $name = $('#profile-name');
         var $rank = $('#profile-rank');
         var given_name = Utils.readCookie('given_name');
-        var user_rank = Utils.readCookie('user_rank');
         var pictureURL = Utils.readCookie('picture');
         pictureURL = pictureURL.replace(/\"/g, "");
 
         $picture.attr('src', pictureURL);
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
-        $rank[0].innerHTML = 'Your Rank is: ' + user_rank;
-
+        ProfileView.getProfileRankBar().appendTo($rank);
         ProfileView.insertGifts(window.userGifts);
 
     },
@@ -68,6 +66,33 @@ var ProfileView = {
             '</div>' +
             '</div>'
     },
+
+    getProfileRankBar: function() {
+        var userRank = Utils.getUserRank();
+        var barValue = Math.max(35,userRank);
+        barValue = Math.min(100,barValue) + 10;
+        var rank_color = Utils.getRankColor();
+        if (rank_color != 'red') {
+            return $(
+                '<div class="progress progress-rank-profile">' +
+                '<div class="progress-bar ' + rank_color + '-gifter" role="progressbar" aria-valuenow="' + barValue + '"' +
+                'aria-valuemin="0" aria-valuemax="100" style="width:' + barValue + '%">' +
+                '<h4 class="profile-rank-value">' + 'Rank: ' + userRank + ' (' + Utils.capitalizeFirstLetter(rank_color) + ' User)' +'</h4>' +
+                '</div>' +
+                '</div>'
+            );
+        }
+        else {
+            return $(
+                '<div class="progress progress-rank-profile">' +
+                '<div class="progress-bar red-gifter" role="progressbar" aria-valuenow="100"' +
+                'aria-valuemin="0" aria-valuemax="100" style="width:100%">' +
+                '<h4 class="profile-rank-value">' + 'User under warning!' + ' (Rank: ' + userRank + ')</h4>' +
+                '</div>' +
+                '</div>'
+            );
+        }
+    }
 };
 
 

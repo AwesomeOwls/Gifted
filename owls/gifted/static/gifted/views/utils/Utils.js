@@ -47,12 +47,32 @@ var Utils = {
 
     injectView: function(selector, template, callback, background) {
         if (background) $(selector).css('background-image', 'url(static/gifted/img/' + background + ')');
+        else {
+            $(selector).css('background-image', 'none');
+        }
 
         return $(selector).load(template, null, callback);
     },
 
     clearView: function(selector) {
         $(selector)[0].innerHTML = '';
+    },
+
+    capitalizeFirstLetter: function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+
+    getUserRank: function() {
+        return Utils.readCookie('user_rank');
+    },
+
+    getRankColor: function() {
+        var userRank = Utils.getUserRank();
+        if (userRank < 0) return 'red';
+        if (userRank >= 0 && userRank < 20) return 'bronze';
+        if (userRank >= 5 && userRank < 15) return 'silver';
+        if (userRank >= 15 && userRank < 30) return 'gold';
+        if (userRank >= 30) return 'diamond';
     }
 };
 
