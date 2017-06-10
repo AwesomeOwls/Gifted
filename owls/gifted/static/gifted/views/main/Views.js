@@ -70,7 +70,7 @@ var ProfileView = {
     getProfileRankBar: function() {
         var userRank = Utils.getUserRank();
         var barValue = Math.max(35,userRank);
-        barValue = Math.min(100,barValue) + 10;
+        barValue = Math.min(100,barValue) + 35;
         var rank_color = Utils.getRankColor();
         if (rank_color != 'red') {
             return $(
