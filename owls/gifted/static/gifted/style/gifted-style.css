@@ -208,3 +208,26 @@ p.error {
   /*background-color: #9099E9!important;*/
   background: red!important;
 }
+
+
+
+.faq_container{
+  position: absolute;
+  left: 50px;
+}
+
+.faq_question {
+    margin: 0px;
+    padding: 0px 0px 5px 0px;
+    cursor: pointer;
+    font-weight: bold;
+  font-size: xx-large;
+}
+
+.faq_answer_container {
+    height: 0px;
+    overflow: hidden;
+    padding: 0px;
+    text-align: left;
+  font-size:x-large;
+}
