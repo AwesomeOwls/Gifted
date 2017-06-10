@@ -270,7 +270,6 @@ var ResultsView = {
 
 };
 
-
 var AboutView = {
     showAboutView: function() {
         Utils.clearView('.main-container');
@@ -278,4 +277,12 @@ var AboutView = {
         Utils.injectView('.main-container', AboutPage, null, 'background1_80.jpg');
 
     },
-}
+};
+
+var FAQView = {
+    showFAQView: function () {
+        Utils.clearView('.main-container');
+        var FAQPage = 'static/gifted/inner-templates/faqPage.html';
+        Utils.injectView('.main-container', FAQPage, null, 'background1_80.jpg');
+    }
+};
