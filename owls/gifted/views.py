@@ -547,15 +547,16 @@ def add_initial_gifts(request):
             user = User.objects.all()[:1].get()
             i=0
             for row in reader:
-                descreption = row[0]
-                age = row[1]
-                gender = row[2]
-                price = row[3]
-                gift_img = row[4]
-                rank = row[5]
-                relationship = row[6]
-                gift = Gift(relationship=relationship,gift_img=gift_img,
-                            age=age,description=descreption,price=price,gender=gender,gift_rank=rank)
+                title=row[0]
+                description = row[1]
+                age = row[2]
+                gender = row[3]
+                price = row[4]
+                gift_img = row[5]
+                rank = row[6]
+                relationship = Relation.objects.get(description=row[7])
+                gift = Gift(title=title,relationship=relationship,gift_img=gift_img,
+                            age=age,description=description,price=price,gender=gender,gift_rank=rank,uploading_user=user)
                 i += 1
                 gift.save()
             user.user_rank += 2*i
