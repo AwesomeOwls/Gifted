@@ -211,23 +211,25 @@ p.error {
 
 
 
-.faq_container{
+.faq-container{
   position: absolute;
   left: 50px;
+  max-height: 75%;
+  overflow: scroll;
 }
 
-.faq_question {
+.faq-question {
     margin: 0px;
     padding: 0px 0px 5px 0px;
     cursor: pointer;
     font-weight: bold;
-  font-size: xx-large;
+    font-size: xx-large;
 }
 
-.faq_answer_container {
+.faq-answer-container {
     height: 0px;
     overflow: hidden;
     padding: 0px;
     text-align: left;
-  font-size:x-large;
+    font-size: x-large;
 }

@@ -78,7 +78,6 @@ var NavBar = {
         var introHeader = 'static/gifted/inner-templates/introHeader.html';
         pictureURL = pictureURL.replace(/\"/g, "");
         var $welcome = $('#welcome');
-        //TODO: check if user is in DB Already, if so present 'welcome back' message or something similar
         $welcome.hide();
         var $welcomeText = $('<div></div>');
         $welcomeText[0].innerText = 'Welcome, ' + userName + '!  ';

@@ -69,7 +69,7 @@ var ProfileView = {
 
     getProfileRankBar: function() {
         var userRank = Utils.getUserRank();
-        var barValue = Math.max(35,userRank);
+        var barValue = Math.max(0,userRank);
         barValue = Math.min(100,barValue) + 35;
         var rank_color = Utils.getRankColor();
         if (rank_color != 'red') {
@@ -286,22 +286,16 @@ var FAQView = {
         Utils.injectView('.main-container', FAQPage, FAQView.onFAQInjected, 'background1_80.jpg');
     },
 
-
-
     onFAQInjected: function () {
-        $('.faq_question').click(function () {
-
+        $('.faq-question').click(function () {
             if ($(this).parent().is('.open')) {
-                $(this).closest('.faq').find('.faq_answer_container').animate({'height': '0'}, 500);
+                $(this).closest('.faq').find('.faq-answer-container').animate({'height': '0'}, 500);
                 $(this).closest('.faq').removeClass('open');
-
             } else {
                 var newHeight = $(this).closest('.faq').find('.faq_answer').height() + 'px';
-                $(this).closest('.faq').find('.faq_answer_container').animate({'height': newHeight}, 500);
+                $(this).closest('.faq').find('.faq-answer-container').animate({'height': newHeight}, 500);
                 $(this).closest('.faq').addClass('open');
             }
-
         });
     }
-
 };
