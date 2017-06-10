@@ -17,15 +17,12 @@ MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
-NOT_LOGGED_IN = 'User is not logged-in'
-COOKIE_EXPIRED = 'Cookie expired'
+NOT_LOGGED_IN = 'You are not logged in.'
+COOKIE_EXPIRED = 'Your session expired. Please log in again.'
+BANNED = 'You are temporarily banned. Check our FAQ for more information.'
+
 NOT_CHOSEN = 6
-
 BAN_TIME = timedelta(1)
-ERR_USR_NOT_FOUND = 0
-ERR_COOKIE_EXPIRED = 1
-LOGGED_OK = 2
-
 
 def index(request):
     context = {}
@@ -33,18 +30,10 @@ def index(request):
 
 
 def like(request):
-
     ans = {}
 
-    login_status = check_logged(request)
-    if login_status != LOGGED_OK:
-        if login_status == ERR_USR_NOT_FOUND:
-            ans['status'] = NOT_LOGGED_IN
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-        else:
-            ans['status'] = COOKIE_EXPIRED
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(res)
+    res = check_logged(request)
+    if res is not None:
         return res
 
     body = json.loads(request.body)
@@ -61,7 +50,7 @@ def like(request):
 
     # User may like/dislike other gifts only if his rank is high enough.
     if user.user_rank < TRUST_USER_RANK:
-        return HttpResponse(json.dumps({'status': 'User rank too low, cannot like'}),
+        return HttpResponse(json.dumps({'status': 'Have to be a trusted user to like. \nCheck out our ranking system in FAQ.'}),
                             content_type='application/json', status=400)
 
     search_query = {'gift_id':gift_id,'is_like': 1 if like>0 else 0}
@@ -69,7 +58,9 @@ def like(request):
     liked_gifts_ids = user.get_liked_gift_ids()
     # check if user already liked/disliked this gift
     if search_query in liked_gifts_ids:
-        return HttpResponse(json.dumps({'status': 'User already liked/disliked this gift'}),
+
+        return HttpResponse(json.dumps({'status': 'You already liked this gift'}),
+                            content_type='application/json', status=400) if like >0 else HttpResponse(json.dumps({'status': 'You already disliked this gift'}),
                             content_type='application/json', status=400)
 
     elif {'gift_id':gift_id, 'is_like': 1-search_query['is_like']} in liked_gifts_ids:
@@ -95,7 +86,7 @@ def like(request):
 
     gift.gift_rank = gift.gift_rank + int(like)
 
-    # if the picture is liked, the uploader gets 1 point
+    # if the gift is liked, the uploader gets 1 point
     if like > 0:
         uploader.user_rank += 1
 
@@ -118,20 +109,30 @@ def like(request):
 
 
 def check_logged(request):
+    ans = dict()
     req_user_id = request.COOKIES.get('user_id')
     req_expiry_time = request.COOKIES.get('expiry_time')
 
     if 'user_id' in request.COOKIES:
 
             if not User.objects.filter(user_id=req_user_id).exists():
-                return ERR_USR_NOT_FOUND
+                ans['status'] = NOT_LOGGED_IN
+                invalidate_cookie(res)
 
-            if parser.parse(req_expiry_time) < datetime.utcnow():
-                return ERR_COOKIE_EXPIRED
+            elif User.objects.get(user_id=req_user_id).is_banned:
+                ans['status'] = BANNED
+                invalidate_cookie(res)
 
-            return LOGGED_OK
+            elif parser.parse(req_expiry_time) < datetime.utcnow():
+                ans['status'] = COOKIE_EXPIRED
+                invalidate_cookie(res)
+
+            else:
+                return None
     else:
-        return ERR_USR_NOT_FOUND
+        ans['status'] = NOT_LOGGED_IN
+    res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+    return res
 
 
 def invalidate_cookie(response):
@@ -143,17 +144,10 @@ def invalidate_cookie(response):
 
 
 def ask_user(request):
-    ans = dict()
+    ans = {}
 
-    login_status = check_logged(request)
-    if login_status != LOGGED_OK:
-        if login_status == ERR_USR_NOT_FOUND:
-            ans['status'] = NOT_LOGGED_IN
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-        else:
-            ans['status'] = COOKIE_EXPIRED
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(res)
+    res = check_logged(request)
+    if res is not None:
         return res
 
     user_id = request.COOKIES.get('user_id')
@@ -170,25 +164,19 @@ def ask_user(request):
     relation_strength = body['strength']
     update_rmatrix(rel, other_rel, relation_strength, user)
 
+    user.save()
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
+    response.set_cookie('user_rank', user.user_rank)
     extend_cookie(response)
     return response
 
 
 def search_gift(request):
+    ans = {}
 
-    ans = dict()
-
-    login_status = check_logged(request)
-    if login_status != LOGGED_OK:
-        if login_status == ERR_USR_NOT_FOUND:
-            ans['status'] = NOT_LOGGED_IN
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-        else:
-            ans['status'] = COOKIE_EXPIRED
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(res)
+    res = check_logged(request)
+    if res is not None:
         return res
 
     body = json.loads(request.body)
@@ -216,33 +204,31 @@ def search_gift(request):
         # ////input validations////
 
         if low_price <= 0 or high_price <= 0 or high_price < low_price:
-            ans = {'status': 'prices must be positive integers and high price must be higher then lower price'}
+            ans = {'status': 'Prices must be positive integers and high price must be higher then lower price'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
         if age and age <= 0 or age >= 200:
-            ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
+            ans = {'status': 'Age/price must be positive integers where age cannot be over 200'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
         elif age_range:
             low_age, high_age = age_range.split('-')
             low_age = int(low_age)
             high_age = int(high_age)
             if low_age <= 0 or high_age <= 0 or high_age < low_age:
-                ans = {'status': 'ages must be positive integers and high age must be higher then lower agr'}
+                ans = {'status': 'Ages must be positive integers and high age must be higher then lower age'}
                 return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
         # ////end of input validations////
 
     except (TypeError, ValueError):
-        ans = {'status': 'age/price must be integers'}
+        ans = {'status': 'Age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     if user is None:
-        return HttpResponse(json.dumps({'status': 'user does not exist'}),status=400, content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'User does not exist'}),status=400, content_type='application/json')
 
     if user.user_rank < MIN_SEARCH_RANK:
-        ans['status'] = 'RankTooLow'
+        ans['status'] = 'Your rank is too low. \nYou need to upload few gifts before searching. \nCheck out our FAQ.'
         return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
-    elif user.is_banned:
-        return HttpResponse(json.dumps({'status': 'banned'}), content_type='application/json', status=400)
 
     rel_rng = None
     if age_range is None:
@@ -252,7 +238,7 @@ def search_gift(request):
                 break
         if rel_rng is None:
             # should not get here at all
-            return HttpResponse(json.dumps({'status': 'illegalAge'}), content_type='application/json',status=400)
+            return HttpResponse(json.dumps({'status': 'No suitable range in range array.'}), content_type='application/json',status=400)
     else:
         rel_rng = [int(low_age),int(high_age)]
     # query the DB for the relevant gifts
@@ -333,11 +319,12 @@ def login(request):
         if user.is_banned:
             # check if ban is over
             if (datetime.utcnow().replace(tzinfo=None) - user.banned_start.replace(tzinfo=None)) < BAN_TIME:
-                ans['status'] = 'Sorry you are banned!'
+                ans['status'] = 'Sorry you are banned! Check out our banning policy in FAQ.'
                 return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
             else:
                 user.is_banned = False
                 user.banned_start = None
+                user.gifts_removed = 0
                 user.save()
 
     res = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
@@ -353,18 +340,10 @@ def login(request):
 
 
 def logout(request):
+    ans = {}
 
-    ans = dict()
-
-    login_status = check_logged(request)
-    if login_status != LOGGED_OK:
-        if login_status == ERR_USR_NOT_FOUND:
-            ans['status'] = NOT_LOGGED_IN
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-        else:
-            ans['status'] = COOKIE_EXPIRED
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(res)
+    res = check_logged(request)
+    if res is not None:
         return res
 
     ans['status'] = 'Logged out'
@@ -374,17 +353,10 @@ def logout(request):
 
 
 def upload_gift(request):
-    ans = dict()
+    ans = {}
 
-    login_status = check_logged(request)
-    if login_status != LOGGED_OK:
-        if login_status == ERR_USR_NOT_FOUND:
-            ans['status'] = NOT_LOGGED_IN
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-        else:
-            ans['status'] = COOKIE_EXPIRED
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(res)
+    res = check_logged(request)
+    if res is not None:
         return res
 
     body = json.loads(request.body)
@@ -404,43 +376,43 @@ def upload_gift(request):
         age = int(age)
         price = int(price)
         if age <= 0 or age >= 200 or price <= 0:
-            ans = {'status': 'age/price must be positive integers where age cannot be over 200'}
+            ans = {'status': 'Age/price must be positive integers where age cannot be over 200'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
     except (TypeError, ValueError):
-        ans = {'status': 'age/price must be integers'}
+        ans = {'status': 'Age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     if not re.match('(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)?',image_url):
-        ans = {'status': 'image url is invalid'}
+        ans = {'status': 'Image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
     if not re.match('(\w+(\s\w+)?)',title):
-        return HttpResponse(json.dumps({'status': 'title is not legal'}), status=400, content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'Title is not legal'}), status=400, content_type='application/json')
 
     if not re.match('(\w+(\s\w+)?)?',description):
         return HttpResponse(json.dumps({'status':'The descreption is not legal.Please use only English letters or digits'}),
                             status=400, content_type='application/json')
 
     if not gender == 'M' and not gender == 'F':
-        ans = {'status': 'wrong gender'}
+        ans = {'status': 'Wrong gender supplied'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     ##### end of input validation #####
 
     rel = Relation.objects.get(description=relation)
     if rel is None:
-        ans = {'status': 'relation is not defined'}
+        ans = {'status': 'Relation is not defined'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
     if user is None:
-        return HttpResponse(json.dumps({'status': 'user does not exist'}), status=400, content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'User does not exist'}), status=400, content_type='application/json')
 
     #check if gift already exists in DB
     if Gift.objects.filter(title=title, description=description, age=age, price=price,
                             gender=gender, gift_img=image_url, relationship=rel).exists():
-        return HttpResponse(json.dumps({'status': 'gift you are trying to upload already exists'}), status=400, content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'Gift you are trying to upload already exists in our DB'}), status=400, content_type='application/json')
 
     gift = Gift(title=title, description=description, age=age, price=price,
                 gender=gender, gift_img=image_url, relationship=rel)
@@ -519,8 +491,12 @@ def init_relationship_matrix():
                     if i == 0:
                         rel = row[indx]
                     elif not row[indx] == '' and not int(row[indx]) == 0:
-                        first_rel = Relation.objects.get(description=rel)
-                        second_rel = Relation.objects.get(description=col)
+                        try:
+                            first_rel = Relation.objects.get(description=rel)
+                            second_rel = Relation.objects.get(description=col)
+                        except Relation.DoesNotExist:
+                            return HttpResponse(json.dumps({'status': 'relations not found: ' + rel + ',' + col}), status=400)
+
                         relationship_matrix_cell = RelationshipMatrixCell(rel1=first_rel,
                                                                           rel2=second_rel, strength=int(row[indx]))
                         relationship_matrix_cell.save()
@@ -569,23 +545,16 @@ def add_initial_gifts(request):
 def clear_db(request):
     Relation.objects.all().delete()
     RelationshipMatrixCell.objects.all().delete()
-    User.objects.all().delete()
-    Gift.objects.all().delete()
+    #User.objects.all().delete()
+    #Gift.objects.all().delete()
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
 
 
 def profile_page(request):
     ans = {}
 
-    login_status = check_logged(request)
-    if login_status != LOGGED_OK:
-        if login_status == ERR_USR_NOT_FOUND:
-            ans['status'] = NOT_LOGGED_IN
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-        else:
-            ans['status'] = COOKIE_EXPIRED
-            res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-            invalidate_cookie(res)
+    res = check_logged(request)
+    if res is not None:
         return res
 
     user_id = request.COOKIES.get('user_id')

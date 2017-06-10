@@ -20,7 +20,7 @@ class User(models.Model):
         return json.loads(self.liked_gift_ids)
 
     def __str__(self):
-        return "id:%s, rank:%s, banned:%s, liked gift ids:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no", self.liked_gift_ids)
+       return "id:%s, rank:%s, banned:%s, liked gift ids:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no", self.liked_gift_ids)
 
 
 class Relation(models.Model):
@@ -86,7 +86,7 @@ class Gift(models.Model):
         )
 
     def __str__(self):
-        return "title:%s, description:%s, uploading user:%s, price:%s, liked users:%s" % (self.title, self.description, self.uploading_user, self.price, self.liked_users)
+       return "title:%s, description:%s, uploading user:%s, price:%s, liked users:%s" % (self.title, self.description, self.uploading_user, self.price, self.liked_users)
 
 
 class RelationshipMatrixCell(models.Model):
