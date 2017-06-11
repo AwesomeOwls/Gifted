@@ -79,14 +79,18 @@ var ProfileView = {
         Utils.clearView('#gifts-cards');
         var userRank = Utils.getUserRank();
         var goldButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-gold.jpg">');
-        var diamondButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-diamond.jpg">');
+        var diamondButton = $('<img class="diamond-button card-button" src="static/gifted/img/gift-diamond.jpg">');
         if (userRank >= Utils.GOLD_RANK) {
             goldButton.appendTo($cards);
-            $('.gold-button').click(cardDialog.showDialog('gold'));
+            $('.gold-button').click(function() {
+                cardDialog.showDialog('gold')
+            });
 
             if (userRank >= Utils.DIAMOND_RANK) {
                 diamondButton.appendTo($cards);
-                $('.gold-button').click(cardDialog.showDialog('diamond'));
+                $('.diamond-button').click( function() {
+                    cardDialog.showDialog('diamond')
+                });
             }
         }
 

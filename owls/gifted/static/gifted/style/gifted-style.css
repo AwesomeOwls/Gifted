@@ -239,4 +239,5 @@ p.error {
 .card-button {
   height: 100px;
   margin-top: 10px;
+  cursor: pointer;
 }

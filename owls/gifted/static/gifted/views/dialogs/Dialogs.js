@@ -363,12 +363,18 @@ var cardDialog = {
 
     showDialog: function(cardType) {
         var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+        var $card_text = $('.card-text');
+        var moneyValue = cardType == 'gold' ? Utils.GOLD_CARD_REWARD : Utils.DIAMOND_CARD_REWARD;
+        var redeemValue = cardType == 'gold' ? Utils.GOLD_CARD_VALUE : Utils.DIAMOND_CARD_VALUE;
+        debugger
+        $card_text[0].innerHTML = '<h5>You are about to redeem ' + redeemValue + ' Points from your rank.</h5>' +
+                                '<h5>You will recieve a ' + moneyValue + ' ₪ gift card to your Email.</h5>' +
+                                '<h5>Are you sure you want to redeem your points?</h5>';
 
         $('#card-modal').modal();
 
-        $('#card-modal').on('hidden.bs.modal',QuestionDialog.onDialogClose);
+        $('#card-modal').on('hidden.bs.modal',cardDialog.onDialogClose);
 
-        var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
         $('#card-submit').click( function() {
@@ -390,7 +396,7 @@ var cardDialog = {
                 success: function(data){
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
-                        successDialog.showDialog('Money Redeeemed in email!');
+                        successDialog.showDialog("The " + Utils.capitalizeFirstLetter(cardType) + " gift card is on it's way to your email! 😉");
                         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
                         ProfileView.initProfilePageData();
                     });
@@ -406,12 +412,12 @@ var cardDialog = {
     },
 
     closeDialog: function() {
-        $('#question-modal').modal('hide');
+        $('#card-modal').modal('hide');
     },
 
     onDialogClose: function() {
-        $('#question-submit').off('click');
-        $('#question-modal').off('hidden.bs.modal');
+        $('#card-submit').off('click');
+        $('#card-modal').off('hidden.bs.modal');
     }
 
 };
