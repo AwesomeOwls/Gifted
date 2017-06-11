@@ -71,7 +71,7 @@ var UploadDialog = {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Gift Uploaded Successfully');
                         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
-                        ProfileView.initProfileBar();
+                        ProfileView.initProfilePageData();
                     });
                 },
                 error: function(error){
@@ -337,6 +337,62 @@ var QuestionDialog = {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Thanks for your answer!');
                         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+                    });
+                },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
+            });
+            return false;
+        });
+    },
+
+    closeDialog: function() {
+        $('#question-modal').modal('hide');
+    },
+
+    onDialogClose: function() {
+        $('#question-submit').off('click');
+        $('#question-modal').off('hidden.bs.modal');
+    }
+
+};
+var cardDialog = {
+
+    showDialog: function(cardType) {
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+
+        $('#card-modal').modal();
+
+        $('#card-modal').on('hidden.bs.modal',QuestionDialog.onDialogClose);
+
+        var randomRelation = Utils.pickRandomProperty(window.relationships);
+        var obj = {};
+
+        $('#card-submit').click( function() {
+            obj['card_type'] = cardType;
+
+            cardDialog.closeDialog();
+            cardDialog.onDialogClose();
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/redeem_card/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        successDialog.showDialog('Money Redeeemed in email!');
+                        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+                        ProfileView.initProfilePageData();
                     });
                 },
                 error: function(error){

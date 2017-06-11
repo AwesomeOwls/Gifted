@@ -20,7 +20,7 @@ var ProfileView = {
 
         $picture.attr('src', pictureURL);
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
-        ProfileView.initProfileBar();
+        ProfileView.initProfilePageData();
         ProfileView.insertGifts(window.userGifts);
 
     },
@@ -65,10 +65,32 @@ var ProfileView = {
             '</div>'
     },
 
-    initProfileBar: function() {
+    initProfilePageData: function() {
         var $rank = $('#profile-rank');
         Utils.clearView('#profile-rank');
         ProfileView.getProfileRankBar().appendTo($rank);
+        ProfileView.initCardsButtons();
+
+
+    },
+
+    initCardsButtons: function() {
+        var $cards = $('#gifts-cards');
+        Utils.clearView('#gifts-cards');
+        var userRank = Utils.getUserRank();
+        var goldButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-gold.jpg">');
+        var diamondButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-diamond.jpg">');
+        if (userRank >= Utils.GOLD_RANK) {
+            goldButton.appendTo($cards);
+            $('.gold-button').click(cardDialog.showDialog('gold'));
+
+            if (userRank >= Utils.DIAMOND_RANK) {
+                diamondButton.appendTo($cards);
+                $('.gold-button').click(cardDialog.showDialog('diamond'));
+            }
+        }
+
+
     },
 
     getProfileRankBar: function() {

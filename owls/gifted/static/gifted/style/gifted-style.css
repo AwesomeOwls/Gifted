@@ -216,7 +216,8 @@ p.error {
   position: absolute;
   left: 50px;
   max-height: 75%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .faq-question {
@@ -233,4 +234,9 @@ p.error {
     padding: 0px;
     text-align: left;
     font-size: x-large;
+}
+
+.card-button {
+  height: 100px;
+  margin-top: 10px;
 }
