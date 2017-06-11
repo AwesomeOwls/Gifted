@@ -25,6 +25,7 @@ BANNED = 'You are temporarily banned. Check our FAQ for more information.'
 NOT_CHOSEN = 6
 BAN_TIME = timedelta(1)
 
+
 def index(request):
     context = {}
     return render(request, 'gifted/index.html', context)
@@ -37,7 +38,11 @@ def like(request):
     if res is not None:
         return res
 
-    body = json.loads(request.body)
+    if request.body:
+        body = json.loads(request.body)
+    else:
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+
     user_id = request.COOKIES.get('user_id')
     like = body['like']
     gift_id = body['gift_id']
@@ -105,9 +110,7 @@ def like(request):
     uploader.save()
     ans['status'] = 'Like succesfully done.'
     response = HttpResponse(json.dumps(ans), status=200)
-    if like < 0:
-        response.set_cookie('RemovedGiftsCount', user.gifts_removed)
-    extend_cookie(response)
+    refresh_cookie(response,user)
     return response
 
 
@@ -146,6 +149,7 @@ def invalidate_cookie(response):
     response.delete_cookie('picture')
     response.delete_cookie('expiry_time')
     response.delete_cookie('user_rank')
+    response.delete_cookie('RemovedGiftsCount')
 
 
 def ask_user(request):
@@ -157,7 +161,10 @@ def ask_user(request):
 
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
-    body = json.loads(request.body)
+    if request.body:
+        body = json.loads(request.body)
+    else:
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     try:
         rel = Relation.objects.get(description=body['relation'])
@@ -172,8 +179,7 @@ def ask_user(request):
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)
-    response.set_cookie('RemovedGiftsCount', user.gifts_removed)
-    extend_cookie(response)
+    refresh_cookie(response,user)
     return response
 
 
@@ -184,7 +190,11 @@ def search_gift(request):
     if res is not None:
         return res
 
-    body = json.loads(request.body)
+    if request.body:
+        body = json.loads(request.body)
+    else:
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+
     age = age_range = None
     if '-' in body['age']:
         age_range = body['age']
@@ -268,7 +278,7 @@ def search_gift(request):
 
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
-    extend_cookie(response)
+    refresh_cookie(response,user)
     return response
 
 
@@ -296,7 +306,11 @@ def truncate_by_relation_strength(gifts,relation,user_id):
 
 
 def login(request):
-    body = json.loads(request.body)
+    if request.body:
+        body = json.loads(request.body)
+    else:
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+
     token_id = body['id_token']
     ans = dict()
 
@@ -337,7 +351,7 @@ def login(request):
     res.set_cookie('user_id', user_id)
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
-    # set cookie for 30 minutes
+    # set cookie for COOKIE_EXPIRY_TIME sec
     res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     res.set_cookie('user_rank', user.user_rank)
     res.set_cookie('RemovedGiftsCount', user.gifts_removed)
@@ -365,7 +379,10 @@ def upload_gift(request):
     if res is not None:
         return res
 
-    body = json.loads(request.body)
+    if request.body:
+        body = json.loads(request.body)
+    else:
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
     age = body['age']
     gender = body['gender']
     price = body['price']
@@ -435,7 +452,7 @@ def upload_gift(request):
     ans['status'] = 'OK'
     res = HttpResponse(json.dumps(ans), status=200, content_type='application/json')
     res.set_cookie('user_rank', user.user_rank)
-    extend_cookie(res)
+    refresh_cookie(res)
     return res
 
 
@@ -556,12 +573,14 @@ def profile_page(request):
     ans['status'] = 'OK'
 
     response = HttpResponse(json.dumps(ans), status=200)
-    extend_cookie(response)
+    refresh_cookie(response,user)
     return response
 
 
-def extend_cookie(response):
+def refresh_cookie(response, user):
     response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
+    response.set_cookie('user_rank', user.user_rank)
+    response.set_cookie('RemovedGiftsCount', user.gifts_removed)
 
 
 def redeem_giftcard(request):
@@ -573,23 +592,22 @@ def redeem_giftcard(request):
 
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
-    body = json.loads(request.body)
 
-    try:
-        if body['card_type']=='gold':
-            user.user_rank-=150
-        elif body['card_type']=='diamond':
-            user.user_rank-=250
-        else:
-            return HttpResponse(json.dumps({'status': 'card type is nol legal'}), status=400,content_type='application/json')
+    if request.body:
+        body = json.loads(request.body)
+    else:
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
-    except TypeError:
-        return HttpResponse(json.dumps({'status': 'error changing user rank'}), status=400,
-                            content_type='application/json')
+    if body['card_type']=='gold':
+        user.user_rank-=150
+    elif body['card_type']=='diamond':
+        user.user_rank-=250
+    else:
+        return HttpResponse(json.dumps({'status': 'Card type is not legal'}), status=400, content_type='application/json')
 
     user.save()
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)
-    extend_cookie(response)
+    refresh_cookie(response,user)
     return response
