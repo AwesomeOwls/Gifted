@@ -18,7 +18,7 @@ MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'You are not logged in.'
-COOKIE_EXPIRED = 'Your session expired. Please log in again.'
+COOKIE_EXPIRED = 'Your session has expired. Please reload page'
 BANNED = 'You are temporarily banned. Check our FAQ for more information.'
 
 NOT_CHOSEN = 6
