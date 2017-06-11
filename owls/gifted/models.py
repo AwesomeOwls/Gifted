@@ -5,7 +5,7 @@ import json
 
 class User(models.Model):
     user_id = models.CharField(max_length=150, primary_key=True)
-    user_rank = models.IntegerField(default=0)
+    user_rank = models.PositiveIntegerField(default=0)
     gifts_removed = models.IntegerField(default=0)
     is_banned = models.BooleanField(default=False)
     banned_start = models.DateTimeField(null=True, blank=True)

@@ -94,7 +94,7 @@ def like(request):
     # Under gift rank of -5, the gift will be removed from the DB.
     if gift.gift_rank < MIN_GIFT_RANK:
         gift.delete()
-        uploader.gifts_removed = uploader.gifts_removed + 1
+        uploader.gifts_removed += 1
         if uploader.gifts_removed > MAX_REMOVED:
             uploader.is_banned = True
             uploader.banned_start = datetime.utcnow()
@@ -105,6 +105,8 @@ def like(request):
     uploader.save()
     ans['status'] = 'Like succesfully done.'
     response = HttpResponse(json.dumps(ans), status=200)
+    if like < 0:
+        response.set_cookie('RemovedGiftsCount', user.gifts_removed)
     extend_cookie(response)
     return response
 
@@ -170,6 +172,7 @@ def ask_user(request):
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)
+    response.set_cookie('RemovedGiftsCount', user.gifts_removed)
     extend_cookie(response)
     return response
 
@@ -337,6 +340,7 @@ def login(request):
     # set cookie for 30 minutes
     res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     res.set_cookie('user_rank', user.user_rank)
+    res.set_cookie('RemovedGiftsCount', user.gifts_removed)
 
     return res
 
@@ -457,26 +461,6 @@ def update_rmatrix(rel, other_rel, rel_strength, user):
     rel_matrix_cell.save()
 
 
-def test(request):
-
-    ban_date = datetime.utcnow()
-    user = User.objects.get(user_id='112573066830407886679')
-    user.banned_start = ban_date
-    user.save()
-
-    #tmp_date = datetime.utcnow() + timedelta(seconds=1800)
-    #cookie = {'user_id':'112279187589484342184', 'expiry_time':tmp_date.strftime("%Y-%m-%d %H:%M:%S")}
-    #r = requests.post("http://localhost:63343/search/",
-    #                  json={'age': 25,
-    #                        'relation': 'Parent',
-    #                        'gender': 'M',
-    #                        'price_range': '10-25',
-    #                        'user_id': '112279187589484342184'
-    #                    }, cookies = cookie)
-
-    return HttpResponse(json.dumps({}), status=200)
-
-
 def init_relationship_matrix():
     try:
         with open('../Relationship_matrix.csv','r+') as rel_matrix_file:
@@ -580,7 +564,7 @@ def extend_cookie(response):
     response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
 
 
-def redeem_card(request):
+def redeem_giftcard(request):
     ans = {}
 
     res = check_logged(request)
