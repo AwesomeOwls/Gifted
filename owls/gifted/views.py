@@ -7,6 +7,7 @@ from dateutil import parser
 import re
 import csv
 
+COOKIE_EXPIRY_TIME = 3600
 MIN_SEARCH_RANK = 4
 MIN_GIFT_RANK = -5
 MIN_GIFTS_TH = 5
@@ -117,21 +118,23 @@ def check_logged(request):
 
             if not User.objects.filter(user_id=req_user_id).exists():
                 ans['status'] = NOT_LOGGED_IN
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
 
             elif User.objects.get(user_id=req_user_id).is_banned:
                 ans['status'] = BANNED
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
 
             elif parser.parse(req_expiry_time) < datetime.utcnow():
                 ans['status'] = COOKIE_EXPIRED
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
-
             else:
                 return None
     else:
         ans['status'] = NOT_LOGGED_IN
-    res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+        res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
     return res
 
 
@@ -332,7 +335,7 @@ def login(request):
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
     # set cookie for 30 minutes
-    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
+    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     res.set_cookie('user_rank', user.user_rank)
 
     return res
@@ -574,7 +577,7 @@ def profile_page(request):
 
 
 def extend_cookie(response):
-    response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
+    response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
 
 
 def redeem_card(request):
