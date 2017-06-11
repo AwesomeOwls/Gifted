@@ -4,6 +4,15 @@
 
 var Utils = {
 
+    BRONZE_RANK: 0,
+    SILVER_RANK: 50,
+    GOLD_RANK: 150,
+    DIAMOND_RANK: 250,
+    INITIAL_BAR_WIDTH: 35,
+    BAR_STEP: 2.85,
+
+
+
     readCookie: function(name) {
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
@@ -66,13 +75,22 @@ var Utils = {
         return Utils.readCookie('user_rank');
     },
 
+    getUserName: function() {
+        return Utils.readCookie('given_name');
+    },
+
+    getUserImageURL: function() {
+        var pictureURL = Utils.readCookie('picture');
+        return pictureURL ? pictureURL.replace(/\"/g, "") : false;
+    },
+
     getRankColor: function() {
         var userRank = Utils.getUserRank();
-        if (userRank < 0) return 'red';
-        if (userRank >= 0 && userRank < 10) return 'bronze';
-        if (userRank >= 10 && userRank < 30) return 'silver';
-        if (userRank >= 30 && userRank < 65) return 'gold';
-        if (userRank >= 65) return 'diamond';
+        if (userRank < Utils.BRONZE_RANK) return 'red';
+        if (userRank >= Utils.BRONZE_RANK && userRank < Utils.SILVER_RANK) return 'bronze';
+        if (userRank >= Utils.SILVER_RANK && userRank < Utils.GOLD_RANK) return 'silver';
+        if (userRank >= Utils.GOLD_RANK && userRank < Utils.DIAMOND_RANK) return 'gold';
+        if (userRank >= Utils.DIAMOND_RANK) return 'diamond';
     }
 };
 

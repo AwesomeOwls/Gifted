@@ -203,7 +203,7 @@ def search_gift(request):
         high_price = int(high_price)
         # ////input validations////
 
-        if low_price <= 0 or high_price <= 0 or high_price < low_price:
+        if low_price < 0 or high_price <= 0 or high_price < low_price:
             ans = {'status': 'Prices must be positive integers and high price must be higher then lower price'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 

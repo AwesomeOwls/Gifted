@@ -58,8 +58,8 @@ var GoogleAuth = {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(data){
-                var given_name = Utils.readCookie('given_name');
-                var pictureURL = Utils.readCookie('picture');
+                var given_name = Utils.getUserName();
+                var pictureURL = Utils.getUserImageURL();
 
                 GoogleAuth.onValidatedUser(given_name, pictureURL);
             },

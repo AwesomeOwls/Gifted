@@ -15,14 +15,12 @@ var ProfileView = {
     onProfilePageInjected: function() {
         var $picture = $('#profile-picture');
         var $name = $('#profile-name');
-        var $rank = $('#profile-rank');
-        var given_name = Utils.readCookie('given_name');
-        var pictureURL = Utils.readCookie('picture');
-        pictureURL = pictureURL.replace(/\"/g, "");
+        var given_name = Utils.getUserName();
+        var pictureURL = Utils.getUserImageURL();
 
         $picture.attr('src', pictureURL);
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
-        ProfileView.getProfileRankBar().appendTo($rank);
+        ProfileView.initProfileBar();
         ProfileView.insertGifts(window.userGifts);
 
     },
@@ -65,6 +63,12 @@ var ProfileView = {
             '</div>' +
             '</div>' +
             '</div>'
+    },
+
+    initProfileBar: function() {
+        var $rank = $('#profile-rank');
+        Utils.clearView('#profile-rank');
+        ProfileView.getProfileRankBar().appendTo($rank);
     },
 
     getProfileRankBar: function() {
@@ -113,8 +117,8 @@ var MainView = {
         // check if cookie from server exists and valid
         if (Utils.readCookie('expiry_time') && MainView.checkExpiry())
         {
-            var given_name = Utils.readCookie('given_name');
-            var pictureURL = Utils.readCookie('picture');
+            var given_name = Utils.getUserName();
+            var pictureURL = Utils.getUserImageURL();
             GoogleAuth.onValidatedUser(given_name, pictureURL);
         }
         else {

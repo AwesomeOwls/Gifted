@@ -78,24 +78,13 @@ var NavBar = {
         var introHeader = 'static/gifted/inner-templates/introHeader.html';
         pictureURL = pictureURL.replace(/\"/g, "");
         var $welcome = $('#welcome');
-        $welcome.hide();
-        var $welcomeText = $('<div></div>');
-        $welcomeText[0].innerText = 'Welcome, ' + userName + '!  ';
-        var img = $('<img class="user-img">');
-        img.attr('src', pictureURL);
-        $welcomeText.css('padding-left', '5px');
-        img.appendTo('#welcome');
-        $welcomeText.appendTo('#welcome');
-        var rankBar = NavBar.getRankBar();
-        rankBar.appendTo('#welcome');
-        $welcome.show();
+        NavBar.initWelcomeBar(userName, pictureURL);
 
         $welcome.click(function () {
 
             var obj = {};
             obj['user_id'] = Utils.readCookie('user_id');
 
-            // $welcome.off('click');
             $.ajax({
                 type: "POST",
                 url: "http://localhost:63343/profile/",
@@ -122,7 +111,25 @@ var NavBar = {
         });
     },
 
+    initWelcomeBar: function(userName, pictureURL) {
+        if (!userName || !pictureURL) return;
+        var $welcome = $('#welcome');
+        Utils.clearView('#welcome');
+        $welcome.hide();
+        var $welcomeText = $('<div></div>');
+        $welcomeText[0].innerText = 'Welcome, ' + userName + '!  ';
+        var img = $('<img class="user-img">');
+        img.attr('src', pictureURL);
+        $welcomeText.css('padding-left', '5px');
+        img.appendTo('#welcome');
+        $welcomeText.appendTo('#welcome');
+        var rankBar = NavBar.getRankBar();
+        rankBar.appendTo('#welcome');
+        $welcome.show();
+    },
+
     getRankBar: function () {
+        var $welcome = $('#welcome');
         var userRank = Utils.getUserRank();
         var barValue;
         barValue = Math.max(0, userRank) + 35;
@@ -139,6 +146,7 @@ var NavBar = {
             );
         }
         else {
+
             return $(
                 '<div class="progress progress-rank">' +
                 '<div class="progress-bar red-gifter" role="progressbar" aria-valuenow="100"' +

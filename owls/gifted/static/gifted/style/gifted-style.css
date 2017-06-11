@@ -3,7 +3,8 @@ body {
 }
 
 .main-container {
-overflow-y: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .menuItem * {

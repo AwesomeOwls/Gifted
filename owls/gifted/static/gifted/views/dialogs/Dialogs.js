@@ -70,6 +70,8 @@ var UploadDialog = {
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Gift Uploaded Successfully');
+                        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+                        ProfileView.initProfileBar();
                     });
                 },
                 error: function(error){
@@ -127,7 +129,7 @@ var UploadDialog = {
         // price
         if(!price || +price <= '0') {
             $price.closest('.form-group').addClass('has-error');
-            $price.siblings('.error')[0].innerText = 'Price is required (positive number)';
+            $price.siblings('.error')[0].innerText = 'Price is required';
             isValid = false;
         }
         else {
@@ -286,8 +288,6 @@ var errorDialog = {
 var successDialog = {
 
     showDialog: function(successMsg) {
-        console.log('err', successMsg);
-
         Utils.clearView('.success-message');
         $('#success-modal').modal();
         $('.success-message')[0].innerHTML = successMsg;
@@ -336,6 +336,7 @@ var QuestionDialog = {
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Thanks for your answer!');
+                        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
                     });
                 },
                 error: function(error){
