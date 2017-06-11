@@ -164,7 +164,6 @@ def ask_user(request):
     relation_strength = body['strength']
     update_rmatrix(rel, other_rel, relation_strength, user)
 
-    user.save()
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)
@@ -576,3 +575,34 @@ def profile_page(request):
 
 def extend_cookie(response):
     response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
+
+
+def redeem_card(request):
+    ans = {}
+
+    res = check_logged(request)
+    if res is not None:
+        return res
+
+    user_id = request.COOKIES.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    body = json.loads(request.body)
+
+    try:
+        if body['card_type']=='gold':
+            user.user_rank-=150
+        elif body['card_type']=='diamond':
+            user.user_rank-=250
+        else:
+            return HttpResponse(json.dumps({'status': 'card type is nol legal'}), status=400,content_type='application/json')
+
+    except TypeError:
+        return HttpResponse(json.dumps({'status': 'error changing user rank'}), status=400,
+                            content_type='application/json')
+
+    user.save()
+    ans['status'] = 'OK'
+    response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
+    response.set_cookie('user_rank', user.user_rank)
+    extend_cookie(response)
+    return response
