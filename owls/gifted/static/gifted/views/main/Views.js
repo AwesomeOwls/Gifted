@@ -226,7 +226,7 @@ var ResultsView = {
         var giftID = el.getAttribute('like-id') || el.getAttribute('dislike-id');
         var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
         var currentRank = giftObject.gift_rank;
-        var newRank = giftObject.gift_rank = currentRank + like;
+        var newRank = currentRank + like;
         var obj = {};
         obj.gift_id = giftID;
         obj.like = like;
@@ -244,7 +244,7 @@ var ResultsView = {
                 var negEl = like == 1 ? $('[dislike-id="' + giftID + '"]')[0] : $('[like-id="' + giftID + '"]')[0];
                 el.disabled = true;
                 negEl.disabled = false;
-
+                giftObject.gift_rank = newRank;
                 $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
             },
