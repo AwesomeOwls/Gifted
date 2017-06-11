@@ -15,14 +15,12 @@ var ProfileView = {
     onProfilePageInjected: function() {
         var $picture = $('#profile-picture');
         var $name = $('#profile-name');
-        var $rank = $('#profile-rank');
-        var given_name = Utils.readCookie('given_name');
-        var pictureURL = Utils.readCookie('picture');
-        pictureURL = pictureURL.replace(/\"/g, "");
+        var given_name = Utils.getUserName();
+        var pictureURL = Utils.getUserImageURL();
 
         $picture.attr('src', pictureURL);
         $name[0].innerHTML = 'Hello, ' + given_name + '!  ';
-        ProfileView.getProfileRankBar().appendTo($rank);
+        ProfileView.initProfilePageData();
         ProfileView.insertGifts(window.userGifts);
 
     },
@@ -67,10 +65,43 @@ var ProfileView = {
             '</div>'
     },
 
+    initProfilePageData: function() {
+        var $rank = $('#profile-rank');
+        Utils.clearView('#profile-rank');
+        ProfileView.getProfileRankBar().appendTo($rank);
+        ProfileView.initCardsButtons();
+
+
+    },
+
+    initCardsButtons: function() {
+        var $cards = $('#gifts-cards');
+        Utils.clearView('#gifts-cards');
+        var userRank = Utils.getUserRank();
+        var goldButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-gold.jpg">');
+        var diamondButton = $('<img class="diamond-button card-button" src="static/gifted/img/gift-diamond.jpg">');
+        if (userRank >= Utils.GOLD_RANK) {
+            goldButton.appendTo($cards);
+            $('.gold-button').click(function() {
+                cardDialog.showDialog('gold')
+            });
+
+            if (userRank >= Utils.DIAMOND_RANK) {
+                diamondButton.appendTo($cards);
+                $('.diamond-button').click( function() {
+                    cardDialog.showDialog('diamond')
+                });
+            }
+        }
+
+
+    },
+
     getProfileRankBar: function() {
         var userRank = Utils.getUserRank();
-        var barValue = Math.max(35,userRank);
-        barValue = Math.min(100,barValue) + 35;
+        var barValue = Math.max(0,userRank);
+        barValue = Math.min(Utils.DIAMOND_RANK, barValue) + Utils.INITIAL_BAR_WIDTH;
+        barValue = Math.ceil(barValue / Utils.BAR_STEP);
         var rank_color = Utils.getRankColor();
         if (rank_color != 'red') {
             return $(
@@ -113,8 +144,8 @@ var MainView = {
         // check if cookie from server exists and valid
         if (Utils.readCookie('expiry_time') && MainView.checkExpiry())
         {
-            var given_name = Utils.readCookie('given_name');
-            var pictureURL = Utils.readCookie('picture');
+            var given_name = Utils.getUserName();
+            var pictureURL = Utils.getUserImageURL();
             GoogleAuth.onValidatedUser(given_name, pictureURL);
         }
         else {
@@ -226,7 +257,7 @@ var ResultsView = {
         var giftID = el.getAttribute('like-id') || el.getAttribute('dislike-id');
         var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
         var currentRank = giftObject.gift_rank;
-        var newRank = giftObject.gift_rank = currentRank + like;
+        var newRank = currentRank + like;
         var obj = {};
         obj.gift_id = giftID;
         obj.like = like;
@@ -244,7 +275,7 @@ var ResultsView = {
                 var negEl = like == 1 ? $('[dislike-id="' + giftID + '"]')[0] : $('[like-id="' + giftID + '"]')[0];
                 el.disabled = true;
                 negEl.disabled = false;
-
+                giftObject.gift_rank = newRank;
                 $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
             },
@@ -283,6 +314,19 @@ var FAQView = {
     showFAQView: function () {
         Utils.clearView('.main-container');
         var FAQPage = 'static/gifted/inner-templates/faqPage.html';
-        Utils.injectView('.main-container', FAQPage, null, 'background1_80.jpg');
+        Utils.injectView('.main-container', FAQPage, FAQView.onFAQInjected, 'background1_80.jpg');
+    },
+
+    onFAQInjected: function () {
+        $('.faq-question').click(function () {
+            if ($(this).parent().is('.open')) {
+                $(this).closest('.faq').find('.faq-answer-container').animate({'height': '0'}, 500);
+                $(this).closest('.faq').removeClass('open');
+            } else {
+                var newHeight = $(this).closest('.faq').find('.faq_answer').height() + 'px';
+                $(this).closest('.faq').find('.faq-answer-container').animate({'height': newHeight}, 500);
+                $(this).closest('.faq').addClass('open');
+            }
+        });
     }
 };

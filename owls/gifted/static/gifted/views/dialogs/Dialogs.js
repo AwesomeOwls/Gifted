@@ -70,6 +70,8 @@ var UploadDialog = {
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Gift Uploaded Successfully');
+                        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+                        ProfileView.initProfilePageData();
                     });
                 },
                 error: function(error){
@@ -127,7 +129,7 @@ var UploadDialog = {
         // price
         if(!price || +price <= '0') {
             $price.closest('.form-group').addClass('has-error');
-            $price.siblings('.error')[0].innerText = 'Price is required (positive number)';
+            $price.siblings('.error')[0].innerText = 'Price is required';
             isValid = false;
         }
         else {
@@ -286,8 +288,6 @@ var errorDialog = {
 var successDialog = {
 
     showDialog: function(successMsg) {
-        console.log('err', successMsg);
-
         Utils.clearView('.success-message');
         $('#success-modal').modal();
         $('.success-message')[0].innerHTML = successMsg;
@@ -336,6 +336,7 @@ var QuestionDialog = {
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Thanks for your answer!');
+                        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
                     });
                 },
                 error: function(error){
@@ -355,6 +356,68 @@ var QuestionDialog = {
     onDialogClose: function() {
         $('#question-submit').off('click');
         $('#question-modal').off('hidden.bs.modal');
+    }
+
+};
+var cardDialog = {
+
+    showDialog: function(cardType) {
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+        var $card_text = $('.card-text');
+        var moneyValue = cardType == 'gold' ? Utils.GOLD_CARD_REWARD : Utils.DIAMOND_CARD_REWARD;
+        var redeemValue = cardType == 'gold' ? Utils.GOLD_CARD_VALUE : Utils.DIAMOND_CARD_VALUE;
+        debugger
+        $card_text[0].innerHTML = '<h5>You are about to redeem ' + redeemValue + ' Points from your rank.</h5>' +
+                                '<h5>You will recieve a ' + moneyValue + ' ₪ gift card to your Email.</h5>' +
+                                '<h5>Are you sure you want to redeem your points?</h5>';
+
+        $('#card-modal').modal();
+
+        $('#card-modal').on('hidden.bs.modal',cardDialog.onDialogClose);
+
+        var obj = {};
+
+        $('#card-submit').click( function() {
+            obj['card_type'] = cardType;
+
+            cardDialog.closeDialog();
+            cardDialog.onDialogClose();
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:63343/redeem_card/",
+                // The key needs to match your method's input parameter (case-sensitive).
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                beforeSend: function(){
+                    $status.show();
+                    $preloader.show();
+                },
+                success: function(data){
+                    $preloader.delay(300).fadeOut('slow', function () {
+                        $body.delay(550).css({'overflow': 'visible'});
+                        successDialog.showDialog("The " + Utils.capitalizeFirstLetter(cardType) + " gift card is on it's way to your email! 😉");
+                        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+                        ProfileView.initProfilePageData();
+                    });
+                },
+                error: function(error){
+                    $status.hide();
+                    $preloader.hide();
+                    errorDialog.showDialog(error.responseText);
+                },
+            });
+            return false;
+        });
+    },
+
+    closeDialog: function() {
+        $('#card-modal').modal('hide');
+    },
+
+    onDialogClose: function() {
+        $('#card-submit').off('click');
+        $('#card-modal').off('hidden.bs.modal');
     }
 
 };

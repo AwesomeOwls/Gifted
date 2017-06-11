@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^like/', views.like),
     url(r'^add_gifts/', views.add_initial_gifts),
     url(r'^ask_user/', views.ask_user),
+    url(r'^redeem_card/', views.redeem_card),
     url(r'^$', views.index)
 ]

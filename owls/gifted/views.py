@@ -7,6 +7,7 @@ from dateutil import parser
 import re
 import csv
 
+COOKIE_EXPIRY_TIME = 3600
 MIN_SEARCH_RANK = 4
 MIN_GIFT_RANK = -5
 MIN_GIFTS_TH = 5
@@ -18,7 +19,7 @@ MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 NOT_LOGGED_IN = 'You are not logged in.'
-COOKIE_EXPIRED = 'Your session expired. Please log in again.'
+COOKIE_EXPIRED = 'Your session has expired. Please reload page'
 BANNED = 'You are temporarily banned. Check our FAQ for more information.'
 
 NOT_CHOSEN = 6
@@ -117,21 +118,23 @@ def check_logged(request):
 
             if not User.objects.filter(user_id=req_user_id).exists():
                 ans['status'] = NOT_LOGGED_IN
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
 
             elif User.objects.get(user_id=req_user_id).is_banned:
                 ans['status'] = BANNED
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
 
             elif parser.parse(req_expiry_time) < datetime.utcnow():
                 ans['status'] = COOKIE_EXPIRED
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
-
             else:
                 return None
     else:
         ans['status'] = NOT_LOGGED_IN
-    res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+        res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
     return res
 
 
@@ -164,7 +167,6 @@ def ask_user(request):
     relation_strength = body['strength']
     update_rmatrix(rel, other_rel, relation_strength, user)
 
-    user.save()
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)
@@ -203,7 +205,7 @@ def search_gift(request):
         high_price = int(high_price)
         # ////input validations////
 
-        if low_price <= 0 or high_price <= 0 or high_price < low_price:
+        if low_price < 0 or high_price <= 0 or high_price < low_price:
             ans = {'status': 'Prices must be positive integers and high price must be higher then lower price'}
             return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
@@ -333,7 +335,7 @@ def login(request):
     res.set_cookie('given_name', idinfo['given_name'])
     res.set_cookie('picture', idinfo['picture'])
     # set cookie for 30 minutes
-    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
+    res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     res.set_cookie('user_rank', user.user_rank)
 
     return res
@@ -575,4 +577,35 @@ def profile_page(request):
 
 
 def extend_cookie(response):
-    response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=3600))
+    response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
+
+
+def redeem_card(request):
+    ans = {}
+
+    res = check_logged(request)
+    if res is not None:
+        return res
+
+    user_id = request.COOKIES.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    body = json.loads(request.body)
+
+    try:
+        if body['card_type']=='gold':
+            user.user_rank-=150
+        elif body['card_type']=='diamond':
+            user.user_rank-=250
+        else:
+            return HttpResponse(json.dumps({'status': 'card type is nol legal'}), status=400,content_type='application/json')
+
+    except TypeError:
+        return HttpResponse(json.dumps({'status': 'error changing user rank'}), status=400,
+                            content_type='application/json')
+
+    user.save()
+    ans['status'] = 'OK'
+    response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
+    response.set_cookie('user_rank', user.user_rank)
+    extend_cookie(response)
+    return response
