@@ -28,6 +28,14 @@ BAN_TIME = timedelta(1)
 
 def index(request):
     context = {}
+
+    if 'user_id' in request.COOKIES:
+        user_id = request.COOKIES.get('user_id')
+        user = User.objects.get(user_id=user_id)
+        response = render(request, 'gifted/index.html', context)
+        refresh_cookie(response, user)
+        return response
+
     return render(request, 'gifted/index.html', context)
 
 
@@ -452,7 +460,7 @@ def upload_gift(request):
     ans['status'] = 'OK'
     res = HttpResponse(json.dumps(ans), status=200, content_type='application/json')
     res.set_cookie('user_rank', user.user_rank)
-    refresh_cookie(res)
+    refresh_cookie(res, user)
     return res
 
 
