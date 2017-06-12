@@ -90,8 +90,7 @@ var Utils = {
 
     getRankColor: function() {
         var userRank = Utils.getUserRank();
-        if (userRank < Utils.BRONZE_RANK) return 'red';
-        if (userRank >= Utils.BRONZE_RANK && userRank < Utils.SILVER_RANK) return 'bronze';
+        if (userRank < Utils.SILVER_RANK) return 'bronze';
         if (userRank >= Utils.SILVER_RANK && userRank < Utils.GOLD_RANK) return 'silver';
         if (userRank >= Utils.GOLD_RANK && userRank < Utils.DIAMOND_RANK) return 'gold';
         if (userRank >= Utils.DIAMOND_RANK) return 'diamond';

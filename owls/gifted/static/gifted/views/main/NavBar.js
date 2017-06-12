@@ -134,26 +134,13 @@ var NavBar = {
         barValue = Math.min(Utils.DIAMOND_RANK, barValue) + Utils.INITIAL_BAR_WIDTH;
         barValue = Math.ceil(barValue / Utils.BAR_STEP);
         var rank_color = Utils.getRankColor();
-        if (rank_color != 'red') {
-            return $(
-                '<div class="progress progress-rank">' +
-                '<div class="progress-bar ' + rank_color + '-gifter" role="progressbar" aria-valuenow="' + barValue + '"' +
-                'aria-valuemin="0" aria-valuemax="100" style="width:' + barValue + '%">' +
-                'Rank: ' + userRank +
-                '</div>' +
-                '</div>'
-            );
-        }
-        else {
-
-            return $(
-                '<div class="progress progress-rank">' +
-                '<div class="progress-bar red-gifter" role="progressbar" aria-valuenow="100"' +
-                'aria-valuemin="0" aria-valuemax="100" style="width:100%">' +
-                'User under warning' +
-                '</div>' +
-                '</div>'
-            );
-        }
+        return $(
+            '<div class="progress progress-rank">' +
+            '<div class="progress-bar ' + rank_color + '-gifter" role="progressbar" aria-valuenow="' + barValue + '"' +
+            'aria-valuemin="0" aria-valuemax="100" style="width:' + barValue + '%">' +
+            'Rank: ' + userRank +
+            '</div>' +
+            '</div>'
+        );
     }
 };

@@ -181,7 +181,7 @@ p.error {
   height: 25px;
 }
 
-.bronze-gifter,.silver-gifter,.gold-gifter,.diamond-gifter,.red-gifter {
+.bronze-gifter,.silver-gifter,.gold-gifter,.diamond-gifter{
   display: flex;
   align-items: center;
   justify-content: center;
@@ -205,12 +205,6 @@ p.error {
   background-color: #e9b5bb !important;
   /*background-image: url(../img/diamond.jpeg)!important;*/
 }
-.red-gifter {
-  /*background-color: #9099E9!important;*/
-  background: red!important;
-}
-
-
 
 .faq-container{
   position: absolute;
