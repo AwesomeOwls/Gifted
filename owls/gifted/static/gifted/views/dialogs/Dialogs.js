@@ -23,11 +23,13 @@ var UploadDialog = {
     showDialog: function() {
         var $description = $('#upload-description'); var $age = $('#upload-age');
         var $title = $('#upload-title');
+        var $trusted = $('#upload-trusted');
         var $gender = $('#upload-gender'); var $price = $('#upload-price');
         var $relationship = $('#upload-relationship'); var $img_url = $('#upload-img-url');
         var $relationship_score = $('#upload-relationship-score'); var $relationship2 = $('#upload-relationship2');
         var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
         UploadDialog.fillRelationships();
+        Utils.isUserTrusted() ? $trusted.show() : $trusted.hide()
 
         $('#upload-modal').modal();
 
@@ -277,11 +279,16 @@ var errorDialog = {
         Utils.clearView('.error-message');
         $('#error-modal').modal();
         $('.error-message')[0].innerHTML = errMsg;
+        $('.error-modal').on('hidden.bs.modal',successDialog.onDialogClose);
 
     },
     closeDialog: function() {
         $('#error-modal').modal('hide');
     },
+
+    onDialogClose: function() {
+        $('#error-modal').off('hidden.bs.modal');
+    }
 
 };
 
@@ -291,11 +298,16 @@ var successDialog = {
         Utils.clearView('.success-message');
         $('#success-modal').modal();
         $('.success-message')[0].innerHTML = successMsg;
+        $('.success-modal').on('hidden.bs.modal',successDialog.onDialogClose);
 
     },
     closeDialog: function() {
         $('#success-modal').modal('hide');
     },
+
+    onDialogClose: function() {
+        $('#success-modal').off('hidden.bs.modal');
+    }
 
 };
 

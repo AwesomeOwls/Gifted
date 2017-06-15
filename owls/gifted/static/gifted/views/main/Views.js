@@ -70,6 +70,7 @@ var ProfileView = {
         Utils.clearView('#profile-rank');
         ProfileView.getProfileRankBar().appendTo($rank);
         ProfileView.initCardsButtons();
+        ProfileView.initWarning();
 
 
     },
@@ -94,6 +95,17 @@ var ProfileView = {
             }
         }
 
+
+    },
+
+    initWarning: function() {
+        var $warning = $('#profile-warning');
+        Utils.clearView('#profile-warning');
+        var removedGiftsCount = Utils.getRemovedGiftsCount();
+        console.log(removedGiftsCount)
+        if (removedGiftsCount >= 3) {
+            $warning[0].innerText = removedGiftsCount + ' You are under warning! (5 of your gifts have been removed) - for more information see FAQ'
+        }
 
     },
 
@@ -205,10 +217,11 @@ var ResultsView = {
             else disableDislike = true;
         }
 
+        var hideQuestionIcon = Utils.isUserTrusted() ? '' : 'hidden';
 
         return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
                     '<div class="thumbnail">' +
-                            '<img class="help-us help_' + gift.gift_id + '" onclick="ResultsView.showQuestionDialog(this)" src="static/gifted/img/help-us1.jpeg">' +
+                        (hideQuestionIcon ? '' : '<img class="help-us help_' + gift.gift_id + '" onclick="ResultsView.showQuestionDialog(this)" src="static/gifted/img/help-us1.jpeg">') +
                             '<img class="group list-group-image" src=' + '"' + img_url + '"' + 'alt="" />' +
                             '<div class="caption">' +
                                     '<h4 class="group inner list-group-item-heading">' +

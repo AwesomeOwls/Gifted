@@ -157,7 +157,7 @@ def invalidate_cookie(response):
     response.delete_cookie('picture')
     response.delete_cookie('expiry_time')
     response.delete_cookie('user_rank')
-    response.delete_cookie('RemovedGiftsCount')
+    response.delete_cookie('removed_gifts_count')
 
 
 def ask_user(request):
@@ -362,7 +362,7 @@ def login(request):
     # set cookie for COOKIE_EXPIRY_TIME sec
     res.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     res.set_cookie('user_rank', user.user_rank)
-    res.set_cookie('RemovedGiftsCount', user.gifts_removed)
+    res.set_cookie('removed_gifts_count', user.gifts_removed)
 
     return res
 
@@ -588,7 +588,7 @@ def profile_page(request):
 def refresh_cookie(response, user):
     response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     response.set_cookie('user_rank', user.user_rank)
-    response.set_cookie('RemovedGiftsCount', user.gifts_removed)
+    response.set_cookie('removed_gifts_count', user.gifts_removed)
 
 
 def redeem_giftcard(request):

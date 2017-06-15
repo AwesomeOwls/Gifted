@@ -4,6 +4,7 @@
 
 var Utils = {
 
+    TRUSTED_RANK: 4,
     BRONZE_RANK: 0,
     SILVER_RANK: 50,
     GOLD_RANK: 150,
@@ -86,6 +87,14 @@ var Utils = {
     getUserImageURL: function() {
         var pictureURL = Utils.readCookie('picture');
         return pictureURL ? pictureURL.replace(/\"/g, "") : false;
+    },
+
+    getRemovedGiftsCount: function() {
+        return Utils.readCookie('removed_gifts_count');
+    },
+
+    isUserTrusted: function() {
+        return Utils.getUserRank() >= Utils.TRUSTED_RANK;
     },
 
     getRankColor: function() {

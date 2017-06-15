@@ -161,10 +161,9 @@ p.error {
 }
 .progress.progress-rank-profile {
   width: auto;
-  background: #acc6d3!important;
-  margin-bottom: 0px!important;
+  background: rgba(0, 0, 0, 0.1)!important;
+  margin: 20px 100px 0 100px;
   align-self: center;
-  margin-left: 5px;
   height: 50px;
 }
 /*.thumbnail {*/
@@ -173,7 +172,7 @@ p.error {
 /*}*/
 
 .progress.progress-rank{
-  background: #acc6d3!important;
+  background: rgba(0, 0, 0, 0.1)!important;
   width: 160px;
   margin-bottom: 0px!important;
   align-self: center;
@@ -234,4 +233,17 @@ p.error {
   height: 100px;
   margin-top: 10px;
   cursor: pointer;
+}
+
+#profile-warning {
+  color: red;
+  font-weight: bold;
+  background-color: white;
+  width: 400px;
+  margin: auto;
+  line-height: inherit;
+}
+
+#profile-picture,.user-img {
+  border-radius: 50px;
 }
