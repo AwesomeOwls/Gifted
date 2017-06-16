@@ -10,7 +10,7 @@ var NavBar = {
             });
     },
 
-    hideTopButtons: function () {
+    showPartialButtonsOnly: function () {
         var $login = $('#login-button');
         var $logout = $('#logout-button');
         var $welcome = $('#welcome');
@@ -20,14 +20,12 @@ var NavBar = {
         var $faq = $('#faq-button');
 
         $logout.hide();
-        $logout.off('click');
         $search.hide();
         $upload.hide();
         $login.show();
         $about.show();
         $faq.show();
         $welcome.hide();
-        $welcome.off('click');
         $welcome[0].innerText = '';
     },
 
@@ -41,12 +39,10 @@ var NavBar = {
         var $faq = $('#faq-button');
 
         $logout.hide();
-        $logout.off('click');
         $search.hide();
         $upload.hide();
         $login.hide();
         $welcome.hide();
-        $welcome.off('click');
         $about.hide();
         $faq.hide();
 
@@ -63,7 +59,6 @@ var NavBar = {
 
         $login.hide();
         $logout.show();
-        $logout.click(GoogleAuth.signOut);
         $search.show();
         $upload.show();
         $about.show();
@@ -92,17 +87,16 @@ var NavBar = {
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(obj),
                 dataType: "json",
-                beforeSend: function () {
-                    $status.show();
-                    $preloader.show();
-                },
+                beforeSend: Utils.beforeSend,
                 success: function (data) {
                     $preloader.delay(300).fadeOut('slow', function () {
+                        NavBar.updateTopBar();
                         $body.delay(550).css({'overflow': 'visible'});
                         ProfileView.showProfilePage(data.gifts);
                     });
                 },
                 error: function (error) {
+                    NavBar.updateTopBar();
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);
@@ -142,5 +136,19 @@ var NavBar = {
             '</div>' +
             '</div>'
         );
+    },
+
+    unbindTopButtonsClick: function() {
+        var $logout = $('#logout-button'); var $search = $('#search-button');
+        var $upload = $('#upload-button'); var $welcome = $('#welcome');
+
+        [$logout, $search, $upload, $welcome].forEach( function($button) {
+            $button.off('click');
+        })
+    },
+
+    updateTopBar: function() {
+        NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+        NavBar.showTopButtons();
     }
 };

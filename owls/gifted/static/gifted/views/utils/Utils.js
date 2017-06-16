@@ -106,6 +106,13 @@ var Utils = {
         if (userRank >= Utils.SILVER_RANK && userRank < Utils.GOLD_RANK) return 'silver';
         if (userRank >= Utils.GOLD_RANK && userRank < Utils.DIAMOND_RANK) return 'gold';
         if (userRank >= Utils.DIAMOND_RANK) return 'diamond';
+    },
+
+    beforeSend: function() {
+        var $status = $('#status'); var $preloader = $('#preloader');
+        NavBar.hideAllButtons();
+        $status.show();
+        $preloader.show();
     }
 };
 

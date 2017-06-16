@@ -67,6 +67,7 @@ var ProfileView = {
 
     initProfilePageData: function() {
         var $rank = $('#profile-rank');
+        if (!$rank) return;
         Utils.clearView('#profile-rank');
         ProfileView.getProfileRankBar().appendTo($rank);
         ProfileView.initCardsButtons();
@@ -143,9 +144,7 @@ var MainView = {
         // check if cookie from server exists and valid
         if (Utils.readCookie('expiry_time') && MainView.checkExpiry())
         {
-            var given_name = Utils.getUserName();
-            var pictureURL = Utils.getUserImageURL();
-            GoogleAuth.onValidatedUser(given_name, pictureURL);
+            GoogleAuth.onValidatedUser();
         }
         else {
             MainView.deleteAllCookies();
@@ -161,8 +160,6 @@ var MainView = {
         var expiry_time_str = Utils.readCookie('expiry_time').replace(/\"/g, "")
         var expiry_time = new Date(expiry_time_str);
         return now_utc.getTime() <= expiry_time.getTime();
-
-
     },
 
     deleteAllCookies: function () {
