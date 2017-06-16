@@ -4,6 +4,8 @@ import csv
 from dateutil import parser
 from datetime import *
 from random import  randint
+from django.core.exceptions import ObjectDoesNotExist
+
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
@@ -84,8 +86,14 @@ def clear_db(request):
 
 
 def update_rmatrix(rel, other_rel, rel_strength, user):
+
     try:
         rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=rel.pk, rel2_id=other_rel.pk)
+    except ObjectDoesNotExist:
+        rel_matrix_cell = RelationshipMatrixCell.objects.get(rel1_id=other_rel.pk, rel2_id=rel.pk)
+
+    try:
+
         # if user improved the relationship decrease the strength by 0.01 thus making it closer
         if (rel_matrix_cell.strength - rel_strength) > 0:
             rel_matrix_cell.strength -= 0.01
@@ -146,16 +154,21 @@ def fill_db(request):
 
 
 def add_initial_gifts(request):
+    start = request.GET.get('start')
+    if not start:
+        start = 0
+    start = int(start)
     try:
         with open('../gifts.csv', 'r+') as rel_matrix_file:
             reader = csv.reader(rel_matrix_file)
             next(reader)  # skip columns names
             users = User.objects.all()
+            for x in range(start-2):
+                next(reader)
             i=0
             for row in reader:
                 indx = randint(0, len(users))
-                user = users[indx].get()
-
+                user = users[indx]
                 title=row[0]
                 description = row[1]
                 age = row[2]
