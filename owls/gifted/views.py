@@ -6,6 +6,8 @@ from utils import *
 
 def index(request):
     context = {}
+    if request.method != 'GET':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     if 'user_id' in request.COOKIES:
         user_id = request.COOKIES.get('user_id')
@@ -18,10 +20,10 @@ def index(request):
 
 
 def login(request):
-    if request.body:
-        body = json.loads(request.body)
-    else:
+    if not request.body or request.method != 'POST':
         return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
 
     token_id = body['id_token']
     ans = dict()
@@ -72,8 +74,9 @@ def login(request):
 
 
 def logout(request):
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
     ans = {}
-
     res = check_logged(request)
     if res is not None:
         return res
@@ -85,16 +88,15 @@ def logout(request):
 
 
 def search(request):
-    ans = {}
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
 
+    ans = {}
     res = check_logged(request)
     if res is not None:
         return res
-
-    if request.body:
-        body = json.loads(request.body)
-    else:
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     age = age_range = None
     if '-' in body['age']:
@@ -189,16 +191,16 @@ def search(request):
 
 
 def upload_gift(request):
-    ans = {}
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
 
+    ans = {}
     res = check_logged(request)
     if res is not None:
         return res
 
-    if request.body:
-        body = json.loads(request.body)
-    else:
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
     age = body['age']
     gender = body['gender']
     price = body['price']
@@ -274,16 +276,16 @@ def upload_gift(request):
 
 
 def like(request):
-    ans = {}
 
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
+
+    ans = {}
     res = check_logged(request)
     if res is not None:
         return res
-
-    if request.body:
-        body = json.loads(request.body)
-    else:
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     user_id = request.COOKIES.get('user_id')
     like = body['like']
@@ -360,18 +362,19 @@ def like(request):
 
 
 def ask_user(request):
-    ans = {}
 
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
+
+    ans = {}
     res = check_logged(request)
     if res is not None:
         return res
 
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
-    if request.body:
-        body = json.loads(request.body)
-    else:
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     try:
         rel = Relation.objects.get(description=body['relation'])
@@ -391,8 +394,11 @@ def ask_user(request):
 
 
 def profile_page(request):
-    ans = {}
 
+    if request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+
+    ans = {}
     res = check_logged(request)
     if res is not None:
         return res
@@ -415,19 +421,19 @@ def profile_page(request):
 
 
 def redeem_giftcard(request):
-    ans = {}
 
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
+
+    ans = {}
     res = check_logged(request)
     if res is not None:
         return res
 
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
-
-    if request.body:
-        body = json.loads(request.body)
-    else:
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     if body['card_type']=='gold':
         user.user_rank-=150
