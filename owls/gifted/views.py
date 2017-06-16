@@ -148,32 +148,32 @@ def search(request):
         ans['status'] = 'Your rank is too low. \nYou need to upload few gifts before searching. \nCheck out our FAQ.'
         return HttpResponse(json.dumps(ans), content_type='application/json',status=400)
 
-    rel_rng = None
+    ages_rng = None
     if age_range is None:
         for rng in age_ranges:
             if rng[0] <= int(age) <= rng[1]:
-                rel_rng = rng
+                ages_rng = rng
                 break
-        if rel_rng is None:
+        if ages_rng is None:
             # should not get here at all
             return HttpResponse(json.dumps({'status': 'No suitable range in range array.'}), content_type='application/json',status=400)
     else:
-        rel_rng = [int(low_age),int(high_age)]
+        ages_rng = [int(low_age),int(high_age)]
 
     # query the DB for the relevant gifts
     if price_range:
         if gender != 'U':
-            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]] , gender=gender,
+            gifts = Gift.objects.filter(age__range=[ages_rng[0], ages_rng[1]], gender=gender,
                                     price__range=[int(low_price), int(high_price)])
         else:
-            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]],
+            gifts = Gift.objects.filter(age__range=[ages_rng[0], ages_rng[1]],
                                     price__range=[int(low_price), int(high_price)])
     else:
         # no asked price was given
         if gender != 'U':
-            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]], gender=gender)
+            gifts = Gift.objects.filter(age__range=[ages_rng[0], ages_rng[1]], gender=gender)
         else:
-            gifts = Gift.objects.filter(age__range=[rel_rng[0], rel_rng[1]])
+            gifts = Gift.objects.filter(age__range=[ages_rng[0], ages_rng[1]])
 
     # if relevant gifts were found
     if gifts:
@@ -221,12 +221,13 @@ def upload_gift(request):
         ans = {'status': 'Age/price must be integers'}
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
+    # check if the url string is a valid url or an empty string
     if not re.match('(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)?',image_url):
         ans = {'status': 'Image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
     if not re.match('(\w+(\s\w+)?)',title):
-        return HttpResponse(json.dumps({'status': 'Title is not legal'}), status=400, content_type='application/json')
+        return HttpResponse(json.dumps({'status': 'Title is not legal.\nPlease use only English letters or digits.'}), status=400, content_type='application/json')
 
     if not re.match('(\w+(\s\w+)?)?',description):
         return HttpResponse(json.dumps({'status':'The descreption is not legal.Please use only English letters or digits'}),
@@ -248,7 +249,7 @@ def upload_gift(request):
     if user is None:
         return HttpResponse(json.dumps({'status': 'User does not exist'}), status=400, content_type='application/json')
 
-    #check if gift already exists in DB
+    # check if gift already exists in DB
     if Gift.objects.filter(title=title, description=description, age=age, price=price,
                             gender=gender, gift_img=image_url, relationship=rel).exists():
         return HttpResponse(json.dumps({'status': 'Gift you are trying to upload already exists in our DB'}), status=400, content_type='application/json')
@@ -411,12 +412,6 @@ def profile_page(request):
     response = HttpResponse(json.dumps(ans), status=200)
     refresh_cookie(response,user)
     return response
-
-
-def refresh_cookie(response, user):
-    response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
-    response.set_cookie('user_rank', user.user_rank)
-    response.set_cookie('removed_gifts_count', user.gifts_removed)
 
 
 def redeem_giftcard(request):

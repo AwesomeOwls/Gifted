@@ -3,6 +3,7 @@ from models import *
 import csv
 from dateutil import parser
 from datetime import *
+from random import  randint
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
@@ -149,9 +150,12 @@ def add_initial_gifts(request):
         with open('../gifts.csv', 'r+') as rel_matrix_file:
             reader = csv.reader(rel_matrix_file)
             next(reader)  # skip columns names
-            user = User.objects.all()[:1].get()
+            users = User.objects.all()
             i=0
             for row in reader:
+                indx = randint(0, len(users))
+                user = users[indx].get()
+
                 title=row[0]
                 description = row[1]
                 age = row[2]
@@ -161,11 +165,12 @@ def add_initial_gifts(request):
                 rank = row[6]
                 relationship = Relation.objects.get(description=row[7])
                 gift = Gift(title=title,relationship=relationship,gift_img=gift_img,
-                            age=age,description=description,price=price,gender=gender,gift_rank=rank,uploading_user=user)
+                            age=age,description=description,price=price,gender=gender,gift_rank=rank,
+                            uploading_user=user)
                 i += 1
+                user.user_rank += 2
+                user.save()
                 gift.save()
-            user.user_rank += 2*i
-            user.save()
     except IOError:
         return HttpResponse(json.dumps({'status': 'file not found'}), status=400)
 
@@ -179,3 +184,9 @@ def invalidate_cookie(response):
     response.delete_cookie('expiry_time')
     response.delete_cookie('user_rank')
     response.delete_cookie('removed_gifts_count')
+
+
+def refresh_cookie(response, user):
+    response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
+    response.set_cookie('user_rank', user.user_rank)
+    response.set_cookie('removed_gifts_count', user.gifts_removed)
