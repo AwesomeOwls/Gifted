@@ -64,19 +64,23 @@ var UploadDialog = {
                 data: JSON.stringify(obj),
                 dataType: "json",
                 beforeSend: function(){
+                    NavBar.hideAllButtons();
                     $status.show();
                     $preloader.show();
                 },
                 success: function(data){
+                    $relationship_score.rateYo("option", "rating", 0);
                     Utils.clearInputs($description, $title, $age, $price, $img_url);
                     $preloader.delay(300).fadeOut('slow', function () {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Gift Uploaded Successfully');
                         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
+                        NavBar.showTopButtons();
                         ProfileView.initProfilePageData();
                     });
                 },
                 error: function(error){
+                    NavBar.showTopButtons();
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);
@@ -178,17 +182,20 @@ var SearchDialog = {
                 data: JSON.stringify(obj),
                 dataType: "json",
                 beforeSend: function(){
+                    NavBar.hideAllButtons()
                     $status.show();
                     $preloader.show();
                 },
                 success: function(data){
                     Utils.clearInputs($age, $price_from, $price_to);
                     $preloader.delay(300).fadeOut('slow', function () {
+                        NavBar.showTopButtons();
                         $body.delay(550).css({'overflow': 'visible'});
                         ResultsView.showResultsPage(data.gifts);
                     });
                 },
                 error: function(error){
+                    NavBar.showTopButtons();
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);
@@ -287,6 +294,7 @@ var errorDialog = {
     },
 
     onDialogClose: function() {
+        // this function might not be actually called as modal is dismissed via different binding
         $('#error-modal').off('hidden.bs.modal');
     }
 
@@ -306,6 +314,7 @@ var successDialog = {
     },
 
     onDialogClose: function() {
+        // this function might not be actually called as modal is dismissed via different binding
         $('#success-modal').off('hidden.bs.modal');
     }
 
@@ -341,17 +350,21 @@ var QuestionDialog = {
                 data: JSON.stringify(obj),
                 dataType: "json",
                 beforeSend: function(){
+                    NavBar.hideAllButtons();
                     $status.show();
                     $preloader.show();
                 },
                 success: function(data){
+                    $relationship_score.rateYo("option", "rating", 0);
                     $preloader.delay(300).fadeOut('slow', function () {
+                        NavBar.showTopButtons();
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Thanks for your answer!');
                         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
                     });
                 },
                 error: function(error){
+                    NavBar.showTopButtons();
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);
@@ -402,11 +415,13 @@ var cardDialog = {
                 data: JSON.stringify(obj),
                 dataType: "json",
                 beforeSend: function(){
+                    NavBar.hideAllButtons();
                     $status.show();
                     $preloader.show();
                 },
                 success: function(data){
                     $preloader.delay(300).fadeOut('slow', function () {
+                        NavBar.showTopButtons();
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog("The " + Utils.capitalizeFirstLetter(cardType) + " gift card is on it's way to your email! 😉");
                         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
@@ -414,6 +429,7 @@ var cardDialog = {
                     });
                 },
                 error: function(error){
+                    NavBar.showTopButtons();
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);

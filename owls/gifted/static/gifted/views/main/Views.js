@@ -102,7 +102,6 @@ var ProfileView = {
         var $warning = $('#profile-warning');
         Utils.clearView('#profile-warning');
         var removedGiftsCount = Utils.getRemovedGiftsCount();
-        console.log(removedGiftsCount)
         if (removedGiftsCount >= 3) {
             $warning[0].innerText = removedGiftsCount + ' You are under warning! (5 of your gifts have been removed) - for more information see FAQ'
         }

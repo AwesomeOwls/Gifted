@@ -69,7 +69,10 @@ var Utils = {
     },
 
     clearView: function(selector) {
-        $(selector)[0].innerHTML = '';
+        var $view = $(selector)[0]
+        if ($view){
+            $view.innerHTML = '';
+        }
     },
 
     capitalizeFirstLetter: function(string) {
