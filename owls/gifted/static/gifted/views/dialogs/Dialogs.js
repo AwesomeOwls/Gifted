@@ -349,7 +349,14 @@ var QuestionDialog = {
         var obj = {};
 
         obj['other_relation'] = randomRelation;
+        while(randomRelation==giftRelationship)
+        {
+            var randomRelation = Utils.pickRandomProperty(window.relationships);
+        }
         $relationship2.text(window.relationships[randomRelation]);
+
+
+
 
         $('#question-submit').click( function() {
             obj['relation'] = giftRelationship;
