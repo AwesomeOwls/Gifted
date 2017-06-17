@@ -10,6 +10,8 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 import os
+import requests
+import mimetypes
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
@@ -41,6 +43,15 @@ GMAIL_MAIL = 'giftedcrowdsourcing@gmail.com'
 GMAIL_PASS = 'adminadmin'
 GIFTCARD_GOLD_PATH = 'gifted/static/gifted/img/giftcard_50.png'
 GIFTCARD_DIAMOND_PATH = 'gifted/static/gifted/img/giftcard_100.png'
+
+
+def is_image_url(url):
+    try:
+        r = requests.head(url)
+    except:
+        return False
+    mimetype, encoding = mimetypes.guess_type(url)
+    return (mimetype and mimetype.startswith('image')) and r.status_code == requests.codes.ok
 
 
 def send_mail_reward(user_mail, is_gold):
