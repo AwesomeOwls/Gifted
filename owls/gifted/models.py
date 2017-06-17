@@ -10,6 +10,7 @@ class User(models.Model):
     is_banned = models.BooleanField(default=False)
     banned_start = models.DateTimeField(null=True, blank=True)
     liked_gift_ids = models.TextField(default='[]', blank=True)
+    email = models.TextField(default='', blank=True)
 
     def add_liked_gift_id(self, gift_obj):
         liked_gifts = self.get_liked_gift_ids()
