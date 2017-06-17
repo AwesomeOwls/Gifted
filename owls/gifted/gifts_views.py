@@ -2,6 +2,51 @@ import re
 from utils import *
 
 
+def remove_gift(request):
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
+
+    ans = {}
+    res = check_logged(request)
+    if res is not None:
+        return res
+
+    gift_id = body['gift_id']
+    user_id = request.COOKIES.get('user_id')
+
+    try:
+        gift = Gift.objects.get(pk=gift_id)
+        user = User.objects.get(user_id=user_id)
+    except ObjectDoesNotExist:
+        return HttpResponse(json.dumps({'status': 'Gift/User not found'}), status=400)
+
+    user.user_rank -= gift.gift_rank
+    user.save()
+    liked_users = gift.get_liked_users()
+    for user_obj in liked_users:
+        user_id = user_obj['user_id']
+        try:
+            tmp_user = User.objects.get(user_id=user_id)
+        except ObjectDoesNotExist:
+            return HttpResponse(json.dumps({'status': 'User not found'}), status=400)
+        liked_gifts = tmp_user.get_liked_gift_ids()
+        for liked_gift in liked_gifts:
+            if liked_gift['gift_id'] == gift_id:
+                liked_gifts.remove(liked_gift)
+        tmp_user.liked_gift_ids = liked_gifts
+        tmp_user.save()
+
+    gift.delete()
+    ans['status'] = 'Remove gift succesfully done.'
+    response = HttpResponse(json.dumps(ans), status=200)
+    refresh_cookie(response, user)
+    return response
+
+
+
+
 def upload_gift(request):
     if not request.body or request.method != 'POST':
         return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
