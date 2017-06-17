@@ -28,8 +28,8 @@ MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 NOT_CHOSEN = 6
-#BAN_TIME = timedelta(1)
-BAN_TIME = timedelta(seconds=20)
+BAN_TIME = timedelta(1)
+#BAN_TIME = timedelta(seconds=20)
 
 
 NOT_LOGGED_IN = 'You are not logged in.'
@@ -135,8 +135,9 @@ def truncate_by_relation_strength(gifts,relation,user_id):
 def clear_db(request):
     Relation.objects.all().delete()
     RelationshipMatrixCell.objects.all().delete()
-    # User.objects.all().delete()
-    # Gift.objects.all().delete()
+    User.objects.all().delete()
+    Gift.objects.all().delete()
+    return HttpResponse(json.dumps({'status': 'OK'}), status=200, content_type='application/json')
 
 
 def update_rmatrix(rel, other_rel, rel_strength, user):
@@ -221,7 +222,7 @@ def add_initial_gifts(request):
                 next(reader)
             i=0
             for row in reader:
-                indx = randint(0, len(users))
+                indx = randint(0,len(users)-1)
                 user = users[indx]
                 title=row[0]
                 description = row[1]
