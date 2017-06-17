@@ -51,7 +51,7 @@ def is_image_url(url):
     except:
         return False
     mimetype, encoding = mimetypes.guess_type(url)
-    return (mimetype and mimetype.startswith('image')) and r.status_code == requests.codes.ok
+    return mimetype and mimetype.startswith('image') and r.status_code == requests.codes.ok
 
 
 def send_mail_reward(user_mail, is_gold):
