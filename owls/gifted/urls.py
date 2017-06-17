@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^add_gifts/', utils.add_initial_gifts),
     url(r'^ask_user/', views.ask_user),
     url(r'^redeem_card/', views.redeem_giftcard),
+    url(r'^change_strength',utils.enhance_relation),
     url(r'^$', views.index)
 ]

@@ -223,3 +223,55 @@ def refresh_cookie(response, user):
     response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     response.set_cookie('user_rank', user.user_rank)
     response.set_cookie('removed_gifts_count', user.gifts_removed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def enhance_relation(request):
+    rel1 = request.GET.get('rel1')
+    rel2 = request.GET.get('rel2')
+    strength = request.GET.get('strength')
+    if not rel1 or not rel2 or not strength :
+        return HttpResponse(json.dumps({'status':'Failed'}),status=400)
+    try:
+        relation1 = Relation.objects.get(description=rel1)
+        relation2 = Relation.objects.get(description=rel2)
+    except ObjectDoesNotExist:
+        return HttpResponse(json.dumps({'status':'Failed'}),status=400)
+    try:
+        relmat = RelationshipMatrixCell.objects.get(rel1=relation1,rel2=relation2)
+    except ObjectDoesNotExist:
+        relmat = RelationshipMatrixCell.objects.get(rel1=relation2,rel2=relation1)
+    relmat.strength += int(strength)
+    relmat.save()
+    return HttpResponse(json.dumps({'status':'OK'}))
