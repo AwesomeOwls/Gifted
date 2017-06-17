@@ -65,13 +65,9 @@ var NavBar = {
         $faq.show();
         if(Utils.getUserRank() < Utils.TRUSTED_RANK){
             $search.children().first().addClass('disabled-nav-btn');
-            $search.off('click');
             $search.attr('title', 'Your rank must be 4 or higher!');
         } else {
             $search.children().first().removeClass('disabled-nav-btn');
-            $search.click(function () {
-                SearchDialog.showDialog();
-            });
             $search.removeAttr('title');
         }
     },
