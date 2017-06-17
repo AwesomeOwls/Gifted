@@ -219,7 +219,7 @@ def add_initial_gifts(request):
                 next(reader)
             i=0
             for row in reader:
-                indx = randint(0, len(users))
+                indx = randint(0,len(users)-1)
                 user = users[indx]
                 title=row[0]
                 description = row[1]
