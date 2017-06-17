@@ -5,11 +5,12 @@ from dateutil import parser
 from datetime import *
 from random import  randint
 from django.core.exceptions import ObjectDoesNotExist
-
+import smtplib
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
 COOKIE_EXPIRY_TIME = 3600
+#COOKIE_EXPIRY_TIME = 10
 MIN_GIFT_RANK = -5
 MIN_GIFTS_TH = 5
 TRUSTED_USER_RANK = 4
@@ -26,8 +27,21 @@ NOT_CHOSEN = 6
 BAN_TIME = timedelta(1)
 
 NOT_LOGGED_IN = 'You are not logged in.'
-COOKIE_EXPIRED = 'Your session has expired. Please reload page'
+COOKIE_EXPIRED = 'Your session has expired. Please log-in again.'
 BANNED = 'You are temporarily banned. Check our FAQ for more information.'
+
+GMAIL_MAIL = 'giftedcrowdsourcing@gmail.com'
+GMAIL_PASS = 'adminadmin'
+
+
+def send_mail_reward(user_mail):
+    msg = 'Why,Oh why!'
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.ehlo()
+    server.starttls()
+    server.login(GMAIL_MAIL, GMAIL_PASS)
+    server.sendmail(GMAIL_MAIL, user_mail, msg)
+    server.quit()
 
 
 def check_logged(request):
@@ -44,13 +58,15 @@ def check_logged(request):
 
             elif User.objects.get(user_id=req_user_id).is_banned:
                 ans['status'] = BANNED
-                res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-                invalidate_cookie(res)
+                ans['status_code'] = 405
+                res = HttpResponse(json.dumps(ans), content_type='application/json', status=405)
+                #invalidate_cookie(res)
 
             elif parser.parse(req_expiry_time) < datetime.utcnow():
                 ans['status'] = COOKIE_EXPIRED
+                ans['status_code'] = 405
                 res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
-                invalidate_cookie(res)
+                #invalidate_cookie(res)
             else:
                 return None
     else:

@@ -46,7 +46,7 @@ def login(request):
         user = None
 
     if not user:
-        user = User(user_id=user_id)
+        user = User(user_id=user_id, email=idinfo['email'])
         user.save()
     else:
         if user.is_banned:
@@ -78,7 +78,9 @@ def logout(request):
         return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
     ans = {}
     res = check_logged(request)
-    if res is not None:
+
+    #special treatment for ban
+    if res is not None and json.loads(res.content)['status_code'] != 405:
         return res
 
     ans['status'] = 'Logged out'
@@ -442,6 +444,9 @@ def redeem_giftcard(request):
         return HttpResponse(json.dumps({'status': 'Card type is not legal'}), status=400, content_type='application/json')
 
     user.save()
+
+    send_mail_reward(user.email)
+
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)

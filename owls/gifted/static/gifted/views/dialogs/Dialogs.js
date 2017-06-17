@@ -190,6 +190,7 @@ var SearchDialog = {
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);
+
                 },
             });
             return false;
@@ -269,8 +270,10 @@ var errorDialog = {
         try {
             var errObj = JSON.parse(errorText);
             var errMsg = errObj.status || 'Internal Server Error';
+            var errCode = errObj.status_code;
         } catch (e) {
             errMsg = 'Internal Server Error';
+            errCode = undefined;
         }
         console.error('err', errMsg);
 
@@ -279,6 +282,9 @@ var errorDialog = {
         $('.error-message')[0].innerHTML = errMsg;
         $('.error-modal').on('hidden.bs.modal',successDialog.onDialogClose);
 
+        if (errCode == 405){
+            GoogleAuth.signOut()
+        }
     },
     closeDialog: function() {
         $('#error-modal').modal('hide');
