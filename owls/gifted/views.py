@@ -435,8 +435,10 @@ def redeem_giftcard(request):
 
     user_id = request.COOKIES.get('user_id')
     user = User.objects.get(user_id=user_id)
+    is_gold = False
 
     if body['card_type']=='gold':
+        is_gold = True
         user.user_rank-=150
     elif body['card_type']=='diamond':
         user.user_rank-=250
@@ -445,10 +447,12 @@ def redeem_giftcard(request):
 
     user.save()
 
-    send_mail_reward(user.email)
+    res = send_mail_reward(user.email, is_gold)
+    if res is None:
+        ans['status'] = 'OK'
+        res = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
 
-    ans['status'] = 'OK'
-    response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
-    response.set_cookie('user_rank', user.user_rank)
-    refresh_cookie(response,user)
-    return response
+    res.set_cookie('user_rank', user.user_rank)
+    refresh_cookie(res, user)
+    return res
+

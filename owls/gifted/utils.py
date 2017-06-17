@@ -6,6 +6,10 @@ from datetime import *
 from random import  randint
 from django.core.exceptions import ObjectDoesNotExist
 import smtplib
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+import os
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
@@ -24,24 +28,54 @@ MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 NOT_CHOSEN = 6
-BAN_TIME = timedelta(1)
+#BAN_TIME = timedelta(1)
+BAN_TIME = timedelta(seconds=20)
+
 
 NOT_LOGGED_IN = 'You are not logged in.'
 COOKIE_EXPIRED = 'Your session has expired. Please log-in again.'
 BANNED = 'You are temporarily banned. Check our FAQ for more information.'
+EMAIL_ERR = 'Failed sending email.'
 
 GMAIL_MAIL = 'giftedcrowdsourcing@gmail.com'
 GMAIL_PASS = 'adminadmin'
+GIFTCARD_GOLD_PATH = 'gifted/static/gifted/img/giftcard_50.png'
+GIFTCARD_DIAMOND_PATH = 'gifted/static/gifted/img/giftcard_100.png'
 
 
-def send_mail_reward(user_mail):
-    msg = 'Why,Oh why!'
-    server = smtplib.SMTP('smtp.gmail.com:587')
-    server.ehlo()
-    server.starttls()
-    server.login(GMAIL_MAIL, GMAIL_PASS)
-    server.sendmail(GMAIL_MAIL, user_mail, msg)
-    server.quit()
+def send_mail_reward(user_mail, is_gold):
+    ans = dict()
+    if is_gold:
+        img_data = open(GIFTCARD_GOLD_PATH, 'rb').read()
+    else:
+        img_data = open(GIFTCARD_DIAMOND_PATH, 'rb').read()
+
+    try:
+        msg = MIMEMultipart()
+        msg['Subject'] = 'Congratulations, you won a giftcard!'
+        msg['From'] = GMAIL_MAIL
+        msg['To'] = user_mail
+
+        text = MIMEText("You can redeem your giftcard in selected stores. Please contact us for more information at support@gifted.com")
+        msg.attach(text)
+
+        if is_gold:
+            image = MIMEImage(img_data, name=os.path.basename(GIFTCARD_GOLD_PATH))
+        else:
+            image = MIMEImage(img_data, name=os.path.basename(GIFTCARD_DIAMOND_PATH))
+
+        msg.attach(image)
+
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.ehlo()
+        server.starttls()
+        server.login(GMAIL_MAIL, GMAIL_PASS)
+        server.sendmail(GMAIL_MAIL, user_mail, msg.as_string())
+        server.quit()
+    except smtplib.SMTPException:
+        ans['status'] = EMAIL_ERR
+        return HttpResponse(json.dumps(ans), content_type='application/json', status=400)
+    return None
 
 
 def check_logged(request):
@@ -223,3 +257,55 @@ def refresh_cookie(response, user):
     response.set_cookie('expiry_time', datetime.utcnow() + timedelta(seconds=COOKIE_EXPIRY_TIME))
     response.set_cookie('user_rank', user.user_rank)
     response.set_cookie('removed_gifts_count', user.gifts_removed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def enhance_relation(request):
+    rel1 = request.GET.get('rel1')
+    rel2 = request.GET.get('rel2')
+    strength = request.GET.get('strength')
+    if not rel1 or not rel2 or not strength :
+        return HttpResponse(json.dumps({'status':'Failed'}),status=400)
+    try:
+        relation1 = Relation.objects.get(description=rel1)
+        relation2 = Relation.objects.get(description=rel2)
+    except ObjectDoesNotExist:
+        return HttpResponse(json.dumps({'status':'Failed'}),status=400)
+    try:
+        relmat = RelationshipMatrixCell.objects.get(rel1=relation1,rel2=relation2)
+    except ObjectDoesNotExist:
+        relmat = RelationshipMatrixCell.objects.get(rel1=relation2,rel2=relation1)
+    relmat.strength += int(strength)
+    relmat.save()
+    return HttpResponse(json.dumps({'status':'OK'}))
