@@ -2,7 +2,7 @@
 from django.conf.urls import url
 from django.contrib import admin
 from . import utils
-from . import gifts_views, users_views
+from . import gifts_views, crowd_views
 
 
 urlpatterns = [
@@ -12,12 +12,12 @@ urlpatterns = [
     url(r'^upload', gifts_views.upload_gift),
     url(r'^like/', gifts_views.like),
 
-    url(r'^signin/', users_views.login),
-    url(r'^signout/', users_views.logout),
-    url(r'^ask_user/', users_views.ask_user),
-    url(r'^profile/', users_views.profile_page),
-    url(r'^redeem_card/', users_views.redeem_giftcard),
-    url(r'^$', users_views.index),
+    url(r'^signin/', crowd_views.login),
+    url(r'^signout/', crowd_views.logout),
+    url(r'^ask_user/', crowd_views.ask_user),
+    url(r'^profile/', crowd_views.profile_page),
+    url(r'^redeem_card/', crowd_views.redeem_giftcard),
+    url(r'^$', crowd_views.index),
 
     url(r'^fill_db/', utils.fill_db),
     url(r'^clear/', utils.clear_db),
