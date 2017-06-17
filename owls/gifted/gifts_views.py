@@ -40,6 +40,9 @@ def upload_gift(request):
         ans = {'status': 'Image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 
+    if image_url != '' and not is_image_url(image_url):
+        image_url = ''
+
     if not re.match('(\w+(\s\w+)?)',title):
         return HttpResponse(json.dumps({'status': 'Title is not legal.\nPlease use only English letters or digits.'}), status=400, content_type='application/json')
 
