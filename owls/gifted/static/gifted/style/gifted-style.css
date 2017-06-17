@@ -236,9 +236,8 @@ p.error {
 }
 
 #profile-warning {
-  color: red;
+  color: #ffc384;
   font-weight: bold;
-  background-color: white;
   width: 400px;
   margin: auto;
   line-height: inherit;

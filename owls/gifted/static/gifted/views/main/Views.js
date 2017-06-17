@@ -80,8 +80,8 @@ var ProfileView = {
         var $cards = $('#gifts-cards');
         Utils.clearView('#gifts-cards');
         var userRank = Utils.getUserRank();
-        var goldButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-gold.jpg">');
-        var diamondButton = $('<img class="diamond-button card-button" src="static/gifted/img/gift-diamond.jpg">');
+        var goldButton = $('<img class="gold-button card-button" src="static/gifted/img/gift-gold.png">');
+        var diamondButton = $('<img class="diamond-button card-button" src="static/gifted/img/gift-diamond.png">');
         if (userRank >= Utils.GOLD_RANK) {
             goldButton.appendTo($cards);
             $('.gold-button').click(function() {
