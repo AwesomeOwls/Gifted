@@ -327,10 +327,13 @@ def like(request):
         for user_obj in liked_users:
             if user_obj['user_id'] == user.user_id:
                 user_obj['is_like'] = 1 - user_obj['is_like']
+                uploader.user_rank += int(like)
                 break
         gift.liked_users = json.dumps(liked_users)
 
     else:
+        if like > 0:
+            uploader.user_rank += 1
         # add liked gift id to list
         user.add_liked_gift_id(search_query)
         gift.add_liked_user({'user_id': user_id, 'is_like': 1 if like > 0 else 0 })
@@ -339,12 +342,8 @@ def like(request):
 
     gift.gift_rank = gift.gift_rank + int(like)
 
-    # if the gift is liked, its uploader gets 1 point
-    if like > 0:
-        uploader.user_rank += 1
-
     # Under gift rank of MIN_GIFT_RANK, the gift will be removed from the DB.
-    if gift.gift_rank < MIN_GIFT_RANK:
+    if gift.gift_rank <= MIN_GIFT_RANK:
         gift.delete()
         uploader.gifts_removed += 1
         if uploader.gifts_removed > MAX_REMOVED:
@@ -379,7 +378,7 @@ def ask_user(request):
     try:
         rel = Relation.objects.get(description=body['relation'])
         other_rel = Relation.objects.get(description=body['other_relation'])
-    except TypeError:
+    except Relation.DoesNotExist:
         return HttpResponse(json.dumps({'status': 'relation does not exist in db'}), status=400,
                             content_type='application/json')
 
