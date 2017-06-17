@@ -42,7 +42,7 @@ def login(request):
 
     try:
         user = User.objects.get(user_id=user_id)
-    except User.DoesNotExist:
+    except ObjectDoesNotExist:
         user = None
 
     if not user:
@@ -297,7 +297,7 @@ def like(request):
         gift = Gift.objects.get(pk=gift_id)
         user = User.objects.get(user_id=user_id)
         uploader = User.objects.get(user_id=gift.uploading_user.user_id)
-    except User.DoesNotExist, Gift.DoesNotExist:
+    except ObjectDoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
 
     # User may like/dislike other gifts only if his rank is high enough.
@@ -380,7 +380,7 @@ def ask_user(request):
     try:
         rel = Relation.objects.get(description=body['relation'])
         other_rel = Relation.objects.get(description=body['other_relation'])
-    except Relation.DoesNotExist:
+    except ObjectDoesNotExist:
         return HttpResponse(json.dumps({'status': 'relation does not exist in db'}), status=400,
                             content_type='application/json')
 
@@ -410,7 +410,7 @@ def profile_page(request):
         user = User.objects.get(user_id=user_id)
         user_gifts = Gift.objects.filter(uploading_user=user)
 
-    except User.DoesNotExist:
+    except ObjectDoesNotExist:
         return HttpResponse(json.dumps({'status': 'User not found'}), status=400)
 
     ans['gifts'] = [x.as_json() for x in user_gifts]

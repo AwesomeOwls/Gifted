@@ -247,3 +247,7 @@ p.error {
 #profile-picture,.user-img {
   border-radius: 50px;
 }
+
+.disabled-nav-btn  {
+  color: #cd9ab9 !important;
+}
