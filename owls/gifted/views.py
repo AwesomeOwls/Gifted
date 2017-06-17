@@ -11,9 +11,12 @@ def index(request):
 
     if 'user_id' in request.COOKIES:
         user_id = request.COOKIES.get('user_id')
-        user = User.objects.get(user_id=user_id)
         response = render(request, 'gifted/index.html', context)
-        refresh_cookie(response, user)
+        try:
+            user = User.objects.get(user_id=user_id)
+            refresh_cookie(response, user)
+        except ObjectDoesNotExist:
+            invalidate_cookie(response)
         return response
 
     return render(request, 'gifted/index.html', context)

@@ -280,7 +280,7 @@ var errorDialog = {
         Utils.clearView('.error-message');
         $('#error-modal').modal();
         $('.error-message')[0].innerHTML = errMsg;
-        $('.error-modal').on('hidden.bs.modal',successDialog.onDialogClose);
+        $('.error-modal').on('hidden.bs.modal',errorDialog.onDialogClose);
 
         if (errCode == 405){
             GoogleAuth.signOut()
