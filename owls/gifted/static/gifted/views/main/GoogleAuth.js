@@ -75,7 +75,7 @@ var GoogleAuth = {
         $status.delay(300).fadeOut();
         $preloader.delay(300).fadeOut('slow', function () {
             $body.delay(550).css({'overflow': 'visible'});
-
+            NavBar.showTopButtons();
             NavBar.showWelcome(given_name, pictureURL);
 
             $search.click(function () {
@@ -89,7 +89,6 @@ var GoogleAuth = {
                 });
                 UploadDialog.showDialog();
             });
-            NavBar.showTopButtons();
         });
     }
 
