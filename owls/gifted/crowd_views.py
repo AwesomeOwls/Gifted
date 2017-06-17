@@ -81,7 +81,7 @@ def logout(request):
     ans = {}
     res = check_logged(request)
 
-    #special treatment for ban
+    #special treatment for ban and cookie expiration
     if res is not None and json.loads(res.content)['status_code'] != 405:
         return res
 

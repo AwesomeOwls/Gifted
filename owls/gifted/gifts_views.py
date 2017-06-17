@@ -35,6 +35,7 @@ def remove_gift(request):
         for liked_gift in liked_gifts:
             if liked_gift['gift_id'] == gift_id:
                 liked_gifts.remove(liked_gift)
+                break
         tmp_user.liked_gift_ids = liked_gifts
         tmp_user.save()
 
@@ -43,8 +44,6 @@ def remove_gift(request):
     response = HttpResponse(json.dumps(ans), status=200)
     refresh_cookie(response, user)
     return response
-
-
 
 
 def upload_gift(request):

@@ -40,22 +40,22 @@ var UploadDialog = {
         var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
-        obj['relationship2'] = randomRelation;
         while(randomRelation==$relationship.val())
         {
-            var randomRelation = Utils.pickRandomProperty(window.relationships);
+            randomRelation = Utils.pickRandomProperty(window.relationships);
         }
+        obj['relationship2'] = randomRelation;
         $relationship2.text(window.relationships[randomRelation]);
 
         $relationship.on('change', function() {
             var randomRelation = Utils.pickRandomProperty(window.relationships);
             var obj = {};
 
+            while(randomRelation==$relationship.val())
+            {
+                randomRelation = Utils.pickRandomProperty(window.relationships);
+            }
             obj['relationship2'] = randomRelation;
-                while(randomRelation==$relationship.val())
-                {
-                    var randomRelation = Utils.pickRandomProperty(window.relationships);
-                }
             $relationship2.text(window.relationships[randomRelation]);
         })
 
@@ -348,11 +348,11 @@ var QuestionDialog = {
         var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
-        obj['other_relation'] = randomRelation;
         while(randomRelation==giftRelationship)
         {
-            var randomRelation = Utils.pickRandomProperty(window.relationships);
+            randomRelation = Utils.pickRandomProperty(window.relationships);
         }
+        obj['other_relation'] = randomRelation;
         $relationship2.text(window.relationships[randomRelation]);
 
 
