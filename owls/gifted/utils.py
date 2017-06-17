@@ -28,7 +28,9 @@ MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 NOT_CHOSEN = 6
-BAN_TIME = timedelta(1)
+#BAN_TIME = timedelta(1)
+BAN_TIME = timedelta(seconds=20)
+
 
 NOT_LOGGED_IN = 'You are not logged in.'
 COOKIE_EXPIRED = 'Your session has expired. Please log-in again.'
