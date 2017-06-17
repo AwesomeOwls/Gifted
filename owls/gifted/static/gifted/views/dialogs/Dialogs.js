@@ -35,11 +35,29 @@ var UploadDialog = {
 
         $('#upload-modal').on('hidden.bs.modal',UploadDialog.onDialogClose);
 
+
+
         var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
         obj['relationship2'] = randomRelation;
+        while(randomRelation==$relationship.val())
+        {
+            var randomRelation = Utils.pickRandomProperty(window.relationships);
+        }
         $relationship2.text(window.relationships[randomRelation]);
+
+        $relationship.on('change', function() {
+            var randomRelation = Utils.pickRandomProperty(window.relationships);
+            var obj = {};
+
+            obj['relationship2'] = randomRelation;
+                while(randomRelation==$relationship.val())
+                {
+                    var randomRelation = Utils.pickRandomProperty(window.relationships);
+                }
+            $relationship2.text(window.relationships[randomRelation]);
+        })
 
         $('#upload-submit').click( function() {
 
