@@ -247,6 +247,14 @@ p.error {
   border-radius: 50px;
 }
 
-.disabled-nav-btn  {
-  color: #cd9ab9 !important;
+.disabled-search-btn  {
+  background-color: rgb(219, 224, 225)!important;
+}
+.disabled-search-btn > a:hover {
+  cursor: default;
+  color: rgb(168, 165, 165)!important;
+}
+.disabled-search-btn > a {
+  cursor: default;
+  color: rgb(168, 165, 165)!important;
 }

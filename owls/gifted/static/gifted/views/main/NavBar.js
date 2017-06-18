@@ -63,13 +63,6 @@ var NavBar = {
         $upload.show();
         $about.show();
         $faq.show();
-        if(Utils.getUserRank() < Utils.TRUSTED_RANK){
-            $search.children().first().addClass('disabled-nav-btn');
-            $search.attr('title', 'Your rank must be 4 or higher!');
-        } else {
-            $search.children().first().removeClass('disabled-nav-btn');
-            $search.removeAttr('title');
-        }
     },
 
     showWelcome: function (userName, pictureURL) {
@@ -145,6 +138,15 @@ var NavBar = {
         );
     },
 
+    updateSearchButton: function() {
+        $search = $('#search-button');
+        if(Utils.getUserRank() < Utils.TRUSTED_RANK){
+            $search.addClass('disabled-search-btn');
+        } else {
+            $search.removeClass('disabled-search-btn');
+        }
+    },
+
     unbindTopButtonsClick: function() {
         var $logout = $('#logout-button'); var $search = $('#search-button');
         var $upload = $('#upload-button'); var $welcome = $('#welcome');
@@ -157,5 +159,6 @@ var NavBar = {
     updateTopBar: function() {
         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
         NavBar.showTopButtons();
+        NavBar.updateSearchButton();
     }
 };

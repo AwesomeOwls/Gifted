@@ -208,7 +208,6 @@ var SearchDialog = {
                     $status.hide();
                     $preloader.hide();
                     errorDialog.showDialog(error.responseText);
-
                 },
             });
             return false;
@@ -348,7 +347,7 @@ var QuestionDialog = {
         var randomRelation = Utils.pickRandomProperty(window.relationships);
         var obj = {};
 
-        while(randomRelation==giftRelationship)
+        while(randomRelation == giftRelationship)
         {
             randomRelation = Utils.pickRandomProperty(window.relationships);
         }
