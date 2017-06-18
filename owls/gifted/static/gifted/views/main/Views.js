@@ -57,7 +57,7 @@ var ProfileView = {
             '</p>' +
             '</div>' +
             '</div>' +
-            '<div class="row">' +
+            '<div class="row description-row">' +
             gift.description +
             '</div>' +
             '</div>' +
@@ -241,7 +241,7 @@ var ResultsView = {
                                         '</p>' +
                                     '</div>' +
                                  '</div>' +
-                                '<div class="row">' +
+                                '<div class="row description-row">' +
                                           gift.description +
                                 '</div>' +
                             '</div>' +

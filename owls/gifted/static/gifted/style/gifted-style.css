@@ -250,11 +250,18 @@ p.error {
 .disabled-search-btn  {
   background-color: rgb(219, 224, 225)!important;
 }
+
 .disabled-search-btn > a:hover {
   cursor: default;
   color: rgb(168, 165, 165)!important;
 }
+
 .disabled-search-btn > a {
   cursor: default;
   color: rgb(168, 165, 165)!important;
+}
+
+.description-row {
+  word-wrap: break-word;infinidat 123456
+  
 }
