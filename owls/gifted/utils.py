@@ -272,8 +272,18 @@ def refresh_cookie(response, user):
 
 
 def init_users():
-    #TODO : cereate users.csv
-    return
+
+    user_newbie = User(user_id='112573066830407886679', email='spook90il@gmail.com')
+    user_giftcard = User(user_id='117896272606849173314', email='evgeny.agronsky@gmail.com', user_rank=300)
+    user_banned = User(user_id='104146418326022036932', email='evgeny@imvisiontech.com', gifts_removed=3, user_rank=-9)
+    user_newbie.save()
+    user_giftcard.save()
+    user_banned.save()
+
+    spam_gift = Gift(title='SpamGift', description='SpamGift', age=22, price=22,
+                gender='M', gift_img='', relationship='parent', gift_rank=-4)
+    spam_gift.uploading_user_id = user_banned.user_id
+    spam_gift.save()
 
 
 def enhance_relation(request):
