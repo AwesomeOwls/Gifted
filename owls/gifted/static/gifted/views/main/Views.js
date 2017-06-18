@@ -103,10 +103,9 @@ var ProfileView = {
         var $warning = $('#profile-warning');
         Utils.clearView('#profile-warning');
         var removedGiftsCount = Utils.getRemovedGiftsCount();
-        if (removedGiftsCount >= 3) {
-            $warning[0].innerText = 'You are under warning!'+ removedGiftsCount +'of your gifts have been removed - for more information see FAQ'
+        if (removedGiftsCount >= Utils.GIFTS_REMOVED_WARNING) {
+            $warning[0].innerText = 'You are under warning! '+ removedGiftsCount +' of your gifts have been removed - for more information see FAQ'
         }
-
     },
 
     getProfileRankBar: function() {

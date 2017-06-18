@@ -407,7 +407,6 @@ var cardDialog = {
         var $card_text = $('.card-text');
         var moneyValue = cardType == 'gold' ? Utils.GOLD_CARD_REWARD : Utils.DIAMOND_CARD_REWARD;
         var redeemValue = cardType == 'gold' ? Utils.GOLD_CARD_VALUE : Utils.DIAMOND_CARD_VALUE;
-        debugger
         $card_text[0].innerHTML = '<h5>You are about to redeem ' + redeemValue + ' Points from your rank.</h5>' +
                                 '<h5>You will recieve a ' + moneyValue + ' ₪ gift card to your Email.</h5>' +
                                 '<h5>Are you sure you want to redeem your points?</h5>';

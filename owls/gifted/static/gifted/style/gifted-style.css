@@ -236,11 +236,13 @@ p.error {
 }
 
 #profile-warning {
-  color: #ffc384;
+  color: red;
   font-weight: bold;
   width: 400px;
   margin: auto;
   line-height: inherit;
+  border: solid 1px black;
+  background-color: rgba(236, 241, 241, 0.62);
 }
 
 #profile-picture,.user-img {
