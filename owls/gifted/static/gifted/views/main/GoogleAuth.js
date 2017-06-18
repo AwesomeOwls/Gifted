@@ -84,7 +84,7 @@ var GoogleAuth = {
             NavBar.showWelcome(given_name, pictureURL);
 
             $search.click(function () {
-                if (Utils.getUserRank() > Utils.TRUSTED_RANK) {
+                if (Utils.getUserRank() >= Utils.TRUSTED_RANK) {
                     SearchDialog.showDialog();
                 }
             });
