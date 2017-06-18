@@ -19,8 +19,9 @@ urlpatterns = [
     url(r'^redeem_card/', crowd_views.redeem_giftcard),
     url(r'^$', crowd_views.index),
 
-    url(r'^fill_db/', utils.fill_db),
+    url(r'^fill_db/', utils.init_relations),
     url(r'^clear/', utils.clear_db),
-    url(r'^add_gifts/', utils.add_initial_gifts),
+    url(r'^add_gifts/', utils.init_gifts),
     url(r'^change_strength',utils.enhance_relation),
+    url(r'^init_db',utils.setup)
 ]

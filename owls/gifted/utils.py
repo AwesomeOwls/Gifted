@@ -211,7 +211,7 @@ def init_relationship_matrix():
     return HttpResponse(json.dumps({}), status=200)
 
 
-def fill_db(request):
+def init_relations(request):
     try:
         init_relationship_matrix()
     except (IOError, ValueError, TypeError):
@@ -219,7 +219,7 @@ def fill_db(request):
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
 
 
-def add_initial_gifts(request):
+def init_gifts(request):
     start = request.GET.get('start')
     if not start:
         start = 0
@@ -271,36 +271,9 @@ def refresh_cookie(response, user):
     response.set_cookie('removed_gifts_count', user.gifts_removed)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def init_users():
+    #TODO : cereate users.csv
+    return
 
 
 def enhance_relation(request):
@@ -321,3 +294,10 @@ def enhance_relation(request):
     relmat.strength += int(strength)
     relmat.save()
     return HttpResponse(json.dumps({'status':'OK'}))
+
+
+def setup(request):
+    clear_db(request)
+    init_relations(request)
+    init_users()
+    init_gifts(request)
