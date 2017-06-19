@@ -241,7 +241,6 @@ p.error {
   width: 400px;
   margin: auto;
   line-height: inherit;
-  border: solid 1px black;
   background-color: rgba(236, 241, 241, 0.62);
 }
 
