@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^search/', gifts_views.search),
     url(r'^upload', gifts_views.upload_gift),
     url(r'^like/', gifts_views.like),
+    url(r'^remove_gift/', gifts_views.remove_gift),
 
     url(r'^signin/', crowd_views.login),
     url(r'^signout/', crowd_views.logout),

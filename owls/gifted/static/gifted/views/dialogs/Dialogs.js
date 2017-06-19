@@ -297,7 +297,7 @@ var errorDialog = {
         Utils.clearView('.error-message');
         $('#error-modal').modal();
         $('.error-message')[0].innerHTML = errMsg;
-        $('.error-modal').on('hidden.bs.modal',errorDialog.onDialogClose);
+        $('#error-modal').on('hidden.bs.modal',errorDialog.onDialogClose);
 
         if (errCode == 405){
             GoogleAuth.signOut()
@@ -314,13 +314,33 @@ var errorDialog = {
 
 };
 
+var noticeDialog = {
+
+    showDialog: function(noticeMessage) {
+
+        Utils.clearView('.notice-message');
+        $('#notice-modal').modal();
+        $('.notice-message')[0].innerHTML = noticeMessage;
+        $('#notice-modal').on('hidden.bs.modal',noticeDialog.onDialogClose);
+    },
+    closeDialog: function() {
+        $('#notice-modal').modal('hide');
+    },
+
+    onDialogClose: function() {
+        // this function might not be actually called as modal is dismissed via different binding
+        $('#notice-modal').off('hidden.bs.modal');
+    }
+
+};
+
 var successDialog = {
 
     showDialog: function(successMsg) {
         Utils.clearView('.success-message');
         $('#success-modal').modal();
         $('.success-message')[0].innerHTML = successMsg;
-        $('.success-modal').on('hidden.bs.modal',successDialog.onDialogClose);
+        $('#success-modal').on('hidden.bs.modal',successDialog.onDialogClose);
 
     },
     closeDialog: function() {

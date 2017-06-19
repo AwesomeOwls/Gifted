@@ -4,6 +4,7 @@
 
 var Utils = {
 
+    REMOVE_GIFT_RANK: -5,
     TRUSTED_RANK: 4,
     BRONZE_RANK: 0,
     SILVER_RANK: 50,
@@ -91,6 +92,10 @@ var Utils = {
     getUserImageURL: function() {
         var pictureURL = Utils.readCookie('picture');
         return pictureURL ? pictureURL.replace(/\"/g, "") : false;
+    },
+
+    getUserID: function() {
+        return Utils.readCookie('user_id');
     },
 
     getRemovedGiftsCount: function() {

@@ -66,42 +66,48 @@ var NavBar = {
     },
 
     showWelcome: function (userName, pictureURL) {
-        var $status = $('#status');
-        var $preloader = $('#preloader');
-        var $body = $('body');
-
         var introHeader = 'static/gifted/inner-templates/introHeader.html';
         pictureURL = pictureURL.replace(/\"/g, "");
         var $welcome = $('#welcome');
         NavBar.initWelcomeBar(userName, pictureURL);
 
         $welcome.click(function () {
+                NavBar.profilePageRequest();
+        });
+    },
 
-            var obj = {};
-            obj['user_id'] = Utils.readCookie('user_id');
+    profilePageRequest: function(options) {
+        var $status = $('#status');
+        var $preloader = $('#preloader');
+        var $body = $('body');
 
-            $.ajax({
-                type: "POST",
-                url: "http://localhost:63343/profile/",
-                // The key needs to match your method's input parameter (case-sensitive).
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(obj),
-                dataType: "json",
-                beforeSend: Utils.beforeSend,
-                success: function (data) {
-                    $preloader.delay(300).fadeOut('slow', function () {
-                        NavBar.updateTopBar();
-                        $body.delay(550).css({'overflow': 'visible'});
-                        ProfileView.showProfilePage(data.gifts);
-                    });
-                },
-                error: function (error) {
+        var obj = {};
+        obj['user_id'] = Utils.readCookie('user_id');
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:63343/profile/",
+            // The key needs to match your method's input parameter (case-sensitive).
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(obj),
+            dataType: "json",
+            beforeSend: Utils.beforeSend,
+            success: function (data) {
+                $preloader.delay(300).fadeOut('slow', function () {
                     NavBar.updateTopBar();
-                    $status.hide();
-                    $preloader.hide();
-                    errorDialog.showDialog(error.responseText);
-                },
-            });
+                    $body.delay(550).css({'overflow': 'visible'});
+                    ProfileView.showProfilePage(data.gifts);
+                    if (options && options.successOnInjected) {
+                        successDialog.showDialog(options.successMessage);
+                    }
+                });
+            },
+            error: function (error) {
+                NavBar.updateTopBar();
+                $status.hide();
+                $preloader.hide();
+                errorDialog.showDialog(error.responseText);
+            },
         });
     },
 

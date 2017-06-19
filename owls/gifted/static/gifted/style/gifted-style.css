@@ -94,6 +94,9 @@ body {
 .success-header {
   background-color: rgba(45, 255, 18, 0.46);
 }
+.notice-header {
+  background-color: rgb(243, 153, 18);
+}
 
 .close, .close:hover {
   color: #000000!important;
@@ -125,7 +128,7 @@ p.error {
   color: #e74c3c;
 }
 
-.help-us {
+.help-us, .remove-gift {
   height: 36px!important;
   position: absolute;
   right: 30px;
@@ -166,10 +169,9 @@ p.error {
   align-self: center;
   height: 50px;
 }
-/*.thumbnail {*/
-  /*!*background-image: url(../img/background1.jpg);*!*/
-  /*background-size: cover;*/
-/*}*/
+.thumbnail {
+  height: 390px!important;
+}
 
 .progress.progress-rank{
   background: rgba(0, 0, 0, 0.1)!important;

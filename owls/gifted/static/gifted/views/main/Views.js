@@ -43,6 +43,7 @@ var ProfileView = {
         return '<div class="item  col-xs-4 col-lg-4 grid-group-item">'+
             '<div class="thumbnail">' +
             '<img class="group list-group-image" src=' + '"' + img_url + '"' + 'alt="" />' +
+            '<img class="remove-gift remove_' + gift.gift_id + '" onclick="ProfileView.deleteGift(this)" src="static/gifted/img/trash.png">' +
             '<div class="caption">' +
             '<h4 class="group inner list-group-item-heading">' +
             gift.title + '</h4>' +
@@ -95,9 +96,40 @@ var ProfileView = {
                 });
             }
         }
+    },
 
+    deleteGift: function(el) {
+        var $status = $('#status'); var $preloader = $('#preloader'); var $body = $('body');
+        var $welcome = $('#welcome');
+
+        var giftID = parseInt(el.className.replace(/[^0-9\.]/g, ''), 10);
+        var obj = {};
+        obj['gift_id'] = giftID;
+        obj['user_id'] = Utils.getUserID();
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:63343/remove_gift/",
+            // The key needs to match your method's input parameter (case-sensitive).
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(obj),
+            dataType: "json",
+            success: function(data){
+                var options = {}
+                options.successOnInjected = true;
+                options.successMessage = "Gift successfully removed";
+                NavBar.profilePageRequest(options);
+            },
+            error: function(error){
+                $status.hide();
+                $preloader.hide();
+                errorDialog.showDialog(error.responseText);
+            },
+        });
 
     },
+
+
 
     initWarning: function() {
         var $warning = $('#profile-warning');
@@ -274,6 +306,16 @@ var ResultsView = {
                 giftObject.gift_rank = newRank;
                 $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
                 $('.likes_' + giftID)[0].innerText = 'Likes: ' + newRank;
+                if (newRank <= Utils.REMOVE_GIFT_RANK) {
+                    noticeDialog.showDialog(' Gift "' + giftObject.title + '" reached -5 score and therefore will be removed');
+                    el.disabled = true;
+                    negEl.disabled = true;
+                }
+                else {
+                    el.disabled = true;
+                    negEl.disabled = false;
+                }
+
             },
             error: function(error){
                 $(el).removeClass(like == 1 ? 'like-glow' : 'dislike-glow');
