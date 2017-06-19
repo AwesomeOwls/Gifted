@@ -1,7 +1,7 @@
 
 from django.conf.urls import url
 from django.contrib import admin
-from . import utils
+from . import utils , tests
 from . import gifts_views, crowd_views
 
 
@@ -20,8 +20,13 @@ urlpatterns = [
     url(r'^$', crowd_views.index),
 
     url(r'^fill_db/', utils.init_relations),
-    url(r'^clear/', utils.clear_db),
     url(r'^add_gifts/', utils.init_gifts),
-    url(r'^change_strength',utils.enhance_relation),
-    url(r'^init_db',utils.setup)
+
+    url(r'^clear/', tests.clear_db),
+    url(r'^change_strength',tests.enhance_relation),
+    url(r'^setup',tests.setup),
+    url(r'^increase', tests.enhance_relation_by_unit),
+    url(r'^decrease', tests.decrease_relation_by_unit),
+    url(r'^unban', tests.unban)
+
 ]

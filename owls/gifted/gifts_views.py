@@ -258,7 +258,7 @@ def like(request):
         user = User.objects.get(user_id=user_id)
         uploader = User.objects.get(user_id=gift.uploading_user.user_id)
     except ObjectDoesNotExist:
-        return HttpResponse(json.dumps({'status': 'Gift/User/Uploader not found'}), status=400)
+        return HttpResponse(json.dumps({'status': 'Gift not found'}), status=400)
 
     # User may like/dislike other gifts only if his rank is high enough.
     if user.user_rank < TRUSTED_USER_RANK:

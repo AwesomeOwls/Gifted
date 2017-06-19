@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpRequest
 from models import *
 import csv
 from dateutil import parser
@@ -12,6 +12,8 @@ from email.mime.multipart import MIMEMultipart
 import os
 import requests
 import mimetypes
+from django.shortcuts import render
+
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
@@ -98,6 +100,7 @@ def check_logged(request):
 
             if not User.objects.filter(user_id=req_user_id).exists():
                 ans['status'] = NOT_LOGGED_IN
+                ans['status_code'] = 400
                 res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
                 invalidate_cookie(res)
 
@@ -116,6 +119,7 @@ def check_logged(request):
                 return None
     else:
         ans['status'] = NOT_LOGGED_IN
+        ans['status_code'] = 400
         res = HttpResponse(json.dumps(ans), content_type='application/json', status=400)
     return res
 
@@ -141,14 +145,6 @@ def truncate_by_relation_strength(gifts,relation,user_id):
             break
 
     return [gift for gift in filtered_gifts]
-
-
-def clear_db(request):
-    Relation.objects.all().delete()
-    RelationshipMatrixCell.objects.all().delete()
-    User.objects.all().delete()
-    Gift.objects.all().delete()
-    return HttpResponse(json.dumps({'status': 'OK'}), status=200, content_type='application/json')
 
 
 def update_rmatrix(rel, other_rel, rel_strength, user):
@@ -270,44 +266,3 @@ def refresh_cookie(response, user):
     response.set_cookie('user_rank', user.user_rank)
     response.set_cookie('removed_gifts_count', user.gifts_removed)
 
-
-def init_users():
-
-    user_newbie = User(user_id='112573066830407886679', email='spook90il@gmail.com')
-    user_giftcard = User(user_id='117896272606849173314', email='evgeny.agronsky@gmail.com', user_rank=300)
-    user_banned = User(user_id='104146418326022036932', email='evgeny@imvisiontech.com', gifts_removed=3, user_rank=-9)
-    user_newbie.save()
-    user_giftcard.save()
-    user_banned.save()
-
-    spam_gift = Gift(title='SpamGift', description='SpamGift', age=22, price=22,
-                gender='M', gift_img='', relationship='parent', gift_rank=-4)
-    spam_gift.uploading_user_id = user_banned.user_id
-    spam_gift.save()
-
-
-def enhance_relation(request):
-    rel1 = request.GET.get('rel1')
-    rel2 = request.GET.get('rel2')
-    strength = request.GET.get('strength')
-    if not rel1 or not rel2 or not strength :
-        return HttpResponse(json.dumps({'status':'Failed'}),status=400)
-    try:
-        relation1 = Relation.objects.get(description=rel1)
-        relation2 = Relation.objects.get(description=rel2)
-    except ObjectDoesNotExist:
-        return HttpResponse(json.dumps({'status':'Failed'}),status=400)
-    try:
-        relmat = RelationshipMatrixCell.objects.get(rel1=relation1,rel2=relation2)
-    except ObjectDoesNotExist:
-        relmat = RelationshipMatrixCell.objects.get(rel1=relation2,rel2=relation1)
-    relmat.strength += int(strength)
-    relmat.save()
-    return HttpResponse(json.dumps({'status':'OK'}))
-
-
-def setup(request):
-    clear_db(request)
-    init_relations(request)
-    init_users()
-    init_gifts(request)
