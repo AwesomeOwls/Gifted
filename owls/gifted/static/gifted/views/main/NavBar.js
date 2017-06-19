@@ -139,11 +139,14 @@ var NavBar = {
     },
 
     updateSearchButton: function() {
-        $search = $('#search-button');
+        var $search = $('#search-button');
         if(Utils.getUserRank() < Utils.TRUSTED_RANK){
             $search.addClass('disabled-search-btn');
+            $search.tooltip('enable');
         } else {
             $search.removeClass('disabled-search-btn');
+            $search.tooltip('disable');
+
         }
     },
 
