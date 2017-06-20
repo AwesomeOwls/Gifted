@@ -119,6 +119,7 @@ var ProfileView = {
                 options.successOnInjected = true;
                 options.successMessage = "Gift successfully removed";
                 NavBar.profilePageRequest(options);
+                NavBar.updateTopBar();
             },
             error: function(error){
                 $status.hide();
