@@ -33,7 +33,7 @@ def remove_gift(request):
             return HttpResponse(json.dumps({'status': 'User not found'}), status=400)
         liked_gifts = tmp_user.get_liked_gift_ids()
         for liked_gift in liked_gifts:
-            if liked_gift['gift_id'] == gift_id:
+            if int(liked_gift['gift_id']) == gift_id:
                 liked_gifts.remove(liked_gift)
                 break
         tmp_user.liked_gift_ids = liked_gifts
