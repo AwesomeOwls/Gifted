@@ -116,6 +116,8 @@ def ask_user(request):
     relation_strength = body['strength']
     update_rmatrix(rel, other_rel, relation_strength, user)
 
+    user.user_rank += 1
+    user.save()
     ans['status'] = 'OK'
     response = HttpResponse(json.dumps(ans), content_type='application/json', status=200)
     response.set_cookie('user_rank', user.user_rank)

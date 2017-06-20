@@ -89,7 +89,7 @@ var UploadDialog = {
                         $body.delay(550).css({'overflow': 'visible'});
                         successDialog.showDialog('Gift Uploaded Successfully');
                         NavBar.updateTopBar();
-                        ProfileView.initProfilePageData();
+                        NavBar.profilePageRequest();
                     });
                 },
                 error: function(error){
