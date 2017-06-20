@@ -172,6 +172,7 @@ def update_rmatrix(rel, other_rel, rel_strength, user):
         return HttpResponse(json.dumps({'status': 'relations ratio does not exist in db'}), status=401,
                             content_type='application/json')
     user.user_rank += 1
+    user.save()
     rel_matrix_cell.save()
 
 
