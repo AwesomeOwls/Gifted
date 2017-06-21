@@ -75,7 +75,7 @@ def setup(request):
     init_gifts(request)
 
     #register newbie user without gifts
-    user_newbie = User(user_id='113339757380497466993', email='gifted.owl.reg@gmail.com', user_rank=4)
+    user_newbie = User(user_id='113339757380497466993', email='gifted.owl.reg@gmail.com', user_rank=0)
     user_newbie.save()
 
     return render(request, 'gifted/index.html', {})
