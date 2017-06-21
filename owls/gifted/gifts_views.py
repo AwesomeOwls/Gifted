@@ -22,7 +22,7 @@ def remove_gift(request):
     except ObjectDoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User not found'}), status=400)
 
-    user.user_rank -= gift.gift_rank
+    user.user_rank = user.user_rank - gift.gift_rank - 2
     user.save()
     liked_users = gift.get_liked_users()
     for user_obj in liked_users:
