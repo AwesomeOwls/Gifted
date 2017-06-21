@@ -2,6 +2,7 @@ from django.test import TestCase
 
 # Create your tests here.
 from utils import *
+from django.shortcuts import redirect
 
 
 def init_users():
@@ -25,7 +26,7 @@ def unban(request):
     banned_usr.banned_start = None
     banned_usr.gifts_removed = 0
     banned_usr.save()
-    return render(request, 'gifted/index.html', {})
+    return redirect('http://localhost:63343/')
 
 
 def enhance_relation(request):
@@ -56,16 +57,16 @@ def enhance_relation(request):
 
 def enhance_relation_by_unit(request):
     req = HttpRequest()
-    req.GET = {'rel1' : 'cousin', 'rel2' : 'parent_in_law', 'strength':-1}
+    req.GET = {'rel1' : 'cousin', 'rel2' : 'acquaintant', 'strength':-1}
     enhance_relation(req)
-    return render(request, 'gifted/index.html', {})
+    return redirect('http://localhost:63343/')
 
 
 def decrease_relation_by_unit(request):
     req = HttpRequest()
     req.GET = {'rel1' : 'cousin', 'rel2' : 'friend', 'strength':2}
     enhance_relation(req)
-    return render(request, 'gifted/index.html', {})
+    return redirect('http://localhost:63343/')
 
 
 def setup(request):
@@ -78,7 +79,7 @@ def setup(request):
     user_newbie = User(user_id='113339757380497466993', email='gifted.owl.reg@gmail.com', user_rank=0)
     user_newbie.save()
 
-    return render(request, 'gifted/index.html', {})
+    return redirect('http://localhost:63343/')
 
 
 def clear_db(request):

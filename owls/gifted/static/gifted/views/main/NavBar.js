@@ -91,16 +91,13 @@ var NavBar = {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(obj),
             dataType: "json",
-            beforeSend: Utils.beforeSend,
             success: function (data) {
-                $preloader.delay(300).fadeOut('slow', function () {
-                    NavBar.updateTopBar();
-                    $body.delay(550).css({'overflow': 'visible'});
-                    ProfileView.showProfilePage(data.gifts);
-                    if (options && options.successOnInjected) {
-                        successDialog.showDialog(options.successMessage);
-                    }
-                });
+                NavBar.updateTopBar();
+                $body.delay(550).css({'overflow': 'visible'});
+                ProfileView.showProfilePage(data.gifts);
+                if (options && options.successOnInjected) {
+                    successDialog.showDialog(options.successMessage);
+                }
             },
             error: function (error) {
                 NavBar.updateTopBar();
