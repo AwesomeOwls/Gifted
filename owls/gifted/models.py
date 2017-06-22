@@ -20,6 +20,14 @@ class User(models.Model):
     def get_liked_gift_ids(self):
         return json.loads(self.liked_gift_ids)
 
+    def remove_liked_gift(self, gift_id):
+        liked_gifts = self.get_liked_gift_ids()
+        for liked_gift in liked_gifts:
+            if int(liked_gift['gift_id']) == gift_id:
+                liked_gifts.remove(liked_gift)
+                break
+        self.liked_gift_ids = liked_gifts
+
     def __str__(self):
        return "id:%s, rank:%s, banned:%s, liked gift ids:%s" % (self.user_id, self.user_rank, "yes" if self.is_banned else "no", self.liked_gift_ids)
 
@@ -73,6 +81,15 @@ class Gift(models.Model):
 
     def get_liked_users(self):
         return json.loads(self.liked_users)
+
+    def remove_liked_user(self, user_id):
+        liked_users = self.get_liked_users()
+        for user_obj in liked_users:
+            if user_obj['user_id'] == user_id:
+                liked_users.remove(user_obj)
+                break
+        self.gift_rank+=1
+        self.liked_users = json.dumps(liked_users)
 
     def as_json(self):
         return dict(

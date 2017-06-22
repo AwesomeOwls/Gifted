@@ -3,6 +3,7 @@ from oauth2client import client
 from utils import *
 
 
+# loads the homepage of the website
 def index(request):
     context = {}
     if request.method != 'GET':
@@ -21,6 +22,7 @@ def index(request):
     return render(request, 'gifted/index.html', context)
 
 
+# login with the user's google account
 def login(request):
     if not request.body or request.method != 'POST':
         return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
@@ -75,6 +77,7 @@ def login(request):
     return res
 
 
+# logout from user's account and session cookie deletion
 def logout(request):
     if request.method != 'POST':
         return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
@@ -91,6 +94,7 @@ def logout(request):
     return res
 
 
+# handles relation matrix related questions that the user was asked about
 def ask_user(request):
 
     if not request.body or request.method != 'POST':
@@ -125,10 +129,8 @@ def ask_user(request):
     return response
 
 
+# load user's personal profile page
 def profile_page(request):
-
-    if request.method != 'POST':
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
 
     ans = {}
     res = check_logged(request)
@@ -168,10 +170,10 @@ def redeem_giftcard(request):
     user = User.objects.get(user_id=user_id)
     is_gold = False
 
-    if body['card_type']=='gold':
+    if body['card_type'] == 'gold':
         is_gold = True
         user.user_rank-=150
-    elif body['card_type']=='diamond':
+    elif body['card_type'] == 'diamond':
         user.user_rank-=250
     else:
         return HttpResponse(json.dumps({'status': 'Card type is not legal'}), status=400, content_type='application/json')

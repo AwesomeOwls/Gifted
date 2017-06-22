@@ -2,50 +2,6 @@ import re
 from utils import *
 
 
-def remove_gift(request):
-    if not request.body or request.method != 'POST':
-        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
-    else:
-        body = json.loads(request.body)
-
-    ans = {}
-    res = check_logged(request)
-    if res is not None:
-        return res
-
-    gift_id = body['gift_id']
-    user_id = request.COOKIES.get('user_id')
-
-    try:
-        gift = Gift.objects.get(pk=gift_id)
-        user = User.objects.get(user_id=user_id)
-    except ObjectDoesNotExist:
-        return HttpResponse(json.dumps({'status': 'Gift/User not found'}), status=400)
-
-    user.user_rank = user.user_rank - gift.gift_rank - 2
-    user.save()
-    liked_users = gift.get_liked_users()
-    for user_obj in liked_users:
-        user_id = user_obj['user_id']
-        try:
-            tmp_user = User.objects.get(user_id=user_id)
-        except ObjectDoesNotExist:
-            return HttpResponse(json.dumps({'status': 'User not found'}), status=400)
-        liked_gifts = tmp_user.get_liked_gift_ids()
-        for liked_gift in liked_gifts:
-            if int(liked_gift['gift_id']) == gift_id:
-                liked_gifts.remove(liked_gift)
-                break
-        tmp_user.liked_gift_ids = liked_gifts
-        tmp_user.save()
-
-    gift.delete()
-    ans['status'] = 'Remove gift succesfully done.'
-    response = HttpResponse(json.dumps(ans), status=200)
-    refresh_cookie(response, user)
-    return response
-
-
 def upload_gift(request):
     if not request.body or request.method != 'POST':
         return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
@@ -87,11 +43,13 @@ def upload_gift(request):
     if image_url != '' and not is_image_url(image_url):
         image_url = ''
 
+    # validate that the title has only english characters ,digits and whitespaces
     if not re.match('(\w+(\s\w+)?)',title):
         return HttpResponse(json.dumps({'status': 'Title is not legal.\nPlease use only English letters or digits.'}), status=400, content_type='application/json')
 
+    # validate that the description has only english characters ,digits or empty string
     if not re.match('(\w+(\s\w+)?)?',description):
-        return HttpResponse(json.dumps({'status':'The descreption is not legal.Please use only English letters or digits'}),
+        return HttpResponse(json.dumps({'status':'The description is not legal.Please use only English letters or digits'}),
                             status=400, content_type='application/json')
 
     if not gender == 'M' and not gender == 'F':
@@ -227,6 +185,7 @@ def search(request):
     # if relevant gifts were found
     if gifts:
         truncated_gifts = truncate_by_relation_strength(gifts, relation, user_id)
+        # sort by likes
         truncated_gifts.sort(key=lambda gift: gift.gift_rank, reverse=True)
         truncated_gifts = truncated_gifts[:MAX_GIFTS]
         ans['gifts'] = [x.as_json() for x in truncated_gifts]
@@ -305,14 +264,15 @@ def like(request):
 
     user.save()
 
-    #check if user is a spamemr - disliked 5 gifts in the last 5 seconds
+    gift.gift_rank = gift.gift_rank + int(like)
+
+    # check if user is a spamemr - disliked 5 gifts in the last 5 seconds
     if int(like) < 0 and is_spammer(user.get_liked_gift_ids()):
         user.is_banned = True
         user.banned_start = datetime.utcnow()
+        remove_likes_of_banned_user(user)
         user.save()
         return check_logged(request)
-
-    gift.gift_rank = gift.gift_rank + int(like)
 
     # Under gift rank of MIN_GIFT_RANK, the gift will be removed from the DB.
     if gift.gift_rank <= MIN_GIFT_RANK:
@@ -329,4 +289,47 @@ def like(request):
     ans['status'] = 'Like is succesfully done.'
     response = HttpResponse(json.dumps(ans), status=200)
     refresh_cookie(response,user)
+    return response
+
+
+# remove gift from DB accordingto user's request
+def remove_gift(request):
+    if not request.body or request.method != 'POST':
+        return HttpResponse(json.dumps({'status': 'Illegal request. Please try again.'}), status=400)
+    else:
+        body = json.loads(request.body)
+
+    ans = {}
+    res = check_logged(request)
+    if res is not None:
+        return res
+
+    gift_id = body['gift_id']
+    user_id = request.COOKIES.get('user_id')
+
+    # get gift and user objects from db
+    try:
+        gift = Gift.objects.get(pk=gift_id)
+        user = User.objects.get(user_id=user_id)
+    except ObjectDoesNotExist:
+        return HttpResponse(json.dumps({'status': 'Gift/User not found'}), status=400)
+
+    # decrease user's rank with the points given for uploading the gift
+    user.user_rank = user.user_rank - gift.gift_rank - UPLOAD_AWARD
+    user.save()
+
+    # remove gift id from liked gifts list for every user liking this removed gift
+    liked_users = gift.get_liked_users()
+    for user_obj in liked_users:
+        user_id = user_obj['user_id']
+        try:
+            tmp_user = User.objects.get(user_id=user_id)
+            tmp_user.remove_liked_gift(gift_id)
+            tmp_user.save()
+        except ObjectDoesNotExist:
+            return HttpResponse(json.dumps({'status': 'User not found'}), status=400)
+    gift.delete()
+    ans['status'] = 'Remove gift succesfully done.'
+    response = HttpResponse(json.dumps(ans), status=200)
+    refresh_cookie(response, user)
     return response

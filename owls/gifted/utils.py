@@ -19,6 +19,7 @@ GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleuse
 
 COOKIE_EXPIRY_TIME = 3600
 #COOKIE_EXPIRY_TIME = 10
+UPLOAD_AWARD = 2
 MIN_GIFT_RANK = -5
 MIN_GIFTS_TH = 5
 TRUSTED_USER_RANK = 4
@@ -272,6 +273,24 @@ def init_gifts(request):
         return HttpResponse(json.dumps({'status': 'file not found'}), status=400)
 
     return HttpResponse(json.dumps({'status':'OK'}), status=200)
+
+
+# remove last SPAM_GIFT_TH dislikes of the banned user
+def remove_likes_of_banned_user(user):
+    user_id = user.user_id
+    liked_gifts_ids = user.get_liked_gift_ids()
+    counter = 0
+    for gift_obj in reversed(liked_gifts_ids):
+        if gift_obj['is_like'] == 0:
+            gift = Gift.objects.get(pk=gift_obj['gift_id'])
+            gift.remove_liked_user(user_id)
+            gift.save()
+            liked_gifts_ids.remove(gift_obj)
+            counter += 1
+        if counter == SPAM_GIFT_TH:
+            break
+    user.liked_gift_ids = liked_gifts_ids
+
 
 
 def invalidate_cookie(response):
