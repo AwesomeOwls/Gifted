@@ -12,7 +12,7 @@ from email.mime.multipart import MIMEMultipart
 import os
 import requests
 import mimetypes
-from django.shortcuts import render
+import time
 
 
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
@@ -46,6 +46,10 @@ GMAIL_PASS = 'adminadmin'
 GIFTCARD_GOLD_PATH = 'gifted/static/gifted/img/giftcard_50.png'
 GIFTCARD_DIAMOND_PATH = 'gifted/static/gifted/img/giftcard_100.png'
 
+current_milli_time = lambda: int(round(time.time() * 1000))
+SPAM_TIME_TH = 5000
+SPAM_GIFT_TH = 5
+
 
 def is_image_url(url):
     try:
@@ -54,6 +58,25 @@ def is_image_url(url):
         return False
     mimetype, encoding = mimetypes.guess_type(url)
     return mimetype and mimetype.startswith('image') and r.status_code == requests.codes.ok
+
+
+def is_spammer(liked_gifts_ids):
+    first_dislike_found = False
+    first_dislike_ts = 0
+    last_dislike_ts = 0
+    dislike_counter = 0
+    for liked_obj in reversed(liked_gifts_ids):
+        if not first_dislike_found and liked_obj['is_like'] == 0:
+            first_dislike_ts = liked_obj['timestamp']
+            first_dislike_found = True
+            dislike_counter += 1
+        elif liked_obj['is_like'] == 0:
+            dislike_counter += 1
+            last_dislike_ts = liked_obj['timestamp']
+
+        if dislike_counter == SPAM_GIFT_TH and first_dislike_ts - last_dislike_ts <= SPAM_TIME_TH:
+            return True
+    return False
 
 
 def send_mail_reward(user_mail, is_gold):

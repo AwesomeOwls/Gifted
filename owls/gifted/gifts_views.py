@@ -22,7 +22,7 @@ def remove_gift(request):
     except ObjectDoesNotExist:
         return HttpResponse(json.dumps({'status': 'Gift/User not found'}), status=400)
 
-    user.user_rank -= gift.gift_rank
+    user.user_rank = user.user_rank - gift.gift_rank - 2
     user.save()
     liked_users = gift.get_liked_users()
     for user_obj in liked_users:
@@ -266,41 +266,51 @@ def like(request):
                                                   \nCheck out our ranking system in FAQ.'}),
                             content_type='application/json', status=400)
 
-    search_query = {'gift_id':gift_id,'is_like': 1 if like>0 else 0}
+    search_query = {'gift_id':gift_id,'is_like': 1 if like>0 else 0, 'timestamp': current_milli_time()}
 
     liked_gifts_ids = user.get_liked_gift_ids()
 
+    opposite_found = False
     # check if user already liked/disliked this gift
-    if search_query in liked_gifts_ids:
+    for sq in liked_gifts_ids:
+        if sq['gift_id'] == search_query['gift_id'] and sq['is_like'] == search_query['is_like']:
+            return HttpResponse(json.dumps({'status': 'You already liked this gift'}),
+                                content_type='application/json', status=400) if like > 0 \
+                else HttpResponse(json.dumps({'status': 'You already disliked this gift'}),
+                                content_type='application/json', status=400)
 
-        return HttpResponse(json.dumps({'status': 'You already liked this gift'}),
-                            content_type='application/json', status=400) if like > 0 \
-            else HttpResponse(json.dumps({'status': 'You already disliked this gift'}),
-                            content_type='application/json', status=400)
+        elif sq['gift_id'] == search_query['gift_id'] and sq['is_like'] != search_query['is_like']:
+            for gift_obj in liked_gifts_ids:
+                if gift_obj['gift_id'] == gift_id:
+                    gift_obj['is_like'] = 1 - gift_obj['is_like']
+                    gift_obj['timestamp'] = current_milli_time()
+                    break
+            user.liked_gift_ids = json.dumps(liked_gifts_ids)
 
-    elif {'gift_id':gift_id, 'is_like': 1-search_query['is_like']} in liked_gifts_ids:
-        for gift_obj in liked_gifts_ids:
-            if gift_obj['gift_id'] == gift_id:
-                gift_obj['is_like'] = 1 - gift_obj['is_like']
-                break
-        user.liked_gift_ids = json.dumps(liked_gifts_ids)
+            liked_users = gift.get_liked_users()
+            for user_obj in liked_users:
+                if user_obj['user_id'] == user.user_id:
+                    user_obj['is_like'] = 1 - user_obj['is_like']
+                    uploader.user_rank += int(like)
+                    break
+            gift.liked_users = json.dumps(liked_users)
+            opposite_found = True
 
-        liked_users = gift.get_liked_users()
-        for user_obj in liked_users:
-            if user_obj['user_id'] == user.user_id:
-                user_obj['is_like'] = 1 - user_obj['is_like']
-                uploader.user_rank += int(like)
-                break
-        gift.liked_users = json.dumps(liked_users)
-
-    else:
+    if not opposite_found:
         if like > 0:
             uploader.user_rank += 1
         # add liked gift id to list
         user.add_liked_gift_id(search_query)
-        gift.add_liked_user({'user_id': user_id, 'is_like': 1 if like > 0 else 0 })
+        gift.add_liked_user({'user_id': user_id, 'is_like': 1 if like > 0 else 0})
 
     user.save()
+
+    #check if user is a spamemr - disliked 5 gifts in the last 5 seconds
+    if int(like) < 0 and is_spammer(user.get_liked_gift_ids()):
+        user.is_banned = True
+        user.banned_start = datetime.utcnow()
+        user.save()
+        return check_logged(request)
 
     gift.gift_rank = gift.gift_rank + int(like)
 
