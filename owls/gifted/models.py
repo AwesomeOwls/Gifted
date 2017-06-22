@@ -87,8 +87,8 @@ class Gift(models.Model):
         for user_obj in liked_users:
             if user_obj['user_id'] == user_id:
                 liked_users.remove(user_obj)
+                self.gift_rank += 1
                 break
-        self.gift_rank+=1
         self.liked_users = json.dumps(liked_users)
 
     def as_json(self):
