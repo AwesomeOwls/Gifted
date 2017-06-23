@@ -1,3 +1,12 @@
+"""
+#           utils file                                 #
+#  includes 'private' functions and constants          #
+#  functions that are for inner backend use.           #
+#  They don't return http responses or used as scripts #
+
+"""
+
+
 from django.http import HttpResponse,HttpRequest
 from models import *
 import csv
@@ -18,24 +27,16 @@ import time
 GOOGLE_CLIENT_ID = '905317763411-2rbmiovs8pcahhv5jn5i6tekj0hflivf.apps.googleusercontent.com'
 
 COOKIE_EXPIRY_TIME = 3600
-#COOKIE_EXPIRY_TIME = 10
 UPLOAD_AWARD = 2
 MIN_GIFT_RANK = -5
 MIN_GIFTS_TH = 5
 TRUSTED_USER_RANK = 4
 MAX_REMOVED = 3
-age_ranges = [(0,1), (2,3), (4,5),(6,8),
-              (9,11), (12,14), (15,19),
-              (20,25), (26,30), (31,40),
-              (41,50), (51,60), (61,70),
-              (71,200)]
 MIN_RELATION_STRENGTH = 2
 MAX_GIFTS = 50
 PREMIUM_USER_RANK = 10
 NOT_CHOSEN = 6
 BAN_TIME = timedelta(1)
-#BAN_TIME = timedelta(seconds=20)
-
 
 NOT_LOGGED_IN = 'You are not logged in.'
 COOKIE_EXPIRED = 'Your session has expired. Please log-in again.'
@@ -47,9 +48,18 @@ GMAIL_PASS = 'adminadmin'
 GIFTCARD_GOLD_PATH = 'gifted/static/gifted/img/giftcard_50.png'
 GIFTCARD_DIAMOND_PATH = 'gifted/static/gifted/img/giftcard_100.png'
 
-current_milli_time = lambda: int(round(time.time() * 1000))
 SPAM_TIME_TH = 5000
 SPAM_GIFT_TH = 5
+
+age_ranges = [(0,1), (2,3), (4,5),(6,8),
+              (9,11), (12,14), (15,19),
+              (20,25), (26,30), (31,40),
+              (41,50), (51,60), (61,70),
+              (71,200)]
+
+
+def current_milli_time():
+    return int(round(time.time() * 1000))
 
 
 def is_image_url(url):
@@ -290,7 +300,6 @@ def remove_likes_of_banned_user(user):
         if counter == SPAM_GIFT_TH:
             break
     user.liked_gift_ids = liked_gifts_ids
-
 
 
 def invalidate_cookie(response):

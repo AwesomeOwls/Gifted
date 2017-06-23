@@ -1,3 +1,10 @@
+"""
+#        gifts views file           #
+#  handles gifts related requests:  #
+#  gift upload,search,like,delete   #
+####################################
+
+"""
 import re
 from utils import *
 
@@ -36,7 +43,7 @@ def upload_gift(request):
         return HttpResponse(json.dumps(ans), status=400,content_type='application/json')
 
     # check if the url string is a valid url or an empty string
-    if not re.match('(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)?',image_url):
+    if image_url != '' and not re.match('(http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)', image_url):
         ans = {'status': 'Image url is invalid'}
         return HttpResponse(json.dumps(ans), status=400, content_type='application/json')
 

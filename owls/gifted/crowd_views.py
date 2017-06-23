@@ -1,3 +1,9 @@
+"""
+                    crowd views file                          #
+#                handles users related requests:              #
+#  login,logout,reedem gift card, relation questions handling #
+"""
+
 from django.shortcuts import render
 from oauth2client import client
 from utils import *

@@ -1,3 +1,8 @@
+"""
+          models file        
+      includes all db tables. 
+"""
+
 from __future__ import unicode_literals
 from django.db import models
 import json

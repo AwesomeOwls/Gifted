@@ -1,6 +1,11 @@
-from django.test import TestCase
+"""
+#              setup file                    #
+#       includes scripts for the demo        #
+#          run localhost:63343/setup         #
 
-# Create your tests here.
+"""
+
+
 from utils import *
 from django.shortcuts import redirect
 
@@ -75,7 +80,7 @@ def setup(request):
     init_users()
     init_gifts(request)
 
-    #register newbie user without gifts
+    # register newbie user without gifts
     user_newbie = User(user_id='113339757380497466993', email='gifted.owl.reg@gmail.com', user_rank=0)
     user_newbie.save()
 

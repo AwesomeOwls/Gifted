@@ -1,4 +1,9 @@
+"""
 
+listens to http requests and redirect
+ them to the suitable handlers
+
+"""
 from django.conf.urls import url
 from django.contrib import admin
 from . import utils , tests
