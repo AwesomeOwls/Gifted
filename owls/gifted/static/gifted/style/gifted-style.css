@@ -268,3 +268,18 @@ p.error {
 .description-row {
   word-wrap: break-word;
 }
+
+.gifted-logo-nav {
+  height: 45px;
+  align-self: center;
+}
+
+.gifted-logo-main {
+  height: 90px;
+  align-self: center;
+}
+
+.home-container {
+  display: flex;
+  justify-content: center;
+}
