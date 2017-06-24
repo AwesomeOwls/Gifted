@@ -60,6 +60,7 @@ body {
 }
 
 #home-button {
+  display: flex;
   cursor: pointer;
 }
 
