@@ -51,7 +51,7 @@ var Utils = {
     clearInput: function($input) {
         return $input && $input.val('');
     },
-
+    /* Pick relation to question, randomly */
     pickRandomProperty: function(obj) {
         var result;
         var count = 0;
@@ -60,7 +60,7 @@ var Utils = {
                 result = prop;
         return result;
     },
-
+    /* Injecting a view into index.html */
     injectView: function(selector, template, callback, background) {
         if (background) $(selector).css('background-image', 'url(static/gifted/img/' + background + ')');
         else {
@@ -69,7 +69,7 @@ var Utils = {
 
         return $(selector).load(template, null, callback);
     },
-
+    /* Clearing a view from index.html */
     clearView: function(selector) {
         var $view = $(selector)[0]
         if ($view){

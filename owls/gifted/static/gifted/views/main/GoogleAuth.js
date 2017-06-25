@@ -1,4 +1,4 @@
-
+/* Contains the google user logic */
 var GoogleAuth = {
 
     onSignIn: function (googleUser) {

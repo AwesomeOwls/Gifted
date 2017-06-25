@@ -1,6 +1,7 @@
 /**
  * Created by ysayag on 09/05/2017.
  */
+/* Contains the Navigation bar button logic */
 var NavBar = {
     setLoginButton: function () {
         var $login = $('#login-button');
@@ -9,7 +10,7 @@ var NavBar = {
                 console.error(e.error)
             });
     },
-
+    /* Display buttons for a logged out user */
     showPartialButtonsOnly: function () {
         var $login = $('#login-button');
         var $logout = $('#logout-button');
@@ -48,7 +49,7 @@ var NavBar = {
 
         $welcome[0].innerText = '';
     },
-
+    /* Display buttons for a logged in user */
     showTopButtons: function () {
         var $login = $('#login-button');
         var $logout = $('#logout-button');
@@ -64,7 +65,7 @@ var NavBar = {
         $about.show();
         $faq.show();
     },
-
+    /* Link to profile page */
     showWelcome: function (userName, pictureURL) {
         var introHeader = 'static/gifted/inner-templates/introHeader.html';
         pictureURL = pictureURL.replace(/\"/g, "");
@@ -107,7 +108,7 @@ var NavBar = {
             },
         });
     },
-
+    /* Initialize link to profile page */
     initWelcomeBar: function(userName, pictureURL) {
         if (!userName || !pictureURL) return;
         var $welcome = $('#welcome');
@@ -140,7 +141,7 @@ var NavBar = {
             '</div>'
         );
     },
-
+    /* Search button is disabled for untrusted users */
     updateSearchButton: function() {
         var $search = $('#search-button');
         if(Utils.getUserRank() < Utils.TRUSTED_RANK){
@@ -152,7 +153,7 @@ var NavBar = {
 
         }
     },
-
+    /* Unbind onclick handlers */
     unbindTopButtonsClick: function() {
         var $logout = $('#logout-button'); var $search = $('#search-button');
         var $upload = $('#upload-button'); var $welcome = $('#welcome');
@@ -161,7 +162,7 @@ var NavBar = {
             $button.off('click');
         })
     },
-
+    /* Initialize logged in user navigation setup */
     updateTopBar: function() {
         NavBar.initWelcomeBar(Utils.getUserName(), Utils.getUserImageURL());
         NavBar.showTopButtons();

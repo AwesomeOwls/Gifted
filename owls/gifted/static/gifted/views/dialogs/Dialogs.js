@@ -1,4 +1,4 @@
-
+/* Contains the different popup dialogs logic */
 window.relationships = {
     'parent': 'Parent',
     'grandparent': 'Grandparent',

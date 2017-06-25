@@ -1,7 +1,7 @@
 /**
  * Created by ysayag on 09/05/2017.
  */
-
+/* Contains the logic of of each page */
 var ProfileView = {
 
     showProfilePage: function(gifts) {
@@ -11,7 +11,7 @@ var ProfileView = {
         Utils.injectView('.main-container', profilePage, ProfileView.onProfilePageInjected, 'background1_80.jpg');
 
     },
-
+    /* Called when the profile page is injected into index.html */
     onProfilePageInjected: function() {
         var $picture = $('#profile-picture');
         var $name = $('#profile-name');
@@ -24,7 +24,7 @@ var ProfileView = {
         ProfileView.insertGifts(window.userGifts);
 
     },
-
+    /* Display the user's gifts */
     insertGifts: function(GiftsObject) {
         var $products = $('#products');
         if (!GiftsObject || !GiftsObject.length) {
@@ -35,7 +35,7 @@ var ProfileView = {
             $($products).append($(ProfileView.createGiftElement(GiftsObject[i])))
         }
     },
-
+    /* The gift element html */
     createGiftElement: function(gift) {
         var img_url = gift.gift_img || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReMxYxGBiScljKXJ3De1t8vLewNDml3yDPYlgL_19Jkzgh6VyZ2mtTUA';
 
@@ -76,7 +76,7 @@ var ProfileView = {
 
 
     },
-
+    /* Initialize redeemable gift cards */
     initCardsButtons: function() {
         var $cards = $('#gifts-cards');
         Utils.clearView('#gifts-cards');
@@ -131,7 +131,7 @@ var ProfileView = {
     },
 
 
-
+    /* When user is under warning of being banned */
     initWarning: function() {
         var $warning = $('#profile-warning');
         Utils.clearView('#profile-warning');
@@ -140,7 +140,7 @@ var ProfileView = {
             $warning[0].innerText = 'You are under warning! '+ removedGiftsCount +' of your gifts have been removed - for more information see FAQ'
         }
     },
-
+    /* The rank progress bar */
     getProfileRankBar: function() {
         var userRank = Utils.getUserRank();
         var barValue = Math.max(0,userRank);
@@ -185,7 +185,7 @@ var MainView = {
 
         }
     },
-
+    /* check session expiration - user is idle */
     checkExpiry: function() {
         var now = new Date();
         var now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
@@ -215,7 +215,7 @@ var ResultsView = {
         Utils.injectView('.main-container', ResultsPage, ResultsView.onResultsPageInjected, 'background1_80.jpg');
 
     },
-
+    /* When the search results are injected into index.html */
     onResultsPageInjected: function() {
         ResultsView.insertGifts(window.resultsGifts);
 
@@ -281,7 +281,6 @@ var ResultsView = {
               '</div>'
     },
 
-
     likeGift: function(like, el) {
         var giftID = el.getAttribute('like-id') || el.getAttribute('dislike-id');
         var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
@@ -325,6 +324,7 @@ var ResultsView = {
             },
         });
     },
+    /* Displayed when user clicks on the question mark on a gift */
     showQuestionDialog: function(el) {
         var giftID = parseInt(el.className.replace(/[^0-9\.]/g, ''), 10);
         var giftObject = $.grep(window.resultsGifts, function(e){ return e.gift_id == giftID; })[0];
@@ -355,7 +355,7 @@ var FAQView = {
         var FAQPage = 'static/gifted/inner-templates/faqPage.html';
         Utils.injectView('.main-container', FAQPage, FAQView.onFAQInjected, 'background1_80.jpg');
     },
-
+    /* When FAQ was injected into index.html */
     onFAQInjected: function () {
         $('.faq-question').click(function () {
             if ($(this).parent().is('.open')) {
